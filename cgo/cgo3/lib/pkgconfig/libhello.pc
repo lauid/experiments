@@ -1,0 +1,12 @@
+prefix=/home/vagrant/code/demo/cmd/cgo3
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: hello 
+Description: hello library <description>
+Version: 0.1
+
+Requires:
+Libs: -L${libdir} -lhello
+Cflags: -I${includedir}
