@@ -12,6 +12,6 @@ TARGET=demo2
 all:
 	go build -o demo2 main.go
 arm:
-	CGO_ENABLED=1 GOOS=linux GOARCH=arm GOARM=7 go build -o ${TARGET} main.go
+	GOOS=linux GOARCH=arm GOARM=7 go build -o ${TARGET} main.go
 clean:
 	rm -rf ${TARGET} 
