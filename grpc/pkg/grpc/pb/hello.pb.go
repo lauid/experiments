@@ -151,11 +151,11 @@ var file_hello_proto_goTypes = []interface{}{
 var file_hello_proto_depIdxs = []int32{
 	0, // 0: hello.Greeter.SayHello:input_type -> hello.HelloRequest
 	1, // 1: hello.Greeter.SayHello:output_type -> hello.HelloReply
-	1, // [1:2] is the sub-list for method output_type
-	0, // [0:1] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	1, // [1:2] is the sub-experiment for method output_type
+	0, // [0:1] is the sub-experiment for method input_type
+	0, // [0:0] is the sub-experiment for extension type_name
+	0, // [0:0] is the sub-experiment for extension extendee
+	0, // [0:0] is the sub-experiment for field type_name
 }
 
 func init() { file_hello_proto_init() }
