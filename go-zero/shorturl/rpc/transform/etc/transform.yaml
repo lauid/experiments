@@ -4,3 +4,9 @@ Etcd:
   Hosts:
   - 127.0.0.1:2379
   Key: transform.rpc
+
+
+DataSource: homestead:secret@tcp(localhost:3306)/gozero
+Table: shorturl
+Cache:
+  - Host: localhost:6379
