@@ -1,6 +1,8 @@
 package svc
 
-import "shorturl/rpc/transform/internal/config"
+import (
+	"shorturl/rpc/transform/internal/config"
+)
 
 type ServiceContext struct {
 	Config config.Config
