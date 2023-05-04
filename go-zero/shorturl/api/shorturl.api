@@ -1,29 +1,20 @@
-syntax = "v1"
-
-info(
-	title: // TODO: add title
-	desc: // TODO: add description
-	author: ""
-	email: ""
-)
-
 type (
 	expandReq {
-		Shorten string `form:"shorten"`
+		shorten string `form:"shorten"`
 	}
 
 	expandResp {
-		Url string `json:"url"`
+		url string `json:"url"`
 	}
 )
 
 type (
 	shortenReq {
-		Url string `form:"url"`
+		url string `form:"url"`
 	}
 
 	shortenResp {
-		Shorten string `json:"shorten"`
+		shorten string `json:"shorten"`
 	}
 )
 
@@ -31,10 +22,10 @@ service shorturl-api {
 	@server(
 		handler: ShortenHandler
 	)
-	get /shorten (shortenReq) returns (shortenResp)
-	
+	get /shorten(shortenReq) returns(shortenResp)
+
 	@server(
 		handler: ExpandHandler
 	)
-	get /expand (expandReq) returns (expandResp)
+	get /expand(expandReq) returns(expandResp)
 }
