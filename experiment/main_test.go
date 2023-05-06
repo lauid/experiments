@@ -4,9 +4,14 @@ import (
 	"container/list"
 	"fmt"
 	"github.com/stretchr/testify/assert"
+	"go.uber.org/goleak"
 	"math/rand"
 	"testing"
 )
+
+func Test2(t *testing.T) {
+	defer goleak.VerifyNone(t)
+}
 
 func TestList1(t *testing.T) {
 	l := list.New()
