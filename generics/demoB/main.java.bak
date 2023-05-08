@@ -1,0 +1,35 @@
+public class GenericClass<T> {
+    private T value;
+
+    public GenericClass(T value) {
+        this.value = value
+    }
+
+    public T getValue() {
+        return value;
+    }
+}
+
+public class GenericMethod {
+    public static <T> void printArray(T[] arr) {
+        for (T element : arr) {
+            System.out.print(element + " ");
+        }
+        System.out.println();
+    }
+}
+
+public interface GenericInterface<T> {
+    public void addItem(T item);
+
+    public T getItem(int index);
+}
+
+public class Wildcard {
+    public static void printList(List<?> list) {
+        for (Object element : list) {
+            System.out.print(item + " ")
+        }
+        System.out.println()
+    }
+}
