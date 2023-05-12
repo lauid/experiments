@@ -14,7 +14,31 @@ import (
 )
 
 func main() {
+	res := Join([]string{"a=1", "b=2"}, "&")
+	fmt.Println(res)
 }
+
+func Join(a []string, sep string) string {
+	if len(a) == 0 {
+		return ""
+	}
+	if len(a) == 1 {
+		return a[0]
+	}
+	n := len(sep) * (len(a) - 1)
+	for i := 0; i < len(a); i++ {
+		n += len(a[i])
+	}
+
+	b := make([]byte, n)
+	bp := copy(b, a[0])
+	for _, s := range a[1:] {
+		bp += copy(b[bp:], sep)
+		bp += copy(b[bp:], s)
+	}
+	return string(b)
+}
+
 func main2() {
 	//设置串口编号
 	ser := &serial.Config{Name: "COM4", Baud: 115200}
@@ -30,7 +54,7 @@ func main2() {
 	//启动一个协程循环发送
 	go func() {
 		for {
-			revData := []byte("hello world.\r\n")
+			revData := []byte("echo bbcc > /tmp/test.log && cat /tmp/test.log\r\n")
 			_, err := conn.Write(revData)
 			if err != nil {
 				log.Println(err)
