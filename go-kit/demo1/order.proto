@@ -1,0 +1,15 @@
+syntax = "proto3";
+package order;
+service OrderService {
+  rpc CreateOrder (OrderRequest) returns (OrderResponse) {}
+  rpc FindOrder (OrderRequest) returns (OrderResponse) {}
+  rpc CancelOrder (OrderRequest) returns (OrderResponse) {}
+}
+message OrderRequest {
+  string id = 1;
+  string name = 2;
+}
+message OrderResponse {
+  int32 code = 1;
+  string msg = 2;
+}
