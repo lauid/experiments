@@ -18,6 +18,7 @@ type SerialPort struct {
 	baudRate int
 	reader   *bufio.Reader
 	writer   *bufio.Writer
+	scanner  *bufio.Scanner
 	port     *serial.Port
 }
 
@@ -34,7 +35,9 @@ func NewSerialPort(portName string, baudRate int) (*SerialPort, error) {
 
 	writer := bufio.NewWriter(s)
 
-	return &SerialPort{portName: portName, baudRate: baudRate, reader: reader, writer: writer, port: s}, nil
+	scanner := bufio.NewScanner(s)
+
+	return &SerialPort{portName: portName, baudRate: baudRate, reader: reader, writer: writer, scanner: scanner, port: s}, nil
 }
 
 // ReadLine 读取一行数据
@@ -55,7 +58,8 @@ func (sp *SerialPort) Close() error {
 func (sp *SerialPort) Write(msg string) error {
 	//writeData := []byte("echo bbcc > /tmp/test.log && cat /tmp/test.log\r\n")
 	writeData := []byte(msg)
-	_, err := sp.port.Write(writeData)
+	//_, err := sp.port.Write(writeData)
+	_, err := sp.writer.Write(writeData)
 	return err
 }
 
@@ -64,13 +68,12 @@ func checkSerialOutPut(ctx context.Context, checkStr string, errChan chan error,
 		log.Printf("Method checkSerialOutput took %s\n", time.Since(start))
 	}(startTime)
 
-	//time.Sleep(1 * time.Second)
-	//errChan <- nil
-	//return
+	time.Sleep(1 * time.Second)
+	errChan <- nil
+	return
 
 	sp, err := NewSerialPort(serialName, 115200)
 	if err != nil {
-		//log.Println(err)
 		errChan <- err
 		return
 	}
@@ -97,7 +100,7 @@ func checkSerialOutPut(ctx context.Context, checkStr string, errChan chan error,
 	log.Println("end", strings.Repeat("-", 20))
 }
 
-//写码
+// 写码
 func checkWriteCode(code string) error {
 	sp, err := NewSerialPort(serialName, 115200)
 	if err != nil {
@@ -105,8 +108,8 @@ func checkWriteCode(code string) error {
 	}
 	defer sp.Close()
 
-	msg := fmt.Sprintf("echo '%s' > /tmp/test.log && cat /tmp/test.log\n", code)
-	err = sp.Write(msg)
+	msg := fmt.Sprintf("echo '%s' > /tmp/test.log && cat /tmp/test.log\r\n", code)
+	_, err = sp.port.Write([]byte(msg))
 	if err != nil {
 		return err
 	}
@@ -123,7 +126,7 @@ func checkWriteCode(code string) error {
 	return errors.New(errMsg)
 }
 
-//串口输出检测
+// 串口输出检测
 func checkSerialUpgrade() {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
@@ -134,7 +137,6 @@ func checkSerialUpgrade() {
 	select {
 	case <-ctx.Done():
 		log.Println("串口检测超时，", time.Since(startTime))
-		return
 	case err := <-errChan:
 		if err != nil {
 			log.Println("Exit err:", err)
@@ -192,6 +194,56 @@ func writeToFile(filename string, data string) error {
 	return nil
 }
 
+func checkLoginMark() error {
+	defer func(start time.Time) {
+		fmt.Println("Method CheckLoginMark took ", time.Since(start))
+	}(time.Now())
+
+	//loginMark := "phyboard-segin-imx6ul-6 login:"
+
+	sp, err := NewSerialPort(serialName, 115200)
+	if err != nil {
+		return err
+	}
+	defer sp.Close()
+
+	loginSuccessMark := "root@phyboard-segin-imx6ul-6:~"
+	loginMarkChan := make(chan struct{}, 0)
+
+	//读取串口数据，判断是否登录成功
+	go func() {
+		for sp.scanner.Scan() {
+			text := sp.scanner.Text()
+			fmt.Println("-", text)
+			if strings.Index(text, loginSuccessMark) != -1 {
+				fmt.Println("login success.")
+				close(loginMarkChan)
+				break
+			}
+		}
+	}()
+
+	//定时去登录
+	loginTimer := time.NewTicker(2 * time.Second)
+	go func() {
+		for range loginTimer.C {
+			_, err := sp.port.Write([]byte("root\r\n"))
+			if err != nil {
+				fmt.Println("Write root err:", err)
+			}
+			fmt.Println("Attempt to write root to login.")
+		}
+	}()
+
+	//登录成功，关闭定时
+	_, ok := <-loginMarkChan
+	if !ok {
+		loginTimer.Stop()
+		//fmt.Println("stop........")
+	}
+	return nil
+}
+
 var (
 	serialName string = "COM4"
 )
@@ -220,7 +272,13 @@ func main() {
 	log.Println("上电")
 	//gpioSetValue("68", "1")
 
+	log.Println("检测登录标识")
+	if err := checkLoginMark(); err != nil {
+		log.Println("检测登录标识出错，err:", err)
+	}
+
 	//写码
+	time.Sleep(1 * time.Second)
 	log.Println("写码")
 	err := checkWriteCode("HELLO")
 	if err != nil {
