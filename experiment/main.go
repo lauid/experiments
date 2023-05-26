@@ -14,6 +14,25 @@ import (
 )
 
 func main() {
+OuterLoop:
+	for i := 0; i < 2; i++ {
+	innerLoop:
+		for j := 0; j < 5; j++ {
+			switch j {
+			case 2:
+				fmt.Println(i, j)
+				break innerLoop
+			case 3:
+				fmt.Println(i, j)
+				break OuterLoop
+			}
+		}
+	}
+
+	fmt.Println("aaaaaaaaaaaa.")
+}
+
+func main3() {
 	res := Join([]string{"a=1", "b=2"}, "&")
 	fmt.Println(res)
 }
