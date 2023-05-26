@@ -9,6 +9,7 @@ import (
 	"log"
 	"os"
 	"strings"
+	"sync"
 	"time"
 )
 
@@ -20,6 +21,7 @@ type SerialPort struct {
 	writer   *bufio.Writer
 	scanner  *bufio.Scanner
 	port     *serial.Port
+	sync.RWMutex
 }
 
 // NewSerialPort 创建一个串口实例
@@ -199,87 +201,138 @@ func checkLoginMark() error {
 		fmt.Println("Method CheckLoginMark took ", time.Since(start))
 	}(time.Now())
 
-	//loginMark := "phyboard-segin-imx6ul-6 login:"
-
 	sp, err := NewSerialPort(serialName, 115200)
 	if err != nil {
 		return err
 	}
 	defer sp.Close()
 
-	loginSuccessMark := "root@phyboard-segin-imx6ul-6:~"
-	loginMarkChan := make(chan struct{}, 0)
+	writeLoginName := func() error {
+		sp.Lock()
+		defer sp.Unlock()
+
+		fmt.Println("Attempt to write loginUser.")
+		_, err := sp.port.Write([]byte(userName + enter))
+		if err != nil {
+			fmt.Println("Write login name, err:", err)
+		}
+
+		return err
+	}
+
+	writePwd := func() error {
+		sp.Lock()
+		defer sp.Unlock()
+
+		fmt.Println("Attempt to write password.")
+		_, err := sp.port.Write([]byte(Password + enter))
+		if err != nil {
+			fmt.Println("Write pwd, err:", err)
+		}
+
+		return err
+	}
+
+	writeEnter := func() error {
+		sp.Lock()
+		defer sp.Unlock()
+		fmt.Println("Attempt to write enter.")
+		_, err := sp.port.Write([]byte(enter))
+		if err != nil {
+			fmt.Println("Write enter, err:", err)
+		}
+
+		return err
+	}
+
+	stopChan := make(chan struct{}, 0)
+	//定时去登录,避免启动完成，串口无输出
+	checkTicker := time.NewTicker(5 * time.Second)
+	go func() {
+		defer checkTicker.Stop()
+		for {
+			select {
+			case <-checkTicker.C:
+				_ = writeEnter()
+			case <-stopChan:
+				fmt.Println("stop ticker.")
+				return
+			}
+		}
+	}()
 
 	//读取串口数据，判断是否登录成功
-	go func() {
-		for sp.scanner.Scan() {
-			text := sp.scanner.Text()
-			fmt.Println("-", text)
-			if strings.Index(text, loginSuccessMark) != -1 {
-				fmt.Println("login success.")
-				close(loginMarkChan)
-				break
+	for sp.scanner.Scan() {
+		text := sp.scanner.Text()
+		//text = strings.TrimSuffix(text,"\n")
+		//text = strings.TrimSuffix(text,"\r")
+		if text == "" {
+			continue
+		}
+		fmt.Printf("-%q\n", text)
+		if strings.Contains(text, loginMark) {
+			// 发送用户名到串口
+			if err1 := writeLoginName(); err1 != nil {
+				//todo
 			}
 		}
-	}()
-
-	//定时去登录
-	loginTimer := time.NewTicker(2 * time.Second)
-	go func() {
-		for range loginTimer.C {
-			_, err := sp.port.Write([]byte("root\r\n"))
-			if err != nil {
-				fmt.Println("Write root err:", err)
+		if strings.Contains(text, pwdMark) {
+			if err1 := writePwd(); err1 != nil {
+				//todo
 			}
-			fmt.Println("Attempt to write root to login.")
 		}
-	}()
-
-	//登录成功，关闭定时
-	_, ok := <-loginMarkChan
-	if !ok {
-		loginTimer.Stop()
-		//fmt.Println("stop........")
+		if strings.Contains(text, loginSuccessMark) {
+			fmt.Println("login success.")
+			close(stopChan)
+			break
+		}
 	}
+
 	return nil
 }
 
 var (
-	serialName string = "COM4"
+	serialName       string = "COM4"
+	userName                = "root"
+	Password                = "zmj123456"
+	loginMark               = "phyboard-segin-imx6ul-6 login:"
+	loginSuccessMark        = "root@phyboard-segin-imx6ul-6:~"
+	pwdMark                 = "Password:"
+	enter                   = "\r\n"
 )
 
 func main() {
 	//todo 短接
-	log.Println("[短接]")
+	log.Println("【短接】")
 	//gpioSetValue("", "1")
 
 	//上电
-	log.Println("[上电]")
+	log.Println("【上电】")
 	//gpioSetValue("68", "1")
 
 	//todo
-	log.Println("[串口输出检测]")
+	log.Println("【系统升级串口输出检测TODO】")
 	checkSerialUpgrade()
 
 	//断电
-	log.Println("断电")
+	log.Println("【断电】")
 	//gpioSetValue("68", "0")
 
 	//todo 断开短接
-	log.Println("断开短接")
+	log.Println("【断开短接】")
 
 	//上电
-	log.Println("上电")
+	log.Println("【上电】")
 	//gpioSetValue("68", "1")
 
-	log.Println("检测登录标识")
+	log.Println("【检测登录标识】")
 	if err := checkLoginMark(); err != nil {
 		log.Println("检测登录标识出错，err:", err)
 	}
 
 	//写码
 	time.Sleep(1 * time.Second)
-	log.Println("写码")
+	log.Println("【写码】")
 	err := checkWriteCode("HELLO")
 	if err != nil {
 		fmt.Println(err)
