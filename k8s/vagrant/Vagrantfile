@@ -1,0 +1,33 @@
+#Vagrant.configure("2") do |config|
+#  config.vm.box = "generic/ubuntu1604"
+#end
+
+VAGRANTFILE_API_VERSION = "2"                                #定义版本
+BOX_NAME = "laravel/homestead"                                 #定义虚拟机镜像
+
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+  config.vm.provider "virtualbox" do |v|
+   # v.memory = 2048                                       #设置内存 （MB）
+   # v.cpus = 2                                            #设置cpu数量
+  end
+  config.vm.define "master1" do |node1|                      #定义虚拟机
+     node1.vm.box = BOX_NAME                               #使用centos-7.2系统镜像
+     node1.vm.host_name = "master1"                          #设置hostname
+     node1.vm.network :private_network, ip: "192.168.40.180"  #设置网络
+     node1.vm.synced_folder "~/code", "/home/vagrant/code"      #设置挂在目录
+     node1.vm.provider "virtualbox" do |v|
+       v.memory = 2048
+       v.cpus = 2 
+     end
+  end
+  config.vm.define "node1" do |node1|                      #定义虚拟机
+     node1.vm.box = BOX_NAME                               #使用centos-7.2系统镜像
+     node1.vm.host_name = "node1"                          #设置hostname
+     node1.vm.network :private_network, ip: "192.168.40.181"  #设置网络
+     node1.vm.synced_folder "~/code", "/home/vagrant/code",nfs:true      #设置挂在目录
+     node1.vm.provider "virtualbox" do |v|
+       v.memory = 1024
+       v.cpus = 2 
+     end
+  end
+end

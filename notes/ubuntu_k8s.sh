@@ -43,4 +43,4 @@ apt-mark hold kubelet kubeadm kubectl
 
 swapoff -a
 
-kubeadm init --apiserver-advertise-address 192.168.40.180 --image-repository registry.cn-hangzhou.aliyuncs.com/google_containers --pod-network-cidr=10.244.0.0/16 --ignore-preflight-errors=SystemVerification
+#kubeadm init --apiserver-advertise-address 192.168.40.180 --image-repository registry.cn-hangzhou.aliyuncs.com/google_containers --pod-network-cidr=10.244.0.0/16 --ignore-preflight-errors=SystemVerification
