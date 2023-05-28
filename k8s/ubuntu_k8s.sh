@@ -1,45 +1,46 @@
-#curl -fsSL https://mirrors.ustc.edu.cn/docker-ce/linux/ubuntu/gpg | sudo apt-key add -
-#
-#sudo add-apt-repository \
-#"deb [arch=amd64] https://mirrors.ustc.edu.cn/docker-ce/linux/ubuntu/ \
-#$(lsb_release -cs) \
-#stable"
-#
-#sudo apt-get install docker-ce docker-ce-cli containerd.io -y
+curl -fsSL https://mirrors.ustc.edu.cn/docker-ce/linux/ubuntu/gpg | sudo apt-key add -
 
-#cat <<EOF | tee /etc/docker/daemon.json
-#{
-#	"exec-opts": ["native.cgroupdriver=systemd"],
-#	"log-driver": "json-file",
-#	"log-opts": {
-#		"max-size": "100m"
-#	},
-#	"storage-driver": "overlay2"
-#}
-#EOF
+sudo add-apt-repository \
+"deb [arch=amd64] https://mirrors.ustc.edu.cn/docker-ce/linux/ubuntu/ \
+$(lsb_release -cs) \
+stable"
 
+sudo apt-get install docker-ce docker-ce-cli containerd.io -y
 
-#mkdir -p /etc/systemd/system/docker.service.d
-#
-#systemctl daemon-reload
-#systemctl restart docker
-#systemctl enable --now docker
+cat <<EOF | tee /etc/docker/daemon.json
+{
+	"exec-opts": ["native.cgroupdriver=systemd"],
+	"log-driver": "json-file",
+	"log-opts": {
+		"max-size": "100m"
+	},
+	"storage-driver": "overlay2"
+}
+EOF
 
 
-#cat <<EOF > /etc/apt/sources.list.d/kubernetes.list
-#deb http://mirrors.ustc.edu.cn/kubernetes/apt kubernetes-xenial main
-#EOF
+mkdir -p /etc/systemd/system/docker.service.d
 
-#apt-key adv --keyserver keyserver.ubuntu.com --recv-keys  B53DC80D13EDEF05
-
-#apt-get update && apt-get install -y apt-transport-https curl
+systemctl daemon-reload
+systemctl restart docker
+systemctl enable --now docker
 
 
-#apt-get install -y kubelet=1.23.1-00 kubeadm=1.23.1-00 kubectl=1.23.1-00
+cat <<EOF > /etc/apt/sources.list.d/kubernetes.list
+deb http://mirrors.ustc.edu.cn/kubernetes/apt kubernetes-xenial main
+EOF
 
-#apt-mark hold kubelet kubeadm kubectl
+apt-key adv --keyserver keyserver.ubuntu.com --recv-keys  B53DC80D13EDEF05
+
+apt-get update && apt-get install -y apt-transport-https curl
 
 swapoff -a
+
+apt-get install -y kubelet=1.23.1-00 kubeadm=1.23.1-00 kubectl=1.23.1-00
+
+apt-mark hold kubelet kubeadm kubectl
+exit
+
 
 
 #master
@@ -80,3 +81,6 @@ Then you can join any number of worker nodes by running the following on each as
 
 kubeadm join 192.168.40.180:6443 --token 48r2rj.4rxr3fhgua60wdeh \
 	--discovery-token-ca-cert-hash sha256:469e299a487ca713b554e4a0f26a5998d0fb84fae71edd55a55e0542cd430de2
+
+
+kubeadm token create --print-join-command

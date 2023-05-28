@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    app: tomcat
+  name: tomcat-test
+spec:
+  containers:
+          - name: tomcat-java
+            image:
+
+
