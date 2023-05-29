@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-nginx
+  labels:
+    run: my-nginx
+spec:
+  type: ClusterIP
+  ports:
+  - port: 80 #service 的端口， 暴露给 k8s 集群内部服务访问
+    protocol: TCP
+    targetPort: 80 #pod 容器中定义的端口
+  selector:
+    run: my-nginx

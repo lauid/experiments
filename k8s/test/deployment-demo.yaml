@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: myapp-v1
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: myapp
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: myapp
+        version: v1    
+    spec:
+      containers:
+      - name: myapp
+        image: nginx:1.12
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 80
+        startupProbe:
+          periodSeconds: 5
+          initialDelaySeconds:  20
+          timeoutSeconds: 10
+          httpGet:
+            scheme: HTTP
+            port: 80
+            path: /
+        livenessProbe:
+          periodSeconds: 5
+          initialDelaySeconds:  20
+          timeoutSeconds: 10
+          httpGet:
+            scheme: HTTP
+            port: 80
+            path: /
+        readinessProbe:
+          periodSeconds: 5
+          initialDelaySeconds:  20
+          timeoutSeconds: 10
+          httpGet:
+            scheme: HTTP
+            port: 80
+            path: /
+

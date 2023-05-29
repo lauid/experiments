@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-nginx
+spec:
+  selector:
+    matchLabels:
+      run: my-nginx
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        run: my-nginx
+    spec:
+      containers:
+      - name: my-nginx
+        image: nginx
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 80 #pod 中的容器需要暴露的端口
+        startupProbe:
+          periodSeconds: 5
+          initialDelaySeconds: 60
+          timeoutSeconds: 10
+          httpGet:
+            scheme: HTTP
+            port: 80
+            path: /
+        livenessProbe:
+          periodSeconds: 5
+          initialDelaySeconds: 60
+          timeoutSeconds: 10
+          httpGet:
+            scheme: HTTP
+            port: 80
+            path: /
+        readinessProbe:
+          periodSeconds: 5
+          initialDelaySeconds: 60
+          timeoutSeconds: 10
+          httpGet:
+            scheme: HTTP
+            port: 80
+            path: /
