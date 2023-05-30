@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pvc-test
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      cunchu: pvc
+  template:
+    metadata:
+      labels:
+        cunchu: pvc
+    spec:
+      containers:
+      - name: test-pvc
+        image: nginx:1.12
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 80
+          protocol: TCP
+        volumeMounts:
+          - name: nginx-html
+            mountPath: /usr/share/nginx/html
+      volumes:
+      - name: nginx-html
+        persistentVolumeClaim:
+          claimName: pvc-v1

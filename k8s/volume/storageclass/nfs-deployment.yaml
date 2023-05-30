@@ -1,0 +1,36 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: nfs-provisioner
+spec:
+  selector:
+    matchLabels:
+      app: nfs-provisioner
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: nfs-provisioner
+    spec:
+      serviceAccount: nfs-provisioner
+      containers:
+      - name: nfs-provisioner
+        image: registry.cn-beijing.aliyuncs.com/mydlq/nfs-subdir-external-provisioner:v4.0.0
+        imagePullPolicy: IfNotPresent
+        volumeMounts:
+        - name: nfs-client-root
+          mountPath: /persistentvolumes
+        env:
+          - name: PROVISION_NAME
+            value: example.com/nfs
+          - name: NFS_SERVER
+            value: 192.168.56.180
+          - name: NFS_PATH
+            value: /data/nfs_pro
+      volumes:
+      - name: nfs-client-root
+        nfs:
+          server: 192.168.56.180
+          path: /data/nfs_pro
