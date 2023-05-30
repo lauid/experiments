@@ -1,7 +1,7 @@
 #!/bin/bash
 set -x
 
-svcs=("mysql" "redis" "php8.2-fpm" "memcached" "nginx" "beanstalkd")
+svcs=("mysql" "redis" "php8.2-fpm" "memcached" "nginx" "beanstalkd" "chronyd" "mailhog")
 
 for svc in "${svcs[@]}"
 do

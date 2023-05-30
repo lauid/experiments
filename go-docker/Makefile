@@ -1,4 +1,4 @@
-MF_DOCKER_IMAGE_NAME_PREFIX ?= goDocker
+MF_DOCKER_IMAGE_NAME_PREFIX ?= godocker
 BUILD_DIR = build
 SERVICES = main
 DOCKERS = $(addprefix docker_,$(SERVICES))
@@ -11,11 +11,11 @@ TIME ?= $(shell date +%F_%T)
 
 define compile_service
 	CGO_ENABLED=$(CGO_ENABLED) GOOS=$(GOOS) GOARCH=$(GOARCH) GOARM=$(GOARM) \
-	go build -mod=vendor -tags $(MF_BROKER_TYPE) -ldflags "-s -w \
-	-X 'github.com/mainflux/mainflux.BuildTime=$(TIME)' \
-	-X 'github.com/mainflux/mainflux.Version=$(VERSION)' \
-	-X 'github.com/mainflux/mainflux.Commit=$(COMMIT)'" \
-	-o ${BUILD_DIR}/mainflux-$(1) main.go
+	go build -mod=vendor -tags tags -ldflags "-s -w \
+	-X 'main.BuildTime=$(TIME)' \
+	-X 'main.Version=$(VERSION)' \
+	-X 'main.Commit=$(COMMIT)'" \
+	-o ${BUILD_DIR}/$(1) main.go
 endef
 
 define make_docker
@@ -29,7 +29,7 @@ define make_docker
 		--build-arg COMMIT=$(COMMIT) \
 		--build-arg TIME=$(TIME) \
 		--tag=$(MF_DOCKER_IMAGE_NAME_PREFIX)/$(svc) \
-		-f docker/Dockerfile .
+		-f Dockerfile .
 endef
 
 all: $(SERVICES)

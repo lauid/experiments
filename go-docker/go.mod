@@ -1,4 +1,4 @@
-module go-docker
+module godocker
 
 go 1.19
 

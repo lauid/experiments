@@ -15,6 +15,28 @@ import (
 	"gopkg.in/natefinch/lumberjack.v2"
 )
 
+const (
+	contentType     = "Content-Type"
+	contentTypeJSON = "application/health+json"
+	svcStatus       = "pass"
+	description     = " service"
+)
+
+var (
+	// Version represents the last service git tag in git history.
+	// It's meant to be set using go build ldflags:
+	// -ldflags "-X 'main.Version=0.0.0'"
+	Version = "0.0.0"
+	// Commit represents the service git commit hash.
+	// It's meant to be set using go build ldflags:
+	// -ldflags "-X 'main.Commit=ffffffff'"
+	Commit = "ffffffff"
+	// BuildTime represetns the service build time.
+	// It's meant to be set using go build ldflags:
+	// -ldflags "-X 'main.BuildTime=1970-01-01_00:00:00'"
+	BuildTime = "1970-01-01_00:00:00"
+)
+
 func handler(w http.ResponseWriter, r *http.Request) {
 	query := r.URL.Query()
 	name := query.Get("name")
@@ -78,28 +100,6 @@ func waitForShutdown(srv *http.Server) {
 	log.Println("Shutting down")
 	os.Exit(0)
 }
-
-const (
-	contentType     = "Content-Type"
-	contentTypeJSON = "application/health+json"
-	svcStatus       = "pass"
-	description     = " service"
-)
-
-var (
-	// Version represents the last service git tag in git history.
-	// It's meant to be set using go build ldflags:
-	// -ldflags "-X 'main.Version=0.0.0'"
-	Version = "0.0.0"
-	// Commit represents the service git commit hash.
-	// It's meant to be set using go build ldflags:
-	// -ldflags "-X 'main.Commit=ffffffff'"
-	Commit = "ffffffff"
-	// BuildTime represetns the service build time.
-	// It's meant to be set using go build ldflags:
-	// -ldflags "-X 'main.BuildTime=1970-01-01_00:00:00'"
-	BuildTime = "1970-01-01_00:00:00"
-)
 
 // HealthInfo contains version endpoint response.
 type HealthInfo struct {
