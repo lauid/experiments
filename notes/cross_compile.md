@@ -12,3 +12,6 @@ go build -o xxx *.go
 GOOS=linux GOARCH=arm64 GOARM=7 go build -o xxx *.go
 
 GOOS=windows GOARCH=ard64 go build -o xxx *.go
+
+
+go install github.com/mitchellh/gox@latest

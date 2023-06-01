@@ -1,16 +1,16 @@
-kind: Pod
 apiVersion: v1
+kind: Pod
 metadata:
   name: read-pod
 spec:
   containers:
   - name: read-pod
-  image: nginx
-  imagePullPolicy: IfNotPresent
-  volumeMounts:
-  - name: nfs-pvc
-    mountPath: /usr/share/nginx/html
-    restartPolicy: "Never"
+    image: nginx
+    imagePullPolicy: IfNotPresent
+    volumeMounts:
+    - name: nfs-pvc
+      mountPath: /usr/share/nginx/html
+  restartPolicy: Never
   volumes:
   - name: nfs-pvc
     persistentVolumeClaim:
