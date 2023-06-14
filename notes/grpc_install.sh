@@ -1,3 +1,4 @@
+#go install github.com/grpc-ecosystem/grpc-gateway/v2/protoc-gen-grpc-gateway@latest
 #protoc --go_out .. --go-grpc_out .. ./hello.proto
 PROTOC_VERSION=21.12
 PROTOC_GEN_VERSION=v1.28.1
@@ -17,3 +18,5 @@ setup_protoc() {
 
     export PATH=$PATH:/usr/local/bin/protoc
 }
+
+setup_protoc

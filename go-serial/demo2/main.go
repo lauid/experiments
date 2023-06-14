@@ -8,6 +8,7 @@ import (
 	"github.com/tarm/serial"
 	"log"
 	"os"
+	"os/exec"
 	"strings"
 	"sync"
 	"time"
@@ -70,9 +71,11 @@ func checkSerialOutPut(ctx context.Context, checkStr string, errChan chan error,
 		log.Printf("Method checkSerialOutput took %s\n", time.Since(start))
 	}(startTime)
 
-	time.Sleep(1 * time.Second)
-	errChan <- nil
-	return
+	if isTest {
+		time.Sleep(1 * time.Second)
+		errChan <- nil
+		return
+	}
 
 	sp, err := NewSerialPort(serialName, 115200)
 	if err != nil {
@@ -103,14 +106,14 @@ func checkSerialOutPut(ctx context.Context, checkStr string, errChan chan error,
 }
 
 // 写码
-func checkWriteCode(code string) error {
+func checkWriteCode(code string, path string) error {
 	sp, err := NewSerialPort(serialName, 115200)
 	if err != nil {
 		return err
 	}
 	defer sp.Close()
 
-	msg := fmt.Sprintf("echo '%s' > /tmp/test.log && cat /tmp/test.log\r\n", code)
+	msg := fmt.Sprintf("echo '%s' > %s && cat %s \r\n", code, path, path)
 	_, err = sp.port.Write([]byte(msg))
 	if err != nil {
 		return err
@@ -147,6 +150,21 @@ func checkSerialUpgrade() {
 			log.Println("串口检测升级成功")
 		}
 	}
+}
+
+func UpgradeStart() {
+	execCmd("i2cset", "-f", "-y", "0", "0x20", "0x1b", "0xFF")
+}
+func UpgradeEnd() {
+	execCmd("i2cset", "-f", "-y", "0", "0x20", "0x1b", "0xF0")
+}
+
+func execCmd(command string, cmdArgs ...string) {
+	cmd := exec.Command(command, cmdArgs...)
+	if err := cmd.Run(); err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println("Data written successfully, " + command + " " + strings.Join(cmdArgs, " "))
 }
 
 // gpioSetValue gpio操作
@@ -299,12 +317,13 @@ var (
 	loginSuccessMark        = "root@phyboard-segin-imx6ul-6:~"
 	pwdMark                 = "Password:"
 	enter                   = "\r\n"
+	isTest = true
 )
 
 func main() {
-	//todo 短接
 	log.Println("【短接】")
 	//gpioSetValue("", "1")
+	UpgradeStart()
 
 	//上电
 	log.Println("【上电】")
@@ -320,6 +339,7 @@ func main() {
 
 	//todo 断开短接
 	log.Println("【断开短接】")
+	UpgradeEnd()
 
 	//上电
 	log.Println("【上电】")
@@ -333,7 +353,7 @@ func main() {
 	//写码
 	time.Sleep(1 * time.Second)
 	log.Println("【写码】")
-	err := checkWriteCode("HELLO")
+	err := checkWriteCode("HELLO", "/tmp/test.log")
 	if err != nil {
 		fmt.Println(err)
 	} else {

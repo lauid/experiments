@@ -12,4 +12,4 @@ vagrant@node1:~/code/experiments/grpc$ grpcurl -plaintext -d '{"name":"avc"}' 12
 }
 
 
-protoc --go_out=./ --go-grpc_out=./ --grpc-gateway_out ./ hello.proto
+_protoc --go_out=./ --go-grpc_out=./ --grpc-gateway_out ./ hello.proto_

@@ -15,7 +15,7 @@ func (e *customerError) Error() string {
 }
 
 func main() {
-	main4()
+	main2()
 }
 
 func main4() {
@@ -43,6 +43,27 @@ func main3() {
 	// Unwrap example
 	fmt.Println(errors.Unwrap(wrappedErr))
 }
+func main2(){
+	err1 := errors.New("error message")
+	err2 := errors.New("error message")
+	if errors.Is(err1, err2) {
+		fmt.Println("err1 and err2 are the same error")
+	}else {
+		fmt.Println("err1 and err2 are not the same error")
+	}
+
+	err11 := &customerError{
+		"error message",
+	}
+	err22 := &customerError{
+		"error message",
+	}
+	if errors.Is(err11, err22) {
+		fmt.Println("err11 and err22 are the same error")
+	} else {
+		fmt.Println("err11 and err22 are not the same error")
+	}
+}
 
 func main1() {
 	//text := "hello world\r\n"
@@ -51,11 +72,17 @@ func main1() {
 	//fmt.Printf("%q", text)
 
 	err1 := errors.New("errorA")
+	err12 := errors.New("errorA")
 	err11 := err1
 	if errors.Is(err1, err11) {
 		fmt.Println("err1 is err11.")
 	} else {
 		fmt.Println("err1 is not err11.")
+	}
+	if errors.As(err1, err12) {
+		fmt.Println("err1 is err12.")
+	} else {
+		fmt.Println("err1 is not err12.")
 	}
 	err2 := errors.New("errorB")
 	//err2 := fmt.Errorf("errorB")
@@ -88,7 +115,7 @@ func processFile(filename string) error {
 	return nil
 }
 
-func main2() {
+func main5() {
 	err := processFile("1.txt")
 	if err != nil {
 		fmt.Println(err)
