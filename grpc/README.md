@@ -13,3 +13,18 @@ vagrant@node1:~/code/experiments/grpc$ grpcurl -plaintext -d '{"name":"avc"}' 12
 
 
 _protoc --go_out=./ --go-grpc_out=./ --grpc-gateway_out ./ hello.proto_
+
+
+
+protoc -I. \
+--go-grpc_out=../ \
+--go_out=../ \
+--grpc-gateway_out=../ \
+hello.proto
+
+
+
+➜  ~ grpcurl -plaintext -d '{"message":"loadavg"}' 192.168.40.180:50051 demo1.Demo1Service.ServerStreamingMethod
+{
+"message": "0.13 1.97 2.25 2/476 58274\n"
+}
