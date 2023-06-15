@@ -35,6 +35,7 @@ func (s *SysReader) procInfo(ctx context.Context, msgChan chan Message, file str
 	for {
 		select {
 		case <-ctx.Done():
+			fmt.Println("cancel.")
 			return
 		case <-timer.C:
 			fmt.Println("reading...")
