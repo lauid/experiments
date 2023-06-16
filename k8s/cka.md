@@ -52,6 +52,11 @@ root@master1:~# kubeadm upgrade apply v1.25.2 --etcd-upgrade=false
 root@master1:~# kubeadm version
 kubeadm version: &version.Info{Major:"1", Minor:"25", GitVersion:"v1.25.2", GitCommit:"5835544ca568b757a8ecae5c153f317e5736700e", GitTreeState:"clean", BuildDate:"2022-09-21T14:32:18Z", GoVersion:"go1.19.1", Compiler:"gc", Platform:"linux/amd64"}
 
+
+root@node2:~# apt-get install -y kubeadm=1.25.3-00
+root@node2:~# kubeadm version
+kubeadm version: &version.Info{Major:"1", Minor:"25", GitVersion:"v1.25.3", GitCommit:"434bfd82814af038ad94d62ebe59b133fcb50506", GitTreeState:"clean", BuildDate:"2022-10-12T10:55:36Z", GoVersion:"go1.19.2", Compiler:"gc", Platform:"linux/amd64"}
+
 root@master1:~# apt-get install kubelet=1.25.2-00
 root@master1:~# kubelet --version
 Kubernetes v1.25.2

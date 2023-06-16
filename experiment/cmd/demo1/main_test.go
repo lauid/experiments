@@ -6,6 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"go.uber.org/goleak"
 	"math/rand"
+	"net/http"
 	"testing"
 )
 
@@ -77,4 +78,19 @@ func printList(l *list.List) {
 		fmt.Print(".")
 	}
 	fmt.Println("")
+}
+
+func TestHttpGet(t *testing.T) {
+	url := "https://yesno.wtf/api"
+	resp, err := http.Get(url)
+	if err != nil {
+		fmt.Println(err)
+	}
+	defer resp.Body.Close()
+	buf := make([]byte, 1024)
+	n, err := resp.Body.Read(buf)
+	if err != nil {
+		fmt.Println(n)
+	}
+	fmt.Println(buf)
 }

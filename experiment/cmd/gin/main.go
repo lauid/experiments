@@ -1,6 +1,7 @@
 package main
 
 import (
+	"experiment"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
@@ -30,11 +31,16 @@ func main() {
 		fmt.Println("after hello")
 	})
 
+	router.GET("/health", func(c *gin.Context) {
+		healthFunc := experiment.Health("")
+		healthFunc(c.Writer, c.Request)
+	})
+
 	router.GET("/hello/:name", func(c *gin.Context) {
 		var lock sync.Mutex
 		lock.Lock()
 		defer lock.Unlock()
-		time.Sleep(time.Second*2)
+		time.Sleep(time.Second * 2)
 		name := c.Param("name")
 		user := User{
 			Name: "hello, " + name,
@@ -45,4 +51,3 @@ func main() {
 
 	router.Run(":8080")
 }
-
