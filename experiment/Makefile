@@ -1,7 +1,7 @@
 MF_DOCKER_IMAGE_NAME_PREFIX ?= experiment
 BUILD_DIR = build
 BUILD_TAGS = buildTags
-SERVICES = demo1 demo2
+SERVICES = demo1 demo2 gin
 DOCKERS = $(addprefix docker_,$(SERVICES))
 DOCKERS_DEV = $(addprefix docker_dev_,$(SERVICES))
 CGO_ENABLED ?= 0
@@ -30,7 +30,7 @@ define make_docker
 		--build-arg VERSION=$(VERSION) \
 		--build-arg COMMIT=$(COMMIT) \
 		--build-arg TIME=$(TIME) \
-		--tag=$(MF_DOCKER_IMAGE_NAME_PREFIX)/$(svc) \
+		--tag=$(MF_DOCKER_IMAGE_NAME_PREFIX)/$(svc):$(VERSION) \
 		-f docker/Dockerfile .
 endef
 

@@ -1,0 +1,121 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  annotations:
+    cni.projectcalico.org/containerID: 86458ca09d137fcc622daa7c1d178aa907fda8b2f478825ac7222e69dd077ac4
+    cni.projectcalico.org/podIP: 10.244.166.174/32
+    cni.projectcalico.org/podIPs: 10.244.166.174/32
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"v1","kind":"Pod","metadata":{"annotations":{},"name":"legacy-app","namespace":"default"},"spec":{"containers":[{"args":["/bin/sh","-c","i=0; while true; do\n  echo \"$i: $(date)\" \u003e\u003e /var/log/legacy-app.log;\n  i=$((i+1));\n  sleep 1;\ndone      \n"],"image":"busybox:1.28","name":"count","volumeMounts":[{"mountPath":"/var/log","name":"varlog"}]}],"volumes":[{"emptyDir":{},"name":"varlog"}]}}
+  creationTimestamp: "2023-06-16T01:57:53Z"
+  name: legacy-app
+  namespace: default
+  resourceVersion: "238660"
+  uid: cf096ba1-8c4f-4322-b632-a9ddffbb9494
+spec:
+  containers:
+  - args:
+    - /bin/sh
+    - -c
+    - "i=0; while true; do\n  echo \"$i: $(date)\" >> /var/log/legacy-app.log;\n  i=$((i+1));\n
+      \ sleep 1;\ndone      \n"
+    image: busybox:1.28
+    imagePullPolicy: IfNotPresent
+    name: count
+    resources: {}
+    terminationMessagePath: /dev/termination-log
+    terminationMessagePolicy: File
+    volumeMounts:
+    - mountPath: /var/log
+      name: varlog
+    - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+      name: kube-api-access-8p77q
+      readOnly: true
+  - name: sidecar
+    image: busybox
+    imagePullPolicy: IfNotPresent
+    args:
+    - /bin/sh
+    - -c
+    - "tail -n+1 -f /var/log/legacy-app.log"
+    volumeMounts:
+    - mountPath: /var/log
+      name: varlog
+  dnsPolicy: ClusterFirst
+  enableServiceLinks: true
+  nodeName: node1
+  preemptionPolicy: PreemptLowerPriority
+  priority: 0
+  restartPolicy: Always
+  schedulerName: default-scheduler
+  securityContext: {}
+  serviceAccount: default
+  serviceAccountName: default
+  terminationGracePeriodSeconds: 30
+  tolerations:
+  - effect: NoExecute
+    key: node.kubernetes.io/not-ready
+    operator: Exists
+    tolerationSeconds: 300
+  - effect: NoExecute
+    key: node.kubernetes.io/unreachable
+    operator: Exists
+    tolerationSeconds: 300
+  volumes:
+  - emptyDir: {}
+    name: varlog
+  - name: kube-api-access-8p77q
+    projected:
+      defaultMode: 420
+      sources:
+      - serviceAccountToken:
+          expirationSeconds: 3607
+          path: token
+      - configMap:
+          items:
+          - key: ca.crt
+            path: ca.crt
+          name: kube-root-ca.crt
+      - downwardAPI:
+          items:
+          - fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.namespace
+            path: namespace
+status:
+  conditions:
+  - lastProbeTime: null
+    lastTransitionTime: "2023-06-16T01:57:49Z"
+    status: "True"
+    type: Initialized
+  - lastProbeTime: null
+    lastTransitionTime: "2023-06-16T01:57:53Z"
+    status: "True"
+    type: Ready
+  - lastProbeTime: null
+    lastTransitionTime: "2023-06-16T01:57:53Z"
+    status: "True"
+    type: ContainersReady
+  - lastProbeTime: null
+    lastTransitionTime: "2023-06-16T01:57:53Z"
+    status: "True"
+    type: PodScheduled
+  containerStatuses:
+  - containerID: containerd://07062d2276ce61d02e9c1d6751bb8350e6119294e889c76ecf7a30836c42e85b
+    image: docker.io/library/busybox:1.28
+    imageID: docker.io/library/busybox@sha256:141c253bc4c3fd0a201d32dc1f493bcf3fff003b6df416dea4f41046e0f37d47
+    lastState: {}
+    name: count
+    ready: true
+    restartCount: 0
+    started: true
+    state:
+      running:
+        startedAt: "2023-06-16T01:57:53Z"
+  hostIP: 192.168.40.181
+  phase: Running
+  podIP: 10.244.166.174
+  podIPs:
+  - ip: 10.244.166.174
+  qosClass: BestEffort
+  startTime: "2023-06-16T01:57:49Z"

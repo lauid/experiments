@@ -9,6 +9,7 @@ ARG TIME
 WORKDIR /experiment
 COPY . .
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
+RUN GOPROXY="https://goproxy.cn"
 RUN apk update \
     && apk add make\
     && make $SVC \

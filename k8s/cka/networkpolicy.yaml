@@ -4,8 +4,6 @@ metadata:
   name: allow-port-from-namespace
   namespace: my-app
 spec:
-  podSelector:
-    matchLabels: {}
   policyTypes:
     - Ingress
   ingress:
@@ -15,4 +13,4 @@ spec:
               project: echo
       ports:
         - protocol: TCP
-          port: 9000
+          port: 6379

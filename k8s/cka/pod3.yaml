@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: experiment-gin
+spec:
+  nodeName: node1
+  containers:
+  - name: experiment-gin
+    image: k8s.io/experiment/gin:v0.0.1
+    imagePullPolicy: IfNotPresent
