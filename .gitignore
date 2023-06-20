@@ -4,3 +4,4 @@
 *.tar
 vendor
 *.txt
+build
