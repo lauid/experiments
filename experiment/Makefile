@@ -13,7 +13,7 @@ TIME ?= $(shell date +%F_%T)
 
 define compile_service
 	CGO_ENABLED=$(CGO_ENABLED) GOOS=$(GOOS) GOARCH=$(GOARCH) GOARM=$(GOARM) \
-	go build -tags $(BUILD_TAGS) -ldflags "-s -w \
+	go build -mod=vendor -tags $(BUILD_TAGS) -ldflags "-s -w \
 	-X 'experiment.BuildTime=$(TIME)' \
 	-X 'experiment.Version=$(VERSION)' \
 	-X 'experiment.Commit=$(COMMIT)'" \
