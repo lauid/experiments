@@ -55,6 +55,14 @@ func main() {
 			})
 	})
 
+	router.GET("/pod2", func(c *gin.Context) {
+		obj := []string{
+			os.Getenv("MY_POD_NAMESPACE"),
+			os.Getenv("MY_POD_NAME"),
+		}
+		c.JSON(http.StatusOK, obj)
+	})
+
 	router.GET("/health", func(c *gin.Context) {
 		healthFunc := experiment.Health("")
 		healthFunc(c.Writer, c.Request)
@@ -87,7 +95,7 @@ func podInfo() (string, string) {
 		panic(err.Error())
 	}
 	// 获取当前 Pod 的标识
-	pod, err := clientset.CoreV1().Pods("").Get(context.TODO(), os.Getenv("POD_NAME"), metav1.GetOptions{})
+	pod, err := clientset.CoreV1().Pods("").Get(context.TODO(), os.Getenv("MY_POD_NAME"), metav1.GetOptions{})
 	if err != nil {
 		panic(err.Error())
 	}

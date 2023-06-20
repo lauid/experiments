@@ -5,10 +5,62 @@ import (
 	"fmt"
 	"github.com/stretchr/testify/assert"
 	"go.uber.org/goleak"
+	"log"
 	"math/rand"
 	"net/http"
+	"os/exec"
 	"testing"
 )
+
+func TestCommand3(t *testing.T) {
+	// Print Go Version
+	cmdOutput, err := exec.Command("go", "version").Output()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Printf("%s", cmdOutput)
+	assert.NotEmpty(t, cmdOutput)
+}
+
+func TestCase1(t *testing.T) {
+	testCases := []struct {
+		input  int
+		output int
+	}{
+		{1, 2},
+		{3, 6},
+		{5, 10},
+	}
+
+	for _, tc := range testCases {
+		result := Case1(tc.input)
+		if result != tc.output {
+			t.Errorf("Expected %d, but got %d for input %d", tc.output, result, tc.input)
+		}
+	}
+}
+
+func TestCase2(t *testing.T) {
+	testCases := []struct {
+		input  int
+		output int
+	}{
+		{1, 2},
+		{3, 6},
+		{5, 10},
+	}
+
+	for _, tc := range testCases {
+		tc := tc // 创建 tc 的副本以便在子测试中使用
+		t.Run(fmt.Sprintf("input=%d", tc.input), func(t *testing.T) {
+			result := Case2(tc.input)
+			if result != tc.output {
+				t.Errorf("Expected %d, but got %d", tc.output, result)
+			}
+		})
+	}
+}
 
 func Test2(t *testing.T) {
 	defer goleak.VerifyNone(t)

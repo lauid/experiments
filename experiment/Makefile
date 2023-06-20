@@ -1,7 +1,8 @@
 MF_DOCKER_IMAGE_NAME_PREFIX ?= experiment
 BUILD_DIR = build
 BUILD_TAGS = buildTags
-SERVICES = demo1 demo2 gin
+#SERVICES = demo1 demo2 gin
+SERVICES = gin
 DOCKERS = $(addprefix docker_,$(SERVICES))
 DOCKERS_DEV = $(addprefix docker_dev_,$(SERVICES))
 CGO_ENABLED ?= 0
@@ -30,7 +31,7 @@ define make_docker
 		--build-arg VERSION=$(VERSION) \
 		--build-arg COMMIT=$(COMMIT) \
 		--build-arg TIME=$(TIME) \
-		--tag=$(MF_DOCKER_IMAGE_NAME_PREFIX)/$(svc):$(VERSION) \
+		--tag=$(MF_DOCKER_IMAGE_NAME_PREFIX)/$(svc) \
 		-f docker/Dockerfile .
 endef
 
@@ -46,7 +47,9 @@ install:
 
 test:
 	#go test -mod=vendor -v -race -count 1 -tags test $(shell go list ./... | grep -v 'vendor\|cmd')
-	go test -v -race -count 1 -tags test $(shell go list ./... | grep -v 'vendor\|cmd')
+	#go test -v -race -count 1 -tags test $(shell go list ./... | grep -v 'vendor\|cmd')
+	#go test -v -race -count 1 -cover -tags test ./...
+	go test -race -count 1 -cover -tags test ./...
 
 proto:
 	protoc -I. --go_out=. --go_opt=paths=source_relative pkg/messaging/*.proto
@@ -78,6 +81,7 @@ release:
 	git checkout $(version)
 	$(MAKE) dockers
 	for svc in $(SERVICES); do \
-		docker tag $(MF_DOCKER_IMAGE_NAME_PREFIX)/$$svc $(MF_DOCKER_IMAGE_NAME_PREFIX)/$$svc:$(version); \
+		docker tag $(MF_DOCKER_IMAGE_NAME_PREFIX)/$$svc k8s.io/$(MF_DOCKER_IMAGE_NAME_PREFIX)/$$svc:$(version); \
+    	docker save k8s.io/$(MF_DOCKER_IMAGE_NAME_PREFIX)/$$svc:$(version) -o ./$$svc.tar; \
 	done
-	$(call docker_push,$(version))
+	#$(call docker_push,$(version))
