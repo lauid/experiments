@@ -2,7 +2,7 @@
 
 ## 按照内核编译环境
 
-> sudo apt-get install build-essential linux-headers-`uname -r`
+> sudo apt-get install build-essential linux-headers-`uname -r` flex bison
 
 
 获取从 "make test" 获得的值，并使用它来创建设备文件，以便我们可以从用户空间与内核模块进行通信：
