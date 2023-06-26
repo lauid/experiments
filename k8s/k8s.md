@@ -27,3 +27,7 @@ containerd 命令行工具 ctr 特性不如 docker 丰富，如 ctr 1.2 并没�
 为支持多租户隔离，containerd 有 namespace 概念，不同 namespace 下的 image、container 均不同，直接使用 ctr 操作时，会使用 default namespace
 
 
+
+kubectl run busybox --image busybox:1.28 --restart=Never --rm -it busybox -- sh
+
+
