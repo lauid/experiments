@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"log"
 	"os"
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -23,6 +24,23 @@ type User struct {
 
 func main() {
 	router := gin.Default()
+
+	router.Use(gin.LoggerWithFormatter(func(param gin.LogFormatterParams) string {
+
+		// 你的自定义格式
+		return fmt.Sprintf("%s - [%s] \"%s %s %s %d %s \"%s\" %s\"\n",
+			param.ClientIP,
+			param.TimeStamp.Format(time.RFC3339),
+			param.Method,
+			param.Path,
+			param.Request.Proto,
+			param.StatusCode,
+			param.Latency,
+			param.Request.UserAgent(),
+			param.ErrorMessage,
+		)
+	}))
+	router.Use(gin.Recovery())
 
 	// config := cors.DefaultConfig()
 	// config.AllowAllOrigins = true
@@ -79,6 +97,15 @@ func main() {
 			Age:  30,
 		}
 		c.JSON(http.StatusOK, user)
+	})
+
+	router.GET("/async", func(c *gin.Context) {
+		cp := c.Copy()
+		go func() {
+			time.Sleep(2 * time.Second)
+			log.Println("----------------------------", cp.Request.URL.Path)
+		}()
+		c.JSON(http.StatusOK, "hello,async.")
 	})
 
 	router.Run(":8080")
