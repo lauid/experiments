@@ -1,11 +1,11 @@
 package main
 
 import (
+	"fmt"
 	"github.com/smartystreets/goconvey/convey"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
-
 
 func TestCase1(t *testing.T) {
 	testCases := []struct {
@@ -50,4 +50,19 @@ func TestCheckUrl(t *testing.T) {
 			convey.So(ok, convey.ShouldBeFalse)
 		})
 	})
+}
+
+func TestCase2(t *testing.T) {
+	slice := []int{0, 1, 2, 3}
+	map1 := Case2(slice)
+	for k, v := range map1 {
+		fmt.Println(k, "-->", *v)
+		assert.Equal(t, *v, slice[k])
+	}
+}
+
+func TestEqualSlice(t *testing.T) {
+	slice1 := []int{1, 2, 3}
+	slice2 := []int{1, 2, 3}
+	assert.True(t, EqualSlice(slice1, slice2))
 }

@@ -29,7 +29,7 @@ func TestGetName(t *testing.T) {
 	//mock接口
 	mock := NewMockOrderDBI(ctrl)
 	//模拟传入值与预期的返回值
-	mock.EXPECT().GetName(gomock.Eq(1225)).Return("xdcutecute")
+	mock.EXPECT().GetName(gomock.Eq(1225)).Return("xdcut")
 
 	//前面定义了传入值与返回值
 	//在这里
