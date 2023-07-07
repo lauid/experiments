@@ -289,7 +289,7 @@ func main9() {
 	buf := make([]byte, 128)
 	dataChan := make(chan []byte)
 
-	// goroutine to monitor data read from the serial port
+	// goroutine to monitor data read from the gokit port
 	go func() {
 		log.Println("read start")
 		for {
