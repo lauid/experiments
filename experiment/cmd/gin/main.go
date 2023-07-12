@@ -9,7 +9,6 @@ import (
 	"fmt"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	"github.com/opentracing/opentracing-go"
 	"log"
 	"os"
 
@@ -52,7 +51,7 @@ func main() {
 	router := gin.Default()
 
 	// 添加 Jaeger 中间件
-	router.Use(jaeger.GinMiddleware(tracer))
+	router.Use(jaeger.GetJaegerTraceMiddleware(tracer))
 	router.Use(gin.LoggerWithFormatter(getLoggerMiddle()))
 	router.Use(gin.Recovery())
 	// config := cors.DefaultConfig()
@@ -60,7 +59,8 @@ func main() {
 	// router.Use(cors.New(config))
 
 	router.Use(cors.Default())
-	router.Use(metrics.GetPrometheusMiddleware())
+	router.Use(metrics.GetPrometheusCounterMiddleware())
+	router.Use(metrics.GetPrometheusLatencyMiddleware())
 
 	// 全局中间件
 	router.Use(func(c *gin.Context) {
@@ -74,8 +74,8 @@ func main() {
 
 	// 路由中间件
 	router.GET("/hello", func(c *gin.Context) {
-		span, _ := opentracing.StartSpanFromContext(c.Request.Context(), "hello-HandlerName")
-		defer span.Finish()
+		//span, _ := opentracing.StartSpanFromContext(c.Request.Context(), "hello-HandlerName")
+		//defer span.Finish()
 
 		fmt.Println("before hello")
 		c.String(http.StatusOK, "Hello")
