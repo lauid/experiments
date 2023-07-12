@@ -1,6 +1,7 @@
 package jaeger
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/opentracing/opentracing-go"
 	"github.com/opentracing/opentracing-go/ext"
@@ -72,11 +73,12 @@ func GetJaegerTraceMiddleware(tracer opentracing.Tracer) gin.HandlerFunc {
 		ext.HTTPMethod.Set(span, c.Request.Method)
 		ext.HTTPUrl.Set(span, c.Request.URL.String())
 
-		// 继续处理请求
-		c.Next()
-
 		// 在响应头中添加Trace ID
 		traceID := span.Context().(jaeger.SpanContext).TraceID().String()
+		fmt.Println("traceID:",traceID)
 		c.Header("Trace-ID", traceID)
+
+		// 继续处理请求
+		c.Next()
 	}
 }

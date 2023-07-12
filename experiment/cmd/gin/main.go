@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"experiment"
 	"experiment/gin/metrics"
 	groute "experiment/gin/routes"
 	"experiment/jaeger"
@@ -10,20 +9,12 @@ import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"log"
-	"os"
-
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"k8s.io/client-go/kubernetes"
-	"k8s.io/client-go/rest"
 	"net/http"
-	"sync"
+	"os"
+	"os/signal"
+	"syscall"
 	"time"
 )
-
-type User struct {
-	Name string `json:"name"`
-	Age  int    `json:"age"`
-}
 
 func getLoggerMiddle() func(param gin.LogFormatterParams) string {
 	return func(param gin.LogFormatterParams) string {
@@ -45,6 +36,9 @@ func getLoggerMiddle() func(param gin.LogFormatterParams) string {
 func main() {
 	// 初始化 Jaeger
 	tracer, closer := jaeger.InitJaeger("Gin")
+	defer func() {
+		fmt.Println("exit...............")
+	}()
 	defer closer.Close()
 
 	// 设置 Gin 路由
@@ -70,85 +64,52 @@ func main() {
 	})
 	groute.RegisterRoutes(router)
 
-	router.GET("/metrics", gin.WrapH(metrics.GetPrometheusHttpHandler()))
+	//router.Run(":8080")
 
-	// 路由中间件
-	router.GET("/hello", func(c *gin.Context) {
-		//span, _ := opentracing.StartSpanFromContext(c.Request.Context(), "hello-HandlerName")
-		//defer span.Finish()
+	// 创建一个带有超时的上下文
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
 
-		fmt.Println("before hello")
-		c.String(http.StatusOK, "Hello")
-		fmt.Println("after hello")
-	})
+	// 创建一个用于接收终止信号的通道
+	quit := make(chan os.Signal, 1)
+	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM) // 监听 SIGINT（Ctrl+C）和 SIGTERM（kill 命令）
 
-	router.GET("/pod", func(c *gin.Context) {
-		ns, name := podInfo()
-		c.JSON(http.StatusOK,
-			struct {
-				name string
-				ns   string
-			}{
-				name: name,
-				ns:   ns,
-			})
-	})
+	// 启动服务器（非阻塞）
+	server := &http.Server{
+		Addr:    ":8080",
+		Handler: router,
+	}
 
-	router.GET("/pod2", func(c *gin.Context) {
-		obj := []string{
-			os.Getenv("MY_POD_NAMESPACE"),
-			os.Getenv("MY_POD_NAME"),
+	go func() {
+		// 监听终止信号
+		<-quit
+
+		// 收到终止信号后开始关闭服务器
+		log.Println("Server is shutting down...")
+
+		// 设置超时时间，等待尚未完成的请求处理完毕
+		gracefulCtx, cancelShutdown := context.WithTimeout(ctx, 10*time.Second)
+		defer cancelShutdown()
+
+		// 关闭服务器并等待已有的连接处理完毕
+		if err := server.Shutdown(gracefulCtx); err != nil {
+			// 处理一些错误日志
+			log.Fatalf("Server forced to shutdown: %v", err)
 		}
-		c.JSON(http.StatusOK, obj)
-	})
 
-	router.GET("/health", func(c *gin.Context) {
-		healthFunc := experiment.Health("")
-		healthFunc(c.Writer, c.Request)
-	})
+		// 执行清理操作
+		// ...
 
-	router.GET("/hello/:name", func(c *gin.Context) {
-		var lock sync.Mutex
-		lock.Lock()
-		defer lock.Unlock()
-		time.Sleep(time.Second * 2)
-		name := c.Param("name")
-		user := User{
-			Name: "hello, " + name,
-			Age:  30,
-		}
-		c.JSON(http.StatusOK, user)
-	})
+		log.Println("Server has been shutdown.")
+	}()
 
-	router.GET("/async", func(c *gin.Context) {
-		cp := c.Copy()
-		go func() {
-			time.Sleep(2 * time.Second)
-			log.Println("----------------------------", cp.Request.URL.Path)
-		}()
-		c.JSON(http.StatusOK, "hello,async.")
-	})
+	// 启动服务器
+	if err := server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+		// 处理一些错误日志
+		log.Fatalf("Server startup failed: %v", err)
+	}
 
-	router.Run(":8080")
+	// 服务器已关闭
+	log.Println("Server exiting...")
 }
 
-func podInfo() (string, string) {
-	// 创建 Kubernetes 客户端
-	config, err := rest.InClusterConfig()
-	if err != nil {
-		panic(err.Error())
-	}
-	clientset, err := kubernetes.NewForConfig(config)
-	if err != nil {
-		panic(err.Error())
-	}
-	// 获取当前 Pod 的标识
-	pod, err := clientset.CoreV1().Pods("").Get(context.TODO(), os.Getenv("MY_POD_NAME"), metav1.GetOptions{})
-	if err != nil {
-		panic(err.Error())
-	}
-	namespace := pod.ObjectMeta.Namespace
-	name := pod.ObjectMeta.Name
-
-	return namespace, name
-}
