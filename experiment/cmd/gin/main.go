@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"experiment"
+	groute "experiment/gin/routes"
 	"experiment/jaeger"
 	"fmt"
 	"github.com/gin-contrib/cors"
@@ -64,6 +65,7 @@ func main() {
 		c.Next()
 		fmt.Println("after request")
 	})
+	groute.RegisterRoutes(router)
 
 	// 路由中间件
 	router.GET("/hello", func(c *gin.Context) {
