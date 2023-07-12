@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"experiment"
+	"experiment/gin/metrics"
 	groute "experiment/gin/routes"
 	"experiment/jaeger"
 	"fmt"
@@ -57,7 +58,9 @@ func main() {
 	// config := cors.DefaultConfig()
 	// config.AllowAllOrigins = true
 	// router.Use(cors.New(config))
+
 	router.Use(cors.Default())
+	router.Use(metrics.GetPrometheusMiddleware())
 
 	// 全局中间件
 	router.Use(func(c *gin.Context) {
@@ -66,6 +69,8 @@ func main() {
 		fmt.Println("after request")
 	})
 	groute.RegisterRoutes(router)
+
+	router.GET("/metrics", gin.WrapH(metrics.GetPrometheusHttpHandler()))
 
 	// 路由中间件
 	router.GET("/hello", func(c *gin.Context) {
