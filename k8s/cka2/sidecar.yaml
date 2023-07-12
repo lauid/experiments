@@ -1,0 +1,118 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  annotations:
+    cni.projectcalico.org/containerID: 812d8b2f11c0b023137c78bb97736e9a59107834b22ac5d62fcae22122f00dac
+    cni.projectcalico.org/podIP: 10.244.104.28/32
+    cni.projectcalico.org/podIPs: 10.244.104.28/32
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"v1","kind":"Pod","metadata":{"annotations":{},"name":"legacy-app","namespace":"default"},"spec":{"containers":[{"args":["/bin/sh","-c","i=0; while true; do\n  echo \"$i: $(date)\" \u003e\u003e /var/log/legacy-app.log;\n  i=$((i+1));\n  sleep 1;\ndone      \n"],"image":"busybox","name":"count","volumeMounts":[{"mountPath":"/var/log","name":"logs"}]}],"volumes":[{"emptyDir":{},"name":"logs"}]}}
+  creationTimestamp: "2023-07-12T09:34:42Z"
+  name: legacy-app
+  namespace: default
+  resourceVersion: "586146"
+  uid: 0f026d49-c8c0-479f-b7c0-947f586f74af
+spec:
+  containers:
+  - name: sidecar
+    image: busybox
+    imagePullPolicy: Always
+    args: [/bin/sh, -c, 'tail -n+1 -f /var/log/legacy-app.log']
+    volumeMounts:
+    - mountPath: /var/log
+      name: logs
+  - args:
+    - /bin/sh
+    - -c
+    - "i=0; while true; do\n  echo \"$i: $(date)\" >> /var/log/legacy-app.log;\n  i=$((i+1));\n
+      \ sleep 1;\ndone      \n"
+    image: busybox
+    imagePullPolicy: Always
+    name: count
+    resources: {}
+    terminationMessagePath: /dev/termination-log
+    terminationMessagePolicy: File
+    volumeMounts:
+    - mountPath: /var/log
+      name: logs
+    - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+      name: kube-api-access-t6644
+      readOnly: true
+  dnsPolicy: ClusterFirst
+  enableServiceLinks: true
+  nodeName: node2
+  preemptionPolicy: PreemptLowerPriority
+  priority: 0
+  restartPolicy: Always
+  schedulerName: default-scheduler
+  securityContext: {}
+  serviceAccount: default
+  serviceAccountName: default
+  terminationGracePeriodSeconds: 30
+  tolerations:
+  - effect: NoExecute
+    key: node.kubernetes.io/not-ready
+    operator: Exists
+    tolerationSeconds: 300
+  - effect: NoExecute
+    key: node.kubernetes.io/unreachable
+    operator: Exists
+    tolerationSeconds: 300
+  volumes:
+  - emptyDir: {}
+    name: logs
+  - name: kube-api-access-t6644
+    projected:
+      defaultMode: 420
+      sources:
+      - serviceAccountToken:
+          expirationSeconds: 3607
+          path: token
+      - configMap:
+          items:
+          - key: ca.crt
+            path: ca.crt
+          name: kube-root-ca.crt
+      - downwardAPI:
+          items:
+          - fieldRef:
+              apiVersion: v1
+              fieldPath: metadata.namespace
+            path: namespace
+status:
+  conditions:
+  - lastProbeTime: null
+    lastTransitionTime: "2023-07-12T09:34:39Z"
+    status: "True"
+    type: Initialized
+  - lastProbeTime: null
+    lastTransitionTime: "2023-07-12T09:34:39Z"
+    message: 'containers with unready status: [count]'
+    reason: ContainersNotReady
+    status: "False"
+    type: Ready
+  - lastProbeTime: null
+    lastTransitionTime: "2023-07-12T09:34:39Z"
+    message: 'containers with unready status: [count]'
+    reason: ContainersNotReady
+    status: "False"
+    type: ContainersReady
+  - lastProbeTime: null
+    lastTransitionTime: "2023-07-12T09:34:42Z"
+    status: "True"
+    type: PodScheduled
+  containerStatuses:
+  - image: busybox
+    imageID: ""
+    lastState: {}
+    name: count
+    ready: false
+    restartCount: 0
+    started: false
+    state:
+      waiting:
+        reason: ContainerCreating
+  hostIP: 192.168.40.182
+  phase: Pending
+  qosClass: BestEffort
+  startTime: "2023-07-12T09:34:39Z"
