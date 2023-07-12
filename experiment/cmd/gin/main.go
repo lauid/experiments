@@ -3,11 +3,11 @@ package main
 import (
 	"context"
 	"experiment"
+	"experiment/jaeger"
 	"fmt"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/opentracing/opentracing-go"
-	"io"
 	"log"
 	"os"
 
@@ -17,25 +17,15 @@ import (
 	"net/http"
 	"sync"
 	"time"
-
-	jaegercfg "github.com/uber/jaeger-client-go/config"
-	"github.com/uber/jaeger-lib/metrics/prometheus"
-
-	"github.com/uber/jaeger-client-go"
-	jaegerlog "github.com/uber/jaeger-client-go/log"
 )
-
 
 type User struct {
 	Name string `json:"name"`
 	Age  int    `json:"age"`
 }
 
-func main() {
-	router := gin.Default()
-
-	router.Use(gin.LoggerWithFormatter(func(param gin.LogFormatterParams) string {
-
+func getLoggerMiddle() func(param gin.LogFormatterParams) string {
+	return func(param gin.LogFormatterParams) string {
 		// 你的自定义格式
 		return fmt.Sprintf("%s - [%s] \"%s %s %s %d %s \"%s\" %s\"\n",
 			param.ClientIP,
@@ -48,9 +38,21 @@ func main() {
 			param.Request.UserAgent(),
 			param.ErrorMessage,
 		)
-	}))
-	router.Use(gin.Recovery())
+	}
+}
 
+func main() {
+	// 初始化 Jaeger
+	tracer, closer := jaeger.InitJaeger("Gin")
+	defer closer.Close()
+
+	// 设置 Gin 路由
+	router := gin.Default()
+
+	// 添加 Jaeger 中间件
+	router.Use(jaeger.GinMiddleware(tracer))
+	router.Use(gin.LoggerWithFormatter(getLoggerMiddle()))
+	router.Use(gin.Recovery())
 	// config := cors.DefaultConfig()
 	// config.AllowAllOrigins = true
 	// router.Use(cors.New(config))
@@ -65,6 +67,9 @@ func main() {
 
 	// 路由中间件
 	router.GET("/hello", func(c *gin.Context) {
+		span, _ := opentracing.StartSpanFromContext(c.Request.Context(), "hello-HandlerName")
+		defer span.Finish()
+
 		fmt.Println("before hello")
 		c.String(http.StatusOK, "Hello")
 		fmt.Println("after hello")
@@ -139,30 +144,4 @@ func podInfo() (string, string) {
 	name := pod.ObjectMeta.Name
 
 	return namespace, name
-}
-
-func initJaeger(serviceName string) (opentracing.Tracer, io.Closer) {
-	cfg := &jaegercfg.Configuration{
-		Sampler: &jaegercfg.SamplerConfig{
-			Type:  jaeger.SamplerTypeConst,
-			Param: 1,
-		},
-		Reporter: &jaegercfg.ReporterConfig{
-			LogSpans:           true,
-			LocalAgentHostPort: "localhost:6831", // 根据实际情况更改主机端口
-		},
-		ServiceName: serviceName,
-	}
-
-	jMetricsFactory := prometheus.New()
-
-	tracer, closer, err := cfg.NewTracer(
-		jaegercfg.Metrics(jMetricsFactory),
-		jaegercfg.Logger(jaegerlog.StdLogger),
-	)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	return tracer, closer
 }
