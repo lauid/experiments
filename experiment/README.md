@@ -9,5 +9,8 @@ go get -u github.com/golang/mock/gomock
 go get -u github.com/golang/mock/mockgen
 
 
+## swagger
 
 swag init --parseVendor -g cmd/gin/main.go
+http://192.168.40.180:8080/swagger/index.html
+

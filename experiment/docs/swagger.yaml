@@ -1,4 +1,12 @@
 basePath: /api/v1
+definitions:
+  models.User:
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+    type: object
 externalDocs:
   description: OpenAPI
   url: https://swagger.io/resources/open-api/
@@ -16,6 +24,27 @@ info:
   title: Swagger Example API
   version: "1.0"
 paths:
+  /accounts/{id}:
+    get:
+      consumes:
+      - application/json
+      description: get string by ID
+      parameters:
+      - description: Account ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.User'
+      summary: Show an account
+      tags:
+      - accounts
   /users/{id}:
     get:
       consumes:

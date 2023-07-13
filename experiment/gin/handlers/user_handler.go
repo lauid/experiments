@@ -12,6 +12,7 @@ package handlers
 import (
 	"experiment/gin/models"
 	"experiment/gin/services"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -68,4 +69,34 @@ func (h *UserHandler) CreateUser(c *gin.Context) {
 
 	// 返回创建的用户信息
 	c.JSON(http.StatusCreated, user)
+}
+
+// ShowAccount godoc
+// @Summary      Show an account
+// @Description  get string by ID
+// @Tags         accounts
+// @Accept       json
+// @Produce      json
+// @Param        id   path      int  true  "Account ID"
+// @Success      200  {object}  models.User
+// @Router       /accounts/{id} [get]
+func (c *UserHandler) ShowAccount(ctx *gin.Context) {
+	id := ctx.Param("id")
+	// 模拟一个错误
+	if id == "0" {
+		NewError(ctx, http.StatusBadRequest, fmt.Errorf("Invalid ID"))
+		return
+	}
+	// 模拟正常返回数据
+	account := map[string]interface{}{
+		"id":   id,
+		"name": "John Doe",
+	}
+	ctx.JSON(http.StatusOK, account)
+}
+
+func NewError(ctx *gin.Context, statusCode int, err error) {
+	ctx.JSON(statusCode, gin.H{
+		"error": err.Error(),
+	})
 }
