@@ -7,6 +7,8 @@ import (
 	"experiment/gin/metrics"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/swaggo/files"
+	"github.com/swaggo/gin-swagger"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
@@ -33,6 +35,9 @@ func RegisterRoutes(router *gin.Engine) {
 	}
 	// 其他路由...
 	routers(router)
+
+	// 设置Swagger中间件
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 }
 
 func routers(router *gin.Engine) {

@@ -2,9 +2,9 @@ package main
 
 import (
 	"context"
+	_ "experiment/cmd/gin/docs" // 导入自动生成的 Swagger 代码
 	"experiment/gin/metrics"
 	groute "experiment/gin/routes"
-	"experiment/jaeger"
 	"fmt"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -33,19 +33,38 @@ func getLoggerMiddle() func(param gin.LogFormatterParams) string {
 	}
 }
 
+// @title           Swagger Example API
+// @version         1.0
+// @description     This is a sample server celler server.
+// @termsOfService  http://swagger.io/terms/
+
+// @contact.name   API Support
+// @contact.url    http://www.swagger.io/support
+// @contact.email  support@swagger.io
+
+// @license.name  Apache 2.0
+// @license.url   http://www.apache.org/licenses/LICENSE-2.0.html
+
+// @host      localhost:8080
+// @BasePath  /api/v1
+
+// @securityDefinitions.basic  BasicAuth
+
+// @externalDocs.description  OpenAPI
+// @externalDocs.url          https://swagger.io/resources/open-api/
 func main() {
-	// 初始化 Jaeger
-	tracer, closer := jaeger.InitJaeger("Gin")
 	defer func() {
 		fmt.Println("exit...............")
 	}()
-	defer closer.Close()
+	//// 初始化 Jaeger
+	//tracer, closer := jaeger.InitJaeger("Gin")
+	//defer closer.Close()
 
 	// 设置 Gin 路由
 	router := gin.Default()
 
 	// 添加 Jaeger 中间件
-	router.Use(jaeger.GetJaegerTraceMiddleware(tracer))
+	//router.Use(jaeger.GetJaegerTraceMiddleware(tracer))
 	router.Use(gin.LoggerWithFormatter(getLoggerMiddle()))
 	router.Use(gin.Recovery())
 	// config := cors.DefaultConfig()

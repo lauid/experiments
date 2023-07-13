@@ -17,6 +17,16 @@ func NewUserHandler() *UserHandler {
 	}
 }
 
+// @Summary 根据ID获取用户信息
+// @Description 根据用户ID，获取用户的详细信息
+// @Tags 用户管理
+// @Accept json
+// @Produce json
+// @Param id path int true "用户ID"
+// @Router /users/{id} [get]
+func (h *UserHandler) getUserByID(c *gin.Context) {
+	// 实际处理逻辑
+}
 func (h *UserHandler) GetUser(c *gin.Context) {
 	// 从URL参数中获取用户ID
 	userID := c.Param("id")
