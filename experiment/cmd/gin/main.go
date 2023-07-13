@@ -2,7 +2,8 @@ package main
 
 import (
 	"context"
-	_ "experiment/cmd/gin/docs" // 导入自动生成的 Swagger 代码
+	//_ "experiment/cmd/gin/docs" // 导入自动生成的 Swagger 代码
+	_ "experiment/docs" // 导入自动生成的 Swagger 代码
 	"experiment/gin/metrics"
 	groute "experiment/gin/routes"
 	"fmt"
