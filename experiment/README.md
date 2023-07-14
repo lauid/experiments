@@ -11,6 +11,13 @@ go get -u github.com/golang/mock/mockgen
 
 ## swagger
 
+docker run -p 6831:6831 -p 16686:16686 -p 14268:14268 jaegertracing/all-in-one
+
 swag init --parseVendor -g cmd/gin/main.go
 http://192.168.40.180:8080/swagger/index.html
 
+
+
+1，gin优雅退出
+2，中间件
+3，jaeger

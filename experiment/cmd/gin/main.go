@@ -2,10 +2,13 @@ package main
 
 import (
 	"context"
+	"experiment/gin/middlewares"
+	groute "experiment/gin/routes"
+	"experiment/jaeger"
+
 	//_ "experiment/cmd/gin/docs" // 导入自动生成的 Swagger 代码
 	_ "experiment/docs" // 导入自动生成的 Swagger 代码
 	"experiment/gin/metrics"
-	groute "experiment/gin/routes"
 	"fmt"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -17,21 +20,23 @@ import (
 	"time"
 )
 
-func getLoggerMiddle() func(param gin.LogFormatterParams) string {
-	return func(param gin.LogFormatterParams) string {
-		// 你的自定义格式
-		return fmt.Sprintf("%s - [%s] \"%s %s %s %d %s \"%s\" %s\"\n",
-			param.ClientIP,
-			param.TimeStamp.Format(time.RFC3339),
-			param.Method,
-			param.Path,
-			param.Request.Proto,
-			param.StatusCode,
-			param.Latency,
-			param.Request.UserAgent(),
-			param.ErrorMessage,
-		)
-	}
+func registerMiddlewares(router *gin.Engine) {
+	router.Use(gin.LoggerWithFormatter(middlewares.GetLoggerMiddle()))
+	router.Use(gin.Recovery())
+	// config := cors.DefaultConfig()
+	// config.AllowAllOrigins = true
+	// router.Use(cors.New(config))
+
+	router.Use(cors.Default())
+	router.Use(metrics.GetPrometheusCounterMiddleware())
+	router.Use(metrics.GetPrometheusLatencyMiddleware())
+
+	// 全局中间件
+	router.Use(func(c *gin.Context) {
+		fmt.Println("before request")
+		c.Next()
+		fmt.Println("after request")
+	})
 }
 
 // @title           Swagger Example API
@@ -57,34 +62,16 @@ func main() {
 	defer func() {
 		fmt.Println("exit...............")
 	}()
-	//// 初始化 Jaeger
-	//tracer, closer := jaeger.InitJaeger("Gin")
-	//defer closer.Close()
-
 	// 设置 Gin 路由
 	router := gin.Default()
-
+	registerMiddlewares(router)
+	// 初始化 Jaeger
+	tracer, closer := jaeger.InitJaeger("Gin")
+	defer closer.Close()
 	// 添加 Jaeger 中间件
-	//router.Use(jaeger.GetJaegerTraceMiddleware(tracer))
-	router.Use(gin.LoggerWithFormatter(getLoggerMiddle()))
-	router.Use(gin.Recovery())
-	// config := cors.DefaultConfig()
-	// config.AllowAllOrigins = true
-	// router.Use(cors.New(config))
+	router.Use(jaeger.GetJaegerTraceMiddleware(tracer))
 
-	router.Use(cors.Default())
-	router.Use(metrics.GetPrometheusCounterMiddleware())
-	router.Use(metrics.GetPrometheusLatencyMiddleware())
-
-	// 全局中间件
-	router.Use(func(c *gin.Context) {
-		fmt.Println("before request")
-		c.Next()
-		fmt.Println("after request")
-	})
 	groute.RegisterRoutes(router)
-
-	//router.Run(":8080")
 
 	// 创建一个带有超时的上下文
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)

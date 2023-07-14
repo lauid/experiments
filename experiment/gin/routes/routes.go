@@ -5,6 +5,7 @@ import (
 	"experiment"
 	"experiment/gin/handlers"
 	"experiment/gin/metrics"
+	"experiment/gin/middlewares"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/swaggo/files"
@@ -26,6 +27,12 @@ type User struct {
 
 func RegisterRoutes(router *gin.Engine) {
 	userHandler := handlers.NewUserHandler()
+
+	// 用户登录路由
+	router.POST("/login", handlers.LoginHandler)
+
+	// 使用鉴权中间件保护受保护的接口
+	router.GET("/protected", middlewares.AuthMiddleware(), handlers.ProtectedHandler)
 
 	// 用户相关路由
 	userRoutes := router.Group("/users")

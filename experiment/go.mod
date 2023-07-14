@@ -7,6 +7,7 @@ require (
 	github.com/gin-gonic/gin v1.9.1
 	github.com/go-kit/kit v0.12.0
 	github.com/go-redis/redis v6.15.9+incompatible
+	github.com/golang-jwt/jwt/v4 v4.0.0
 	github.com/golang/mock v1.6.0
 	github.com/mattn/go-sqlite3 v1.14.17
 	github.com/opentracing/opentracing-go v1.2.0
