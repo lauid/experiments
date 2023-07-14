@@ -15,6 +15,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"strconv"
 )
 
 type UserHandler struct {
@@ -39,10 +40,10 @@ func (h *UserHandler) getUserByID(c *gin.Context) {
 }
 func (h *UserHandler) GetUser(c *gin.Context) {
 	// 从URL参数中获取用户ID
-	userID := c.Param("id")
+	userID, _:= strconv.Atoi(c.Param("id"))
 
 	// 调用UserService获取用户信息
-	user, err := h.userService.GetUserInfo(userID)
+	user, err := h.userService.GetUserInfo(uint(userID), c)
 	if err != nil {
 		// 错误处理
 		return
@@ -59,9 +60,10 @@ func (h *UserHandler) CreateUser(c *gin.Context) {
 		// 错误处理
 		return
 	}
+	fmt.Println(newUser)
 
 	// 调用UserService创建用户
-	user, err := h.userService.CreateUser(newUser)
+	user, err := h.userService.CreateUser(&newUser, c)
 	if err != nil {
 		// 错误处理
 		return

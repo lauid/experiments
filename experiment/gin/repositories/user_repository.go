@@ -2,8 +2,8 @@ package repositories
 
 import (
 	"experiment/gin/models"
-	"k8s.io/apimachinery/pkg/util/rand"
-	"strconv"
+	"fmt"
+	"gorm.io/gorm"
 )
 
 type UserRepository struct {
@@ -16,19 +16,27 @@ func NewUserRepository() *UserRepository {
 	}
 }
 
-func (r *UserRepository) GetByID(userID string) (*models.User, error) {
+func (r *UserRepository) GetByID(userID uint, db *gorm.DB) (*models.User, error) {
 	// 执行数据库查询等操作，返回用户信息
-	return &models.User{
-		ID:   userID,
-		Name: "Name" + userID,
-	}, nil
+	var user models.User
+	db.Find(&user,userID)
+	fmt.Println(user)
+
+	return &user, nil
+
+	//return &models.User{
+	//	ID:   userID,
+	//	Name: "Name" + strconv.Itoa(int(userID)),
+	//}, nil
 }
 
-func (r *UserRepository) Create(newUser models.User) (*models.User, error) {
+func (r *UserRepository) Create(newUser *models.User, db *gorm.DB) (int64, error) {
+	result := db.Create(newUser)
+	return result.RowsAffected,nil
 	// 执行创建用户的数据库插入操作，返回新创建的用户信息
-	idStr := strconv.Itoa(rand.IntnRange(10, 20))
-	return &models.User{
-		ID:   idStr,
-		Name: "Name",
-	}, nil
+	//idStr := rand.IntnRange(10, 20)
+	//return &models.User{
+	//	ID:   uint(idStr),
+	//	Name: "Name",
+	//}, nil
 }

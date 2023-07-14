@@ -26,7 +26,6 @@ type User struct {
 }
 
 func RegisterRoutes(router *gin.Engine) {
-	userHandler := handlers.NewUserHandler()
 
 	// 用户登录路由
 	router.POST("/login", handlers.LoginHandler)
@@ -37,6 +36,7 @@ func RegisterRoutes(router *gin.Engine) {
 	// 用户相关路由
 	userRoutes := router.Group("/users")
 	{
+		userHandler := handlers.NewUserHandler()
 		userRoutes.GET("/:id", userHandler.GetUser)
 		userRoutes.POST("/", userHandler.CreateUser)
 	}

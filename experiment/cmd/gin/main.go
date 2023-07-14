@@ -3,9 +3,9 @@ package main
 import (
 	"context"
 	"experiment/gin/middlewares"
+	svc "experiment/internal/server"
 	groute "experiment/gin/routes"
 	"experiment/jaeger"
-
 	//_ "experiment/cmd/gin/docs" // 导入自动生成的 Swagger 代码
 	_ "experiment/docs" // 导入自动生成的 Swagger 代码
 	"experiment/gin/metrics"
@@ -64,12 +64,20 @@ func main() {
 	}()
 	// 设置 Gin 路由
 	router := gin.Default()
+
 	registerMiddlewares(router)
+
 	// 初始化 Jaeger
 	tracer, closer := jaeger.InitJaeger("Gin")
 	defer closer.Close()
 	// 添加 Jaeger 中间件
 	router.Use(jaeger.GetJaegerTraceMiddleware(tracer))
+
+	// 打开数据库连接
+	svc.NewMysqlConnect()
+	defer svc.CloseDB()
+	router.Use(svc.WithDB())
+	svc.AutoMigrate()
 
 	groute.RegisterRoutes(router)
 

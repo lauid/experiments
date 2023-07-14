@@ -21,3 +21,4 @@ http://192.168.40.180:8080/swagger/index.html
 1，gin优雅退出
 2，中间件
 3，jaeger
+4,登录授权
