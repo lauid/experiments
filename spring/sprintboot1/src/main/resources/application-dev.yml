@@ -1,0 +1,16 @@
+name: abc
+person:
+  name: p${name}
+  address:
+    - shanghai
+    - beijing
+  age: 12
+
+server:
+  port: 8081
+
+spring:
+  config:
+    activate:
+      on-profile:
+        - dev
