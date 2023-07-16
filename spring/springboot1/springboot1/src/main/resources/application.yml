@@ -11,4 +11,11 @@ server:
 spring:
   profiles:
     active: dev
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
+
+
 
