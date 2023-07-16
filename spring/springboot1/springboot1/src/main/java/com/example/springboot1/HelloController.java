@@ -1,4 +1,4 @@
-package com.example.sprintboot1;
+package com.example.springboot1;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
