@@ -3,6 +3,7 @@ package com.example.sgm.entity;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.Version;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -14,6 +15,8 @@ public class SysUser {
     private String name;
     private Integer age;
     private String email;
+    @Version
+    private Integer version;
 
     @TableField(exist = false)
     private String ignoreColumn = "ignoreColumn";
