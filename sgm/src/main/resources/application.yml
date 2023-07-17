@@ -1,3 +1,8 @@
+logging:
+  level:
+    com.example.sgm: debug
+    com.baomidou.mybatisplus.mapper: DEBUG
+
 # DataSource Config
 spring:
   datasource:
@@ -5,19 +10,16 @@ spring:
     url: jdbc:p6spy:h2:mem:test
     username: root
     password: test
-#
-#    driver-class-name: org.h2.Driver
-#    username: root
-#    password: test
+  #
+  #    driver-class-name: org.h2.Driver
+  #    username: root
+  #    password: test
   sql:
     init:
       schema-locations: classpath:db/schema-h2.sql
       data-locations: classpath:db/data-h2.sql
       mode: always
-
-
-# Logger Config
-logging:
-  level:
-    com.example.sgm: debug
-    com.baomidou.mybatisplus.mapper: DEBUG
+  web:
+    resources:
+      static-locations:
+        - classpath:/static/
