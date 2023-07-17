@@ -18,3 +18,11 @@ CREATE TABLE role
     role_describe VARCHAR(30) NULL DEFAULT NULL COMMENT '角色描述',
     PRIMARY KEY (id)
 );
+
+CREATE TABLE user2
+(
+    id BIGINT NOT NULL COMMENT '主键ID',
+    name VARCHAR(30) NULL DEFAULT NULL COMMENT '姓名',
+    age INT NULL DEFAULT NULL COMMENT '年龄',
+    PRIMARY KEY (id)
+);
