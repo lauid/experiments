@@ -5,11 +5,27 @@ logging:
 
 # DataSource Config
 spring:
+#  datasource:
+#    driver-class-name: com.p6spy.engine.spy.P6SpyDriver
+#    url: jdbc:p6spy:h2:mem:test
+#    username: root
+#    password: test
   datasource:
     driver-class-name: com.p6spy.engine.spy.P6SpyDriver
+    initialSize: 10
+    maxActive: 30
+    maxWait: 60000
+    minEvictableIdleTimeMillis: 300000
+    minIdle: 5
+    password: ''
+    testOnBorrow: false
+    testOnReturn: false
+    testWhileIdle: true
+    timeBetweenEvictionRunsMillis: 60000
+    type: com.alibaba.druid.pool.DruidDataSource
     url: jdbc:p6spy:h2:mem:test
     username: root
-    password: test
+    validationQuery: SELECT 1
   #
   #    driver-class-name: org.h2.Driver
   #    username: root
@@ -23,3 +39,4 @@ spring:
     resources:
       static-locations:
         - classpath:/static/
+
