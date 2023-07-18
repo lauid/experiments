@@ -20,6 +20,8 @@ CREATE TABLE role
     PRIMARY KEY (id)
 );
 
+DROP TABLE IF EXISTS user2;
+
 CREATE TABLE user2
 (
     id BIGINT NOT NULL COMMENT '主键ID',
