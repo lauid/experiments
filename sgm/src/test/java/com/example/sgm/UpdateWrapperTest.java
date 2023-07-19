@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.example.sgm.entity.SysUser;
 import com.example.sgm.mapper.SysUserMapper;
+import com.example.sgm.service.UserService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,9 @@ import java.util.List;
 public class UpdateWrapperTest {
     @Autowired
     private SysUserMapper userMapper;
+
+    @Autowired
+    private UserService userService;
 
     /**
      * UPDATE user SET age=?, email=? WHERE (name = ?)
@@ -60,8 +64,10 @@ public class UpdateWrapperTest {
         users.forEach(System.out::println);
     }
 
-    private void printTom() {
-
+    @Test
+    public void testInsert() {
+        userService.insertTest();
+        userService.stateTrans();
     }
 
 }
