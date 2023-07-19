@@ -24,6 +24,12 @@ spring:
     resources:
       static-locations:
         - classpath:/static/
+  data:
+    redis:
+      host: 192.168.56.23
+      password:
+      port: 6379
+      database: 0
 #  datasource:
 #    driver-class-name: com.mysql.cj.jdbc.Driver
 #    url: jdbc:mysql://192.168.56.23:3306/test?characterEncoding=utf8&serverTimezone=Asia/Shanghai
