@@ -17,8 +17,9 @@ public class SgmApplication {
 
     public static void main(String[] args) {
         ConfigurableApplicationContext context = SpringApplication.run(SgmApplication.class, args);
-        Object redisTemplate = context.getBean("user2");
-        System.out.println(redisTemplate);
+
+        Object u = context.getBean("userx");
+        System.out.println(u);
     }
 
 }
