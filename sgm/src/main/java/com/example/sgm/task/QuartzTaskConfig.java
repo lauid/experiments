@@ -17,8 +17,8 @@ public class QuartzTaskConfig {
 
     @Bean
     public Trigger simpleJobTrigger() {
-        //定义每 5 秒执行一次
-        SimpleScheduleBuilder simpleScheduleBuilder = SimpleScheduleBuilder.simpleSchedule().withIntervalInSeconds(5).repeatForever();
+        //定义每 50 秒执行一次
+        SimpleScheduleBuilder simpleScheduleBuilder = SimpleScheduleBuilder.simpleSchedule().withIntervalInSeconds(50).repeatForever();
         //定义触发器
         return TriggerBuilder.newTrigger().forJob(simpleJobDetail()).withIdentity("quartzTaskJobTrigger").withSchedule(simpleScheduleBuilder).build();
     }
