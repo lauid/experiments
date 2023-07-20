@@ -7,16 +7,15 @@ import java.util.Date;
 
 @Component
 public class ScheduledTask {
-    @Scheduled(cron = "0/10 * * * * *")
+    @Scheduled(cron = "0/10 */1 * * * *")
     public void scheduled1() {
         System.out.println(new Date() + " scheduled1定时任务执行");
     }
 
-    @Scheduled(fixedRate = 5000)
-    public void scheduled2() {
-        System.out.println(new Date() + " scheduled2定时任务执行");
-
-    }
+//    @Scheduled(fixedRate = 5000)
+//    public void scheduled2() {
+//        System.out.println(new Date() + " scheduled2定时任务执行");
+//    }
 
     @Scheduled(fixedDelay = 5000)
     public void scheduled3() {
