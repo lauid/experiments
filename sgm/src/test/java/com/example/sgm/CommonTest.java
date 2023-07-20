@@ -1,11 +1,13 @@
 package com.example.sgm;
 
 import com.example.sgm.service.HelloService;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 @SpringBootTest
 public class CommonTest {
@@ -61,6 +63,48 @@ public class CommonTest {
         System.out.println("After remove:" + map);
         System.out.println("size of HashSet:" + map.size());
         System.out.println("value for key 1：" + map.get(1));
+
+        for (Integer key : map.keySet()) {
+            System.out.println(key + ":" + map.get(key));
+        }
+
+        map.forEach((key, value) -> System.out.println(key + ":" + value));
+
+        Assertions.assertEquals(3, map.size());
+    }
+
+    @Test
+    public void testHashTable() {
+        Hashtable<Integer, String> table = new Hashtable<>();
+
+        table.put(1, "Apple");
+        table.put(2, "banana");
+        table.put(3, "orange");
+
+        System.out.println("key 2 value:" + table.get(2));
+        System.out.println("table size" + table.size());
+        for (Integer key : table.keySet()) {
+            System.out.println(key + ":" + table.get(key));
+        }
+
+        table.forEach((key, value) -> System.out.println(key + ":" + value));
+    }
+
+    @Test
+    public void testConcurrentHashMap() {
+        ConcurrentHashMap<Integer, String> map = new ConcurrentHashMap<>();
+        map.put(1, "A");
+        map.put(2, "B");
+        map.put(3, "C");
+
+        System.out.println("key 2 value:" + map.get(1));
+        System.out.println("map size" + map.size());
+
+        for (Integer key : map.keySet()) {
+            System.out.println(key + ":" + map.get(key));
+        }
+
+        map.forEach((key, value) -> System.out.println(key + ":" + value));
     }
 
     @Test
