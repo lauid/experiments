@@ -112,6 +112,19 @@
             <artifactId>spring-boot-starter-freemarker</artifactId>
         </dependency>
 
+<!--    监控 Spring Boot 单机或集群项目，它提供详细的健康 （Health）信息、内存信息、JVM 系统和环境属性、垃圾回收信息、日志设置和查看、定时任务查看、Spring Boot 缓存查看和管理等功能-->
+<!--        <dependency>-->
+<!--            <groupId>de.codecentric</groupId>-->
+<!--            <artifactId>spring-boot-admin-starter-server</artifactId>-->
+<!--            <version>3.0.0</version>-->
+<!--        </dependency>-->
+        <dependency>
+            <groupId>de.codecentric</groupId>
+            <artifactId>spring-boot-admin-starter-client</artifactId>
+            <version>3.0.0</version>
+        </dependency>
+
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
