@@ -5,6 +5,8 @@ logging:
 
 # DataSource Config
 spring:
+  freemarker:
+    suffix: .ftl
   #jsp支持
   mvc:
     view:
