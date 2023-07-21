@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Thymeleaf simple syntax</title>
+    <meta charset="UTF-8">
+</head>
+<body>
+<h1>Thymeleaf简单语法</h1>
+<div>
+    <h5>基本类型操作(字符串):</h5>
+    <p>一个简单的字符串：<span th:text="'thymeleaf text'">default text</span>.</p>
+    <p>字符串连接：<span th:text="'thymeleaf text concat,'+${thymeleafText}">default text</span>.</p>
+    <p>字符串连接：<span th:text="|thymeleaf text concat,${thymeleafText}|">default text</span>.</p>
+</div>
+<div>
+    <h5>基本类型操作(数字):</h5>
+    <p>一个简单的神奇的数字：<span th:text="2025">1000</span>.</p>
+    <p>算术运算： 2025+1=<span th:text="${number1}+1">0</span>.</p>
+    <p>算术运算： 14-1=<span th:text="14-1">0</span>.</p>
+    <p>算术运算： 675 * 3=<span th:text="675*${number2}">0</span>.</p>
+    <p>算术运算： 39 ÷ 3=<span th:text="39/3">0</span>.</p>
+</div>
+<div>
+    <h5>基本类型操作(布尔值):</h5>
+    <p>一个简单的数字比较：2025 > 2024=<span th:text="2025&gt;2024"> </span>.</p>
+    <p>字符串比较：thymeleafText == 'lanqiao'，结果为<span th:text="${thymeleafText} == 'lanqiao'">0</span>.</p>
+    <p>数字比较：13 == 39/3 结果为： <span th:text="13 == 39/3">0</span>.</p>
+</div>
+</body>
+</html>
