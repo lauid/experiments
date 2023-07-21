@@ -91,6 +91,20 @@
             <version>3.6.0</version>
         </dependency>
 
+        <!--如果使用JSTL必须添加该依赖，且要使用jakarta命名空间下的，否则新版本的Tomcat不支持-->
+        <dependency>
+            <groupId>org.glassfish.web</groupId>
+            <artifactId>jakarta.servlet.jsp.jstl</artifactId>
+            <version>3.0.0</version>
+        </dependency>
+
+        <!--引入Spring Boot内嵌的Tomcat对JSP的解析包，不加解析不了JSP页面-->
+        <dependency>
+            <groupId>org.apache.tomcat.embed</groupId>
+            <artifactId>tomcat-embed-jasper</artifactId>
+            <scope>compile</scope>
+        </dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>

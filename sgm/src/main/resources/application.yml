@@ -5,6 +5,16 @@ logging:
 
 # DataSource Config
 spring:
+  #jsp支持
+  mvc:
+    view:
+      prefix: /WEB-INF/pages/
+      suffix: .jsp
+    #关闭默认模板引擎（thymeleaf）,才会支持jsp
+  thymeleaf:
+    cache: false
+    enabled: false
+
   datasource:
     driver-class-name: com.p6spy.engine.spy.P6SpyDriver
     url: jdbc:p6spy:h2:mem:test
