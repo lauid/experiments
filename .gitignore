@@ -5,3 +5,5 @@
 vendor
 *.txt
 build
+.mvn/*
+.mvn
