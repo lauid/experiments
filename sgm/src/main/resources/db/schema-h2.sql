@@ -29,3 +29,16 @@ CREATE TABLE user2
     age INT NULL DEFAULT NULL COMMENT '年龄',
     PRIMARY KEY (id)
 );
+
+
+DROP TABLE IF EXISTS article;
+CREATE TABLE article
+(
+    `id`        BIGINT NOT NULL AUTO_INCREMENT,
+    `title`     varchar(30) NULL DEFAULT NULL,
+    `name`     varchar(30) NULL DEFAULT NULL,
+    `author`    varchar(30) NULL DEFAULT NULL,
+    `content`   varchar(30) NULL DEFAULT NULL,
+    `state`     INT NULL DEFAULT 1 COMMENT '状态',
+    PRIMARY KEY (`id`)
+)
