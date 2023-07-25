@@ -8,7 +8,7 @@ import java.util.Date;
 @Component
 public class ScheduledTask {
 //    @Scheduled(cron = "0/10 */1 * * * *")
-    @Scheduled(cron = "0 */1 * * * *")
+    @Scheduled(cron = "0 */5 * * * *")
     public void scheduled1() {
         System.out.println(new Date() + " scheduled1定时任务执行");
     }
@@ -18,7 +18,7 @@ public class ScheduledTask {
 //        System.out.println(new Date() + " scheduled2定时任务执行");
 //    }
 
-    @Scheduled(fixedDelay = 5000*200)
+    @Scheduled(fixedDelay = 5000*2000)
     public void scheduled3() {
         System.out.println(new Date() + " scheduled3定时任务执行");
     }
