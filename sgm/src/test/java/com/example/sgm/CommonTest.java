@@ -1,10 +1,13 @@
 package com.example.sgm;
 
+import com.example.sang.MyConfig;
+import com.example.sang.ScopeTest;
 import com.example.sgm.service.HelloService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -133,5 +136,14 @@ public class CommonTest {
         {
             System.out.println(ite.next());
         }
+    }
+
+    @Test
+    public void TestScope() {
+        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(MyConfig.class);
+        ScopeTest bean1 = context.getBean(ScopeTest.class);
+        ScopeTest bean2 = context.getBean(ScopeTest.class);
+        Assertions.assertNotEquals(bean1, bean2);
+        context.close();
     }
 }

@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @SpringBootApplication
 @MapperScan("com.example.sgm.mapper")
 @EnableScheduling
+//@Import(ELConfig.class)
 public class SgmApplication {
 
     public static void main(String[] args) {

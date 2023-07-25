@@ -16,6 +16,9 @@ public class HelloController {
     @Autowired
     private HelloService helloService;
 
+//    @Autowired
+//    private ELConfig elConfig;
+
     @GetMapping("/hello")
     @ResponseBody
     @Action(name = "add-1")
@@ -39,5 +42,12 @@ public class HelloController {
         logger.warn("warn log");
 
         return "log print";
+    }
+
+    @GetMapping("/el")
+    @ResponseBody
+    public String el() {
+//        elConfig.output();
+        return "el conifg output";
     }
 }
