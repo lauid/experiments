@@ -4,7 +4,9 @@ import com.example.springbootenableother.config.MyImportBeanDefinitionRegistrar;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
+import redis.clients.jedis.Jedis;
 
 /**
  * ComponentScan 当前引导类所在包以及子包
@@ -22,15 +24,25 @@ public class SpringbootEnableApplication {
 
     public static void main(String[] args) {
         ConfigurableApplicationContext context = SpringApplication.run(SpringbootEnableApplication.class, args);
-        Object user = context.getBean("user");
-        System.out.println(user);
-        Object role = context.getBean("role");
-        System.out.println(role);
+//        Object user = context.getBean("user");
+//        System.out.println(user);
+//        Object role = context.getBean("role");
+//        System.out.println(role);
 //        Map<String,User> map = context.getBeansOfType(User.class);
 //        System.out.println(map);
 //        Object user = context.getBean(User.class);
 //        System.out.println(user);
 //        Object role = context.getBean(Role.class);
 //        System.out.println(role);
+
+        Jedis jedis = context.getBean(Jedis.class);
+        System.out.println(jedis);
+        jedis.set("aa","AA");
+        jedis.set("bb","BB");
+    }
+
+    @Bean
+    public Jedis jedis(){
+        return new Jedis("localhost",6699);
     }
 }
