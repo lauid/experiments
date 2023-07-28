@@ -3,6 +3,8 @@ package com.example.sgm;
 import com.example.sang.MyConfig;
 import com.example.sang.ScopeTest;
 import com.example.sgm.service.HelloService;
+import com.example.thread.MyThread;
+import com.example.thread.TwoThreadAlive;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.commons.util.StringUtils;
@@ -10,6 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
+import java.io.IOException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -517,7 +522,7 @@ public class CommonTest {
 
     @Test
     public void testList() {
-        String[] cities = {"BeiJing", "HongKong", "ShangHai","TianJin"};
+        String[] cities = {"BeiJing", "HongKong", "ShangHai", "TianJin"};
 
         ArrayList<String> arrayList = new ArrayList<>();
         for (int i = 0; i < cities.length; i++) {
@@ -531,7 +536,7 @@ public class CommonTest {
         //打乱
         Collections.shuffle(arrayList);
         System.out.println(arrayList);
-        if (!arrayList.isEmpty()){
+        if (!arrayList.isEmpty()) {
             Assertions.assertTrue(arrayList.size() == cities.length);
             Assertions.assertTrue(arrayList.toArray().length == cities.length);
             //删除
@@ -545,9 +550,9 @@ public class CommonTest {
             list1.add("ShenZhen");
         });
 
-        System.out.println("before rotate:"+arrayList);
+        System.out.println("before rotate:" + arrayList);
         Collections.rotate(arrayList, 2);
-        System.out.println("after rotate:"+arrayList);
+        System.out.println("after rotate:" + arrayList);
     }
 
     @Test
@@ -587,7 +592,7 @@ public class CommonTest {
     }
 
     @Test
-    public void testCollectionRotate(){
+    public void testCollectionRotate() {
         List<Integer> numbers = new ArrayList<>();
         numbers.add(1);
         numbers.add(2);
@@ -681,6 +686,22 @@ public class CommonTest {
 
         for (Map.Entry<String, Integer> entry : map.entrySet()) {
             System.out.println(entry.getKey() + ":" + entry.getValue());
+        }
+    }
+
+    @Test
+    public void testURL() throws IOException {
+        URL url = new URL("https://yesno.wtf/api");
+        System.out.println("host:" + url.getHost());
+        System.out.println("port:" + url.getDefaultPort());
+        System.out.println("protocol:" + url.getProtocol());
+        System.out.println("path:" + url.getPath());
+        URLConnection conn = url.openConnection();
+        System.out.println("content length:" + conn.getContentLength());
+        Map headers = conn.getHeaderFields();
+        Set<String> keys = headers.keySet();
+        for (String k : keys) {
+            System.out.println(k + ":" + headers.get(k));
         }
     }
 }
