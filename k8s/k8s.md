@@ -30,5 +30,8 @@ containerd 命令行工具 ctr 特性不如 docker 丰富，如 ctr 1.2 并没�
 
 kubectl run busybox --image busybox:1.28 --restart=Never --rm -it busybox -- sh
 
-
 kubeadm token create --print-join-command
+
+docker run -p 5432:5432 -e POSTGRES_PASSWORD=password -e POSTGRES_HOST_AUTH_METHOD=trust --rm postgres:latest
+
+nc -zv 127.0.0.1 80

@@ -78,7 +78,9 @@ public class ThreadTest {
         //等待线程
         Thread waitThread = new Thread(() -> {
             synchronized (message) {
-                System.out.println("等待线程获取消息：" + message.getContent());
+                while (message.getContent() != "END"){
+                    System.out.println("等待线程获取消息：" + message.getContent());
+                }
             }
         });
         waitThread.start();
@@ -86,11 +88,17 @@ public class ThreadTest {
         //通知线程
         Thread notifyThread = new Thread(()->{
             synchronized (message){
-                message.setContent("Hello world....");
+                int count = 0 ;
+                while (count++ < 10){
+                    System.out.println(count);
+                    message.setContent("Hello world...."+count);
+                }
+                message.setContent("END");
             }
         });
         notifyThread.start();
 
-        Thread.sleep(10000);
+        waitThread.join();
+        notifyThread.join();
     }
 }
