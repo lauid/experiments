@@ -28,3 +28,9 @@ eureka:
 user-service:
   ribbon:
       NFLoadBalancerRuleClassName: com.netflix.loadbalancer.RandomRule # 负载均衡规
+
+ribbon:
+  eager-load:
+    enabled: true #懒加载,项目启动时加载服务列表
+    clients:
+      - user-service
