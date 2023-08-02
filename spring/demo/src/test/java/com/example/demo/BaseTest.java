@@ -1,14 +1,24 @@
 package com.example.demo;
 
+import com.example.demo.spi.LoggerService;
+import org.hibernate.validator.internal.util.stereotypes.Immutable;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import javax.swing.plaf.synth.SynthTextAreaUI;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 @SpringBootTest
 public class BaseTest {
@@ -54,4 +64,78 @@ public class BaseTest {
         privateMethod.invoke(targetObject);
     }
 
+    @Test
+    public void testLogger() {
+        LoggerService service = LoggerService.getService();
+        service.info("Hello SPI");
+        service.debug("Hello SPI");
+    }
+
+    @Test
+    public void test1() {
+        Integer i = 10_000;
+        System.out.println(i);
+
+        try (BufferedReader reader = new BufferedReader(new FileReader("c:\\share\\aa.txt"))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                System.out.println(line);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Test
+    public void testLambda() {
+        List<String> strList1 = new ArrayList<>(Arrays.asList("www.qq.com".split("\\.")));
+        strList1.forEach(System.out::println);
+        List<String> strList2 = List.of("www", "baidu", "com");
+        strList2.forEach(s -> {
+            System.out.println(s);
+        });
+    }
+
+    class GT<T> {
+        public static int var = 0;
+
+        public void nothing(T x) {
+        }
+    }
+
+    @Test
+    public void testGeneric() {
+        GT<Integer> gts = new GT<Integer>();
+        gts.var = 22;
+
+        GT<Integer> gt = new GT<Integer>();
+        gt.var = 11;
+        System.out.println(gts.var);
+    }
+
+    class Person {
+        public String name;
+
+        Person(String name) {
+            this.name = name;
+        }
+    }
+
+    private void swap(Person man1, Person man2) {
+        Person tmp;
+        tmp = man1;
+        man1 = man2;
+        man2 = tmp;
+        System.out.println("man1 name: " + man1.name);
+        System.out.println("man2 name: " + man2.name);
+    }
+
+    @Test
+    public void testSwap() {
+        Person man1 = new Person("man1");
+        Person man2 = new Person("man2");
+        System.out.println("before: " + man1.name + " " + man2.name);
+        swap(man1, man2);
+        System.out.println("after: " + man1.name + " " + man2.name);
+    }
 }
