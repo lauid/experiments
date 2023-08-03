@@ -8,6 +8,11 @@ spring:
     username: root
     password: password
     driver-class-name: com.mysql.jdbc.Driver
+  cloud:
+    nacos:
+      server-addr: 192.168.56.23:8848
+      discovery:
+        cluster-name: HZ
 
 mybatis:
   type-aliases-package: cn.itcast.user.pojo
@@ -20,7 +25,7 @@ logging:
     dateformat: MM-dd HH:mm:ss:SSS
 
 
-eureka:
-  client:
-    service-url:
-      defaultZone: http://127.0.0.1:10086/eureka/
+#eureka:
+#  client:
+#    service-url:
+#      defaultZone: http://127.0.0.1:10086/eureka/
