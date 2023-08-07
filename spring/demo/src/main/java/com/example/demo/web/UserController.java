@@ -1,15 +1,12 @@
 package com.example.demo.web;
 
+import com.example.demo.common.JSONResult;
 import com.example.demo.model.User;
 import jakarta.validation.Valid;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
-
-import javax.swing.plaf.synth.SynthTextAreaUI;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class UserController {
@@ -23,5 +20,28 @@ public class UserController {
         }
 
         return name;
+    }
+
+    @GetMapping(path = "/getUser", produces = "application/json")
+    @ResponseBody
+    public JSONResult getUser() {
+        return getJsonResult();
+    }
+
+    @GetMapping(path = "/getUser2")
+    public JSONResult getUser2() {
+        return getJsonResult();
+    }
+
+    @NotNull
+    private JSONResult getJsonResult() {
+        User user = new User();
+        user.setAddress("address");
+        user.setEmail("abc@qq.com");
+        user.setAge(20);
+        user.setName("Name");
+        JSONResult result = JSONResult.success(user);
+        System.out.println(result);
+        return result;
     }
 }

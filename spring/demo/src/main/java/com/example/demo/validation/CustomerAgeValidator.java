@@ -13,7 +13,7 @@ import java.lang.annotation.*;
 @Documented
 @Target({ElementType.ANNOTATION_TYPE, ElementType.METHOD, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface CustomerValidator {
+public @interface CustomerAgeValidator {
     String message() default "年龄必须大于18且小于120";
 
     Class<?>[] groups() default {};
