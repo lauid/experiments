@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.Random;
 import java.util.concurrent.*;
 
 @SpringBootTest
@@ -103,5 +104,12 @@ public class QueueTest {
         }catch (Throwable e){
             Assertions.assertThrowsExactly(TimeoutException.class, (Executable) e);
         }
+    }
+
+    @Test
+    public void test1(){
+        Random random = new Random();
+        boolean b = random.nextBoolean();
+        Assertions.assertTrue(b || !b);
     }
 }
