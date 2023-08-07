@@ -138,4 +138,16 @@ public class BaseTest {
         swap(man1, man2);
         System.out.println("after: " + man1.name + " " + man2.name);
     }
+
+    /**
+     * Class<?>[] 是一个 Java 中的泛型数组表示形式。其中，Class<?> 表示一个未知类型的 Class 对象，[] 表示这是一个数组，而 <?> 则表示未知的通配符类型。
+     */
+    @Test
+    public void testClass() {
+        Class<?>[] classes = new Class<?>[3];
+        classes[0] = Integer.class;
+        classes[1] = String.class;
+        classes[2] = Boolean.class;
+        System.out.println(Arrays.asList(classes));
+    }
 }

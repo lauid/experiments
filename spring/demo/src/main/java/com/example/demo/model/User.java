@@ -1,5 +1,6 @@
 package com.example.demo.model;
 
+import com.example.demo.validation.CustomerValidator;
 import jakarta.validation.constraints.*;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.stereotype.Component;
@@ -12,8 +13,9 @@ public class User {
     @Length(min = 2, max = 10, message = "姓名长度错误，姓名长度2-10！")
     private String name;
 
-    @NotNull(message = "年龄不能为空！")
-    @Min(18)
+    //    @NotNull(message = "年龄不能为空！")
+//    @Min(18)
+    @CustomerValidator
     private int age;
 
 
