@@ -1,14 +1,12 @@
 package com.example.demo;
 
+import com.alibaba.fastjson.JSON;
 import com.example.demo.spi.LoggerService;
-import org.hibernate.validator.internal.util.stereotypes.Immutable;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import javax.swing.plaf.synth.SynthTextAreaUI;
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -137,5 +135,68 @@ public class BaseTest {
         System.out.println("before: " + man1.name + " " + man2.name);
         swap(man1, man2);
         System.out.println("after: " + man1.name + " " + man2.name);
+    }
+
+    /**
+     * Class<?>[] 是一个 Java 中的泛型数组表示形式。其中，Class<?> 表示一个未知类型的 Class 对象，[] 表示这是一个数组，而 <?> 则表示未知的通配符类型。
+     */
+    @Test
+    public void testClass() {
+        Class<?>[] classes = new Class<?>[3];
+        classes[0] = Integer.class;
+        classes[1] = String.class;
+        classes[2] = Boolean.class;
+        System.out.println(Arrays.asList(classes));
+    }
+
+    public enum Gender {
+        MALE("man","男性"), FEMALE("woman","女性");
+
+        private final String name;
+        private String code;
+
+        Gender(String code, String name ) {
+            this.code = code;
+            this.name = name;
+        }
+    }
+
+    @Test
+    public void testEnum() {
+        Gender gender = Gender.MALE;
+        System.out.println(gender.name);
+    }
+
+    public void testList2String(){
+        List<Long> longs = new ArrayList<>();
+        longs.add(1L);
+        longs.add(2L);
+        longs.add(3L);
+        String actual = JSON.toJSONString(longs);
+        System.out.println(actual);
+    }
+
+    public enum ProductSPU{
+        STATUS_A("1"),STATUS_B("2");
+
+        private final String status;
+
+        ProductSPU(String number) {
+            this.status = number;
+        }
+
+        public String getStatus() {
+            return status;
+        }
+
+        public Integer getStatus1() {
+            return  Integer.parseInt(this.status);
+        }
+    }
+
+    @Test
+    public void testStream(){
+        int[] array = Arrays.stream(ProductSPU.values()).mapToInt(ProductSPU::getStatus1).toArray();
+        System.out.println(Arrays.toString(array));
     }
 }
