@@ -1,0 +1,32 @@
+package com.example.demo.model;
+
+import jakarta.persistence.*;
+
+@Entity
+//@Table(name = "role")
+public class Role {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(name = "user_name", nullable = false, length = 32, columnDefinition = "tinyint(1) default 1")
+    private String name;
+
+    @Column(columnDefinition = "tinyint(1) default 1")
+    private Boolean enabled;
+
+    private String description;
+
+    transient String secret;
+
+    //指定不持久化字段
+    @Transient
+    private String secret2;
+
+    //大字段
+    @Lob
+    private String content;
+
+    @Enumerated(EnumType.STRING)
+    private Gender gender;
+}

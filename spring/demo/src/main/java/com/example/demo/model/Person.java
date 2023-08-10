@@ -1,8 +1,15 @@
 package com.example.demo.model;
 
 import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 
+import lombok.Data;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class Person {
     @NotBlank(message = "userId不能为空", groups = {GroupA.class})
     /**用户id*/
