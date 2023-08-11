@@ -2,8 +2,12 @@ package main
 
 import (
 	"context"
+	"crypto/tls"
+	"encoding/json"
+	"fmt"
 	"log"
 	"math/rand"
+	"net/http"
 	"sync"
 	"time"
 	"bytes"
@@ -30,7 +34,10 @@ func main() {
 	cfg := elasticsearch.Config{
 		Addresses: []string{"https://localhost:9200"},
 		Username: "elastic",
-		Password: "1151cH+OI*sT7Axg_MBl",
+		Password: "XD7eytxZ_TfAa27Y0z0q",
+		Transport: &http.Transport{
+			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+		},
 	}
 	esClient, err := elasticsearch.NewClient(cfg)
 	if err != nil {
@@ -54,6 +61,7 @@ func main() {
 				"price":       rand.Float64() * 100,
 				"created_at":  time.Now(),
 			}
+			fmt.Println("insert:",product)
 
 			_, err := mongoCollection.InsertOne(context.Background(), product)
 			if err != nil {
@@ -87,6 +95,7 @@ func main() {
 
 			for _, product := range products {
 				product := product
+				fmt.Println("product:",product)
 				indexReq := esapi.IndexRequest{
 					Index:      esIndex,
 					DocumentID: product["_id"].(primitive.ObjectID).Hex(),
@@ -94,10 +103,11 @@ func main() {
 					Refresh:    "true",
 				}
 
-				_, err := indexReq.Do(context.Background(), esClient)
+				res, err := indexReq.Do(context.Background(), esClient)
 				if err != nil {
 					log.Println("4,",err)
 				}
+				fmt.Println(res)
 
 				time.Sleep(time.Millisecond * 100)
 			}
@@ -132,5 +142,6 @@ func bsonToJSON(data bson.M) []byte{
 		log.Println(err)
 		return []byte("")
 	}
+	fmt.Println(string(json.RawMessage(doc)))
 	return doc
 }
