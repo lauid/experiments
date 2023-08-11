@@ -37,6 +37,6 @@ public class StreamTest {
         //4,获取数组的stream流
         String[] names2 = {"张翠山","东方不白","孤独秋容","北乔峰","南慕容"};
         Stream<String> stream2 = Arrays.stream(names2);
-        Stream<String> names21 = Stream.of(names2);
+        Stream.of(names2)
     }
 }
