@@ -182,6 +182,7 @@ func getDocs(ctx context.Context) <-chan Product {
 		cursor, err := collection.Find(context.TODO(), filter)
 		if err != nil {
 			log.Fatal(err)
+			return
 		}
 		defer cursor.Close(ctx)
 
