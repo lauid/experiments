@@ -23,10 +23,10 @@ import (
 )
 
 type Product struct {
-	ID       string    `bson:"_id,omitempty"`
-	Name     string    `bson:"name"`
-	CreateAt time.Time `bson:"create_at"`
-	UpdateAt time.Time `bson:"update_at"`
+	ID       string    `bson:"_id,omitempty" json:"id,omitempty"`
+	Name     string    `bson:"name" json:"name,omitempty"`
+	CreateAt time.Time `bson:"create_at" json:"create_at,omitempty"`
+	UpdateAt time.Time `bson:"update_at" json:"update_at,omitempty"`
 }
 
 type SVC struct {
@@ -34,39 +34,63 @@ type SVC struct {
 	esClient    *elasticsearch.Client
 }
 
+func (s *SVC) stopServer() error {
+	if err := s.mongoClient.Disconnect(context.TODO()); err != nil {
+		log.Fatal(err)
+		return err
+	}
+
+	return nil
+}
+
 var svc *SVC
 
 func main() {
+	//defer func() {
+	//	if err := recover(); err != nil {
+	//		fmt.Println(err)
+	//	}
+	//}()
+	defer fmt.Println("exited...")
+
 	ctx, cancel := context.WithCancel(context.Background())
 	g, ctx := errgroup.WithContext(ctx)
-
-	defer func() {
-		if err := recover(); err != nil {
-			fmt.Println(err)
-		}
-	}()
-	defer fmt.Println("aaaaaaaaaaaa.")
-	defer time.Sleep(time.Second * 1)
+	fmt.Println("1")
 
 	svc = &SVC{}
-
-	//mongo
-	clientOptions := options.Client().ApplyURI("mongodb://192.168.56.11:27017/?connect=direct")
-	mongoClient, err := mongo.Connect(context.TODO(), clientOptions)
+	defer svc.stopServer()
+	err := mongoSetUp(svc)
 	if err != nil {
 		log.Fatal(err)
+		return
 	}
-	err = mongoClient.Ping(context.TODO(), nil)
+	err = esSetUp(svc)
 	if err != nil {
 		log.Fatal(err)
+		return
 	}
-	svc.mongoClient = mongoClient
-	defer func() {
-		if err := mongoClient.Disconnect(context.TODO()); err != nil {
-			log.Fatal(err)
-		}
-	}()
+	fmt.Println(svc)
 
+	g.Go(func() error {
+		return syncEsTimer(ctx)
+	})
+
+	g.Go(func() error {
+		return batchInsertMongo(ctx)
+	})
+
+	g.Go(func() error {
+		return StopSignalHandler(ctx, cancel, svc)
+	})
+
+	if err := g.Wait(); err != nil {
+		fmt.Printf("Authentication service terminated: %s\n", err)
+	}
+	fmt.Println("exit..........")
+}
+func esSetUp(svc *SVC) error {
+	defer fmt.Println("esSetup exit.")
+	fmt.Println("esSetup")
 	//es
 	cfg := elasticsearch.Config{
 		Addresses: []string{
@@ -81,63 +105,73 @@ func main() {
 	client, err := elasticsearch.NewClient(cfg)
 	if err != nil {
 		log.Fatalf("error creating the client:%s", err)
-		return
+		return err
 	}
 	svc.esClient = client
+	return nil
+}
 
-	g.Go(func() error {
-		return syncEsTimer(ctx)
-	})
+func mongoSetUp(svc *SVC) error {
+	defer fmt.Println("mongosetup end")
+	fmt.Println("mongosetup")
+	//mongo
+	clientOptions := options.Client().ApplyURI("mongodb://192.168.56.11:27017/?connect=direct")
+	mongoClient, err := mongo.Connect(context.TODO(), clientOptions)
+	if err != nil {
+		log.Fatal(err)
+		return err
+	}
+	err = mongoClient.Ping(context.TODO(), nil)
+	if err != nil {
+		log.Fatal(err)
+		return err
+	}
+	svc.mongoClient = mongoClient
+	return nil
+}
 
-	g.Go(func() error {
-		ticker := time.NewTicker(2 * time.Second)
-		for {
-			select {
-			case <-ctx.Done():
-				fmt.Println("operation cancel.")
-				return ctx.Err()
-			case <-ticker.C:
-				fmt.Println("ticker.insert..")
-				fmt.Println(time.Now().Format(time.RFC3339))
-				collection := svc.mongoClient.Database("lauid").Collection("myCollection")
-				var docs []interface{}
-				for i := 0; i < 20; i++ {
-					docs = append(docs, Product{Name: "name" + strconv.Itoa(rand.Intn(20)), CreateAt: time.Now(), UpdateAt: time.Now()})
-				}
-				fmt.Println("insertMany:", docs)
-				_, err = collection.InsertMany(context.TODO(), docs)
-				if err != nil {
-					log.Fatal(err)
-					return err
-				}
+func batchInsertMongo(ctx context.Context) error {
+	ticker := time.NewTicker(2 * time.Second)
+	defer ticker.Stop()
+
+	for {
+		select {
+		case <-ctx.Done():
+			fmt.Println("mongo operation cancel.")
+			return ctx.Err()
+
+		case <-ticker.C:
+			fmt.Println("ticker.insert..")
+			fmt.Println(time.Now().Format(time.RFC3339))
+			collection := svc.mongoClient.Database("lauid").Collection("myCollection")
+			var docs []interface{}
+			for i := 0; i < 20; i++ {
+				docs = append(docs, Product{Name: "name" + strconv.Itoa(rand.Intn(20)), CreateAt: time.Now(), UpdateAt: time.Now()})
+			}
+			fmt.Println("insertMany:", docs)
+			_, err := collection.InsertMany(context.TODO(), docs)
+			if err != nil {
+				log.Fatal(err)
+				return err
 			}
 		}
-	})
-
-	g.Go(func() error {
-		return StopSignalHandler(ctx, cancel)
-	})
-
-	if err := g.Wait(); err != nil {
-		fmt.Printf("Authentication service terminated: %s", err)
 	}
 }
 
-func StopSignalHandler(ctx context.Context, cancel context.CancelFunc) error {
-	var err error
-	c := make(chan os.Signal, 2)
-	signal.Notify(c, syscall.SIGINT, syscall.SIGTERM)
+func StopSignalHandler(ctx context.Context, cancel context.CancelFunc, svc *SVC) error {
+	c := make(chan os.Signal, 1)
+	signal.Notify(c, syscall.SIGINT, syscall.SIGTERM, syscall.SIGABRT)
 	select {
 	case sig := <-c:
+		fmt.Println("service get signal: ", sig)
 		defer cancel()
-		err = fmt.Errorf("service shutdown by signal: %v", sig)
-		return err
+		return fmt.Errorf("service shutdown by signal: %v", sig)
 	case <-ctx.Done():
-		return nil
+		return ctx.Err()
 	}
 }
 
-func getDocs() <-chan Product {
+func getDocs(ctx context.Context) <-chan Product {
 	pChan := make(chan Product, 2)
 	go func() {
 		defer close(pChan)
@@ -149,16 +183,20 @@ func getDocs() <-chan Product {
 		if err != nil {
 			log.Fatal(err)
 		}
-		defer cursor.Close(context.TODO())
+		defer cursor.Close(ctx)
 
-		for cursor.Next(context.TODO()) {
+		for cursor.Next(ctx) {
 			var result Product
 			err := cursor.Decode(&result)
 			if err != nil {
 				log.Fatal(err)
 			}
-			fmt.Println(result)
+			//fmt.Println(result)
 			pChan <- result
+
+			if ctx.Err() != nil{
+				break
+			}
 		}
 
 		if err := cursor.Err(); err != nil {
@@ -171,15 +209,17 @@ func getDocs() <-chan Product {
 
 func syncEsTimer(ctx context.Context) error {
 	fmt.Println("syncTimer")
-	t := time.Tick(1 * time.Second)
+	t := time.NewTicker(2 * time.Second)
+	defer t.Stop()
+
 	for {
 		select {
 		case <-ctx.Done():
-			fmt.Println("operation cancel.")
+			fmt.Println("es operation cancel.")
 			return ctx.Err()
-		case <-t:
+		case <-t.C:
 			fmt.Println("sync...")
-			err := syncEs()
+			err := syncEs(ctx)
 			if err != nil {
 				return err
 			}
@@ -187,16 +227,17 @@ func syncEsTimer(ctx context.Context) error {
 	}
 }
 
-func syncEs() error {
+func syncEs(ctx context.Context) error {
 	//curl -ks https://127.0.0.1:9200/_cat/health -u elastic:VOFdLYFHAjlDSCSEO6c=
 
-	indexName := "product_index"
+	indexName := "product_index1"
 	err := createIndex(svc.esClient, indexName)
 	if err != nil {
 		return err
 	}
-	pChan := getDocs()
+	pChan := getDocs(ctx)
 
+	fmt.Println("sync es")
 	for doc := range pChan {
 		err := indexDocument(svc.esClient, indexName, doc)
 		if err != nil {
@@ -208,6 +249,22 @@ func syncEs() error {
 }
 
 func createIndex(client *elasticsearch.Client, index string) error {
+	existRequest := esapi.IndicesExistsRequest{
+		Index: []string{index},
+	}
+	do, err := existRequest.Do(context.Background(), client)
+	if err != nil {
+		return err
+	}
+	defer do.Body.Close()
+	if do.IsError() {
+		log.Printf("Error exist index: %s\n", do.Status())
+	}
+	log.Println("exist res:", do)
+	if do.StatusCode == http.StatusOK {
+		return nil
+	}
+
 	request := esapi.IndicesCreateRequest{
 		Index: index,
 	}
@@ -267,8 +324,5 @@ func indexDocument(es *elasticsearch.Client, indexName string, doc Product) erro
 		log.Fatalf("Error parsing the response body: %s", err)
 		return err
 	}
-
-	// 输出响应结果
-	fmt.Printf("Indexed document ID: %s\n", r["_id"])
 	return nil
 }
