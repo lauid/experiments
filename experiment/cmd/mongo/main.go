@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"context"
+	"crypto/tls"
 	"encoding/json"
 	"fmt"
 	"github.com/elastic/go-elasticsearch/v8"
@@ -13,6 +14,7 @@ import (
 	"golang.org/x/sync/errgroup"
 	"log"
 	"math/rand"
+	"net/http"
 	"os"
 	"os/signal"
 	"strconv"
@@ -45,12 +47,11 @@ func main() {
 	}()
 	defer fmt.Println("aaaaaaaaaaaa.")
 	defer time.Sleep(time.Second * 1)
-	defer cancel()
 
 	svc = &SVC{}
 
 	//mongo
-	clientOptions := options.Client().ApplyURI("mongodb://192.168.56.11:27017")
+	clientOptions := options.Client().ApplyURI("mongodb://192.168.56.11:27017/?connect=direct")
 	mongoClient, err := mongo.Connect(context.TODO(), clientOptions)
 	if err != nil {
 		log.Fatal(err)
@@ -72,7 +73,10 @@ func main() {
 			"https://192.168.56.11:9200",
 		},
 		Username: "elastic",
-		Password: "VOFdLYFHAjlDSCSEO6c=",
+		Password: "kzY8a5gFiN=*QhVpjPX2",
+		Transport: &http.Transport{
+			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+		},
 	}
 	client, err := elasticsearch.NewClient(cfg)
 	if err != nil {
@@ -87,21 +91,27 @@ func main() {
 
 	g.Go(func() error {
 		ticker := time.NewTicker(2 * time.Second)
-		for range ticker.C {
-			fmt.Println(time.Now().Format(time.RFC3339))
-			collection := svc.mongoClient.Database("lauid").Collection("myCollection")
-			var docs []interface{}
-			for i := 0; i < 20; i++ {
-				docs = append(docs, Product{Name: "name" + strconv.Itoa(rand.Intn(20)), CreateAt: time.Now(), UpdateAt: time.Now()})
-			}
-			fmt.Println(docs)
-			_, err = collection.InsertMany(context.TODO(), docs)
-			if err != nil {
-				log.Fatal(err)
-				return err
+		for {
+			select {
+			case <-ctx.Done():
+				fmt.Println("operation cancel.")
+				return ctx.Err()
+			case <-ticker.C:
+				fmt.Println("ticker.insert..")
+				fmt.Println(time.Now().Format(time.RFC3339))
+				collection := svc.mongoClient.Database("lauid").Collection("myCollection")
+				var docs []interface{}
+				for i := 0; i < 20; i++ {
+					docs = append(docs, Product{Name: "name" + strconv.Itoa(rand.Intn(20)), CreateAt: time.Now(), UpdateAt: time.Now()})
+				}
+				fmt.Println("insertMany:", docs)
+				_, err = collection.InsertMany(context.TODO(), docs)
+				if err != nil {
+					log.Fatal(err)
+					return err
+				}
 			}
 		}
-		return nil
 	})
 
 	g.Go(func() error {
@@ -120,7 +130,7 @@ func StopSignalHandler(ctx context.Context, cancel context.CancelFunc) error {
 	select {
 	case sig := <-c:
 		defer cancel()
-		fmt.Printf("service shutdown by signal: %s", sig)
+		err = fmt.Errorf("service shutdown by signal: %v", sig)
 		return err
 	case <-ctx.Done():
 		return nil
@@ -160,40 +170,51 @@ func getDocs() <-chan Product {
 }
 
 func syncEsTimer(ctx context.Context) error {
+	fmt.Println("syncTimer")
 	t := time.Tick(1 * time.Second)
 	for {
 		select {
 		case <-ctx.Done():
 			fmt.Println("operation cancel.")
-			return nil
+			return ctx.Err()
 		case <-t:
 			fmt.Println("sync...")
-			//syncEs()
+			err := syncEs()
+			if err != nil {
+				return err
+			}
+		}
+	}
+}
+
+func syncEs() error {
+	//curl -ks https://127.0.0.1:9200/_cat/health -u elastic:VOFdLYFHAjlDSCSEO6c=
+
+	indexName := "product_index"
+	err := createIndex(svc.esClient, indexName)
+	if err != nil {
+		return err
+	}
+	pChan := getDocs()
+
+	for doc := range pChan {
+		err := indexDocument(svc.esClient, indexName, doc)
+		if err != nil {
+			return err
 		}
 	}
 
 	return nil
 }
 
-func syncEs() {
-	//curl -ks https://127.0.0.1:9200/_cat/health -u elastic:VOFdLYFHAjlDSCSEO6c=
-
-	indexName := "product_index"
-	createIndex(svc.esClient, indexName)
-	pChan := getDocs()
-
-	for doc := range pChan {
-		indexDocument(svc.esClient, indexName, doc)
-	}
-}
-
-func createIndex(client *elasticsearch.Client, index string) {
+func createIndex(client *elasticsearch.Client, index string) error {
 	request := esapi.IndicesCreateRequest{
 		Index: index,
 	}
 	res, err := request.Do(context.Background(), client)
 	if err != nil {
-		return
+		log.Fatal(err)
+		return err
 	}
 	defer res.Body.Close()
 	if res.IsError() {
@@ -203,17 +224,20 @@ func createIndex(client *elasticsearch.Client, index string) {
 	var r map[string]interface{}
 	if err := json.NewDecoder(res.Body).Decode(&r); err != nil {
 		log.Fatalf("Error parsing the response body:%s", err)
+		return err
 	}
 
 	fmt.Println("index created:", r)
+	return nil
 }
 
 // 写入文档
-func indexDocument(es *elasticsearch.Client, indexName string, doc Product) {
+func indexDocument(es *elasticsearch.Client, indexName string, doc Product) error {
 	// 序列化文档数据
 	docBytes, err := json.Marshal(doc)
 	if err != nil {
 		log.Fatalf("Error encoding document: %s", err)
+		return err
 	}
 
 	// 创建索引请求
@@ -228,6 +252,7 @@ func indexDocument(es *elasticsearch.Client, indexName string, doc Product) {
 	res, err := req.Do(context.Background(), es)
 	if err != nil {
 		log.Fatalf("Error indexing document: %s", err)
+		return err
 	}
 	defer res.Body.Close()
 
@@ -240,8 +265,10 @@ func indexDocument(es *elasticsearch.Client, indexName string, doc Product) {
 	var r map[string]interface{}
 	if err := json.NewDecoder(res.Body).Decode(&r); err != nil {
 		log.Fatalf("Error parsing the response body: %s", err)
+		return err
 	}
 
 	// 输出响应结果
 	fmt.Printf("Indexed document ID: %s\n", r["_id"])
+	return nil
 }

@@ -34,5 +34,7 @@ public class ThreadTest {
                 desk.get();
             }
         }, "吃货2").start();
+
+        System.out.println("---------");
     }
 }
