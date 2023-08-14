@@ -10,6 +10,35 @@ import (
 )
 
 func main() {
+	s := []string{"A", "B", "C"}
+	counter := 0
+	for _, v := range s {
+		s = append(s, v)
+		counter++
+	}
+	fmt.Println(counter)
+	fmt.Println(s)
+}
+
+func main2() {
+	var m = map[string]int{
+		"A": 21,
+		"B": 22,
+		"C": 23,
+	}
+	counter := 0
+	for k, v := range m {
+		if counter == 0 {
+			delete(m, "A")
+		}
+		counter++
+		fmt.Println(k, v)
+	}
+	fmt.Println("counter is ", counter)
+	fmt.Println(m)
+}
+
+func main1() {
 	ctx, cancelFunc := context.WithCancel(context.Background())
 
 	go func() {
@@ -39,7 +68,6 @@ func main() {
 			}
 		}
 	}()
-
 
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, syscall.SIGINT, syscall.SIGTERM, syscall.SIGABRT)
