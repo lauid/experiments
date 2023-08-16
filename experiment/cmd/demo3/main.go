@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"log"
 	"os"
 	"os/signal"
 	"syscall"
@@ -10,6 +11,45 @@ import (
 )
 
 func main() {
+	file, err := os.ReadFile("aa.log")
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	//fmt.Println(string(file))
+
+	//fmt.Println(len(file))
+	// 创建或打开日志文件
+	file2, err := os.OpenFile("bb.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer func(file2 *os.File) {
+		err := file2.Close()
+		if err != nil {
+			log.Println(err)
+		}
+	}(file2)
+
+	for i := 0; i < len(file); i += 32 {
+		end := i + 32
+		if end > len(file) {
+			end = len(file)
+		}
+		//fmt.Println(i)
+		//fmt.Println(end)
+
+		chunk := file[i:end]
+		fmt.Println(string(chunk), ",")
+		_, err := file2.Write(chunk)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+	}
+}
+
+func main3() {
 	s := []string{"A", "B", "C"}
 	counter := 0
 	for _, v := range s {

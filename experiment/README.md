@@ -22,3 +22,7 @@ http://192.168.40.180:8080/swagger/index.html
 2，中间件
 3，jaeger
 4,登录授权
+
+
+root@node1:~/code/demo# docker run -d -p 3306:3306 -e MYSQL_ALLOW_EMPTY_PASSWORD=true mysql:8.1.0
+root@node1:~/code/demo# mysql -h 127.0.0.1 -u root -p

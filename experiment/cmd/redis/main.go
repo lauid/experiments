@@ -2,9 +2,11 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"github.com/go-redis/redis/v8"
 	"log"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -20,22 +22,28 @@ func main() {
 			log.Println("redis close err:", err)
 		}
 	}(rdc)
+	streamName := "mystream"
 
 	// 添加消息到 Stream，并自定义消息的 ID
 	go func() {
 		counter := 0
-		ticker := time.NewTicker(2 * time.Second)
+		ticker := time.NewTicker(100 * time.Millisecond)
 		defer ticker.Stop()
 		for range ticker.C {
 			counter += 1
-			streamAddWithCustomID(rdc, "mystream", "custom-message-id", "Hello, World!"+strconv.Itoa(counter))
+			streamAddWithCustomID(rdc, streamName, "custom-message-id", "Hello, World!"+strconv.Itoa(counter))
 		}
 	}()
 
 	go func() {
 		//streamRead(rdc, "mystream", "0")
-		streamReader(rdc, "mystream", "0")
+		consumerGroup(rdc, streamName)
 	}()
+
+	//go func() {
+	//	//streamRead(rdc, "mystream", "0")
+	//	streamReader(rdc, streamName, "0")
+	//}()
 
 	select {}
 }
@@ -103,7 +111,7 @@ func streamRead(rdc *redis.Client, streamName, startId string) error {
 }
 
 func streamAddWithCustomID(rdc *redis.Client, streamName, id, message string) error {
-	res, err := rdc.XAdd(
+	_, err := rdc.XAdd(
 		context.Background(),
 		&redis.XAddArgs{
 			Stream: streamName,
@@ -116,7 +124,58 @@ func streamAddWithCustomID(rdc *redis.Client, streamName, id, message string) er
 	if err != nil {
 		return err
 	}
-	log.Println("Message added to stream with custom ID:", res)
+	//log.Println("Message added to stream with custom ID:", res)
 
 	return nil
+}
+
+func consumerGroup(client *redis.Client, streamName string) {
+	// 创建消费者组并订阅消息
+	consumerGroupName := "myConsumerGroup"
+	consumerName := "myConsumer"
+
+	_, err := client.XGroupCreateMkStream(context.Background(), streamName, consumerGroupName, "$").Result()
+	if err != nil {
+		if !strings.HasPrefix(err.Error(),"BUSYGROUP Consumer Group name already exists"){
+			log.Fatal(err)
+		}
+	}
+
+	for {
+		// 从 Redis Stream 中读取新消息
+		streams, err := client.XReadGroup(context.Background(), &redis.XReadGroupArgs{
+			Group:    consumerGroupName,
+			Consumer: consumerName,
+			Streams:  []string{streamName, ">"},
+			Count:    10,               // 一次读取的消息数量
+			Block:    time.Second * 10, // 阻塞时间，等待新消息
+		}).Result()
+		if err != nil {
+			log.Println(err)
+			continue
+		}
+		fmt.Println(len(streams))
+
+		for _, stream := range streams {
+			streamName := stream.Stream
+
+			// 处理消息
+			for _, message := range stream.Messages {
+				messageID := message.ID
+				messageValues := message.Values
+
+				fmt.Printf("Received message %s: %v\n", messageID, messageValues)
+
+				// 在这里执行你的业务逻辑
+				fmt.Println("done..........")
+				// ...
+
+				// 确认消息已被消费
+				_, err := client.XAck(context.Background(), streamName, consumerGroupName, messageID).Result()
+				if err != nil {
+					log.Println(err)
+				}
+			}
+		}
+	}
 }
