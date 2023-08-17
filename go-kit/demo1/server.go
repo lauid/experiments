@@ -1,49 +1,41 @@
 package demo1
 
-import "google.golang.org/grpc"
+import (
+	"context"
+	httptransport "github.com/go-kit/kit/transport/http"
+	"github.com/gorilla/mux"
+	"net/http"
+)
 
-type grpcServer struct {
-	registerUser grpc.Handler
-	findUser     grpc.Handler
-	deleteUser  grpc.Handler
+func NewHTTPServer(ctx context.Context, endpoints Endpoints) http.Handler {
+	r := mux.NewRouter()
+
+	r.Use(commonMiddleware)
+
+	r.Methods("GET").Path("/status").Handler(httptransport.NewServer(
+		endpoints.StatusEndpoint,
+		decodeStatusRequest,
+		encodeResponse,
+	))
+
+	r.Methods("GET").Path("/get").Handler(httptransport.NewServer(
+		endpoints.GetEndpoint,
+		decodeGetRequest,
+		encodeResponse,
+	))
+
+	r.Methods("POST").Path("/validate").Handler(httptransport.NewServer(
+		endpoints.ValidateEndpoint,
+		decodeValidateRequest,
+		encodeResponse,
+	))
+
+	return r
 }
-func (s *grpcServer) RegisterUser(ctx context.Context, req *pb.UserRequest) (*pb.UserResponse, error) {
-	_, resp, err := s.registerUser.ServeGRPC(ctx, req)
-	if err != nil {
-		return nil, err
-	}
-	return resp.(*pb.UserResponse), nil
-}
-func (s *grpcServer) FindUser(ctx context.Context, req *pb.UserRequest) (*pb.UserResponse, error) {
-	_, resp, err := s.findUser.ServeGRPC(ctx, req)
-	if err != nil {
-		return nil, err
-	}
-	return resp.(*pb.UserResponse), nil
-}
-func (s *grpcServer) DeleteUser(ctx context.Context, req *pb.UserRequest) (*pb.UserResponse, error) {
-	_, resp, err := s.deleteUser.ServeGRPC(ctx, req)
-	if err != nil {
-		return nil, err
-	}
-	return resp.(*pb.UserResponse), nil
-}
-func NewGRPCServer(_ context.Context, endpoint endpoint.UserEndpoints) pb.UserServiceServer {
-	return &grpcServer{
-		registerUser: grpc.NewServer(
-			endpoint.RegisterEndpoint,
-			DecodeGRPCUserRequest,
-			EncodeGRPCUserResponse,
-		),
-		findUser: grpc.NewServer(
-			endpoint.FindEndpoint,
-			DecodeGRPCUserRequest,
-			EncodeGRPCUserResponse,
-		),
-		deleteUser: grpc.NewServer(
-			endpoint.DeleteEndpoint,
-			DecodeGRPCUserRequest,
-			EncodeGRPCUserResponse,
-		),
-	}
+
+func commonMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Add("Content-Type", "application/json")
+		next.ServeHTTP(w, r)
+	})
 }

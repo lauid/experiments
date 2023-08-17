@@ -7,4 +7,5 @@ vendor
 build
 .mvn/*
 .mvn
+*.db
 *.class
