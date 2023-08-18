@@ -3,26 +3,26 @@ package main
 import (
 	"fmt"
 	"github.com/confluentinc/confluent-kafka-go/kafka"
+	"log"
 	"sync"
 )
 
 func main() {
-	producerConfig := kafka.ConfigMap{"bootstrap.servers": "localhost:9092"}
-	consumerConfig := kafka.ConfigMap{
-		"bootstrap.servers": "localhost:9092",
-		"group.id":          "my-consumer-group",
-		"auto.offset.reset": "earliest",
-	}
-
+	producerConfig := kafka.ConfigMap{"bootstrap.servers": "192.168.56.11:9092"}
 	producer, err := kafka.NewProducer(&producerConfig)
 	if err != nil {
-		panic(err)
+		log.Fatalln(err)
 	}
 	defer producer.Close()
 
+	consumerConfig := kafka.ConfigMap{
+		"bootstrap.servers": "192.168.56.11:9092",
+		"group.id":          "my-consumer-group",
+		"auto.offset.reset": "earliest",
+	}
 	consumer, err := kafka.NewConsumer(&consumerConfig)
 	if err != nil {
-		panic(err)
+		log.Fatalln(err)
 	}
 	defer consumer.Close()
 
@@ -52,6 +52,8 @@ func main() {
 				}, nil)
 				if err != nil {
 					fmt.Printf("Failed to produce message: %v\n", err)
+				}else {
+					fmt.Println("produce message.")
 				}
 			}
 
