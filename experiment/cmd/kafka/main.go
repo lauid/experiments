@@ -2,146 +2,110 @@ package main
 
 import (
 	"fmt"
-	"github.com/confluentinc/confluent-kafka-go/kafka"
 	"log"
+	"os"
+	"os/signal"
 	"sync"
+	"syscall"
+	"time"
+
+	"github.com/confluentinc/confluent-kafka-go/kafka"
 )
 
 func main() {
-	producerConfig := kafka.ConfigMap{"bootstrap.servers": "192.168.56.11:9092"}
-	producer, err := kafka.NewProducer(&producerConfig)
-	if err != nil {
-		log.Fatalln(err)
+	defer func() {
+		res := recover()
+		if res != nil {
+			fmt.Println(res)
+		}
+	}()
+	// 配置Kafka生产者和消费者共享的参数
+	addr := "192.168.31.149:9092"
+	config := &kafka.ConfigMap{
+		"bootstrap.servers": addr,
 	}
-	defer producer.Close()
-
-	consumerConfig := kafka.ConfigMap{
-		"bootstrap.servers": "192.168.56.11:9092",
+	consumerConfig := &kafka.ConfigMap{
+		"bootstrap.servers": addr,
 		"group.id":          "my-consumer-group",
 		"auto.offset.reset": "earliest",
 	}
-	consumer, err := kafka.NewConsumer(&consumerConfig)
+
+	// 创建Kafka生产者
+	producer, err := kafka.NewProducer(config)
 	if err != nil {
-		log.Fatalln(err)
+		log.Fatal(err)
 	}
-	defer consumer.Close()
+	defer producer.Close()
 
-	dataChan := make(chan []byte)
+	// 创建等待组，用于等待协程执行完毕
+	var wg sync.WaitGroup
+	wg.Add(2) // 两个协程
 
-	wg := sync.WaitGroup{}
-	wg.Add(1)
+	topic := "my-topic"
+
+	// 生产者协程
 	go func() {
 		defer wg.Done()
-		var topic string
-		for {
-			select {
-			case data := <-dataChan:
-				err := producer.Produce(&kafka.Message{
-					TopicPartition: kafka.TopicPartition{
-						Topic:     &topic,
-						Partition: kafka.PartitionAny,
-					},
-					Key:   []byte("key"),
-					Value: data,
-					Headers: []kafka.Header{
-						{
-							Key:   "headerKey",
-							Value: []byte("headerValue"),
-						},
-					},
-				}, nil)
-				if err != nil {
-					fmt.Printf("Failed to produce message: %v\n", err)
-				}else {
-					fmt.Println("produce message.")
+		deliveryChan := make(chan kafka.Event)
+		for i := 0; i < 100; i++ {
+			message := &kafka.Message{
+				TopicPartition: kafka.TopicPartition{Topic: &topic, Partition: kafka.PartitionAny},
+				Value:          []byte(fmt.Sprintf("Message %d", i+1)),
+				Key:            []byte("key"),
+			}
+			err := producer.Produce(message, deliveryChan)
+			if err != nil {
+				log.Println("Error:", err)
+			} else {
+				e := <-deliveryChan
+				m := e.(*kafka.Message)
+
+				if m.TopicPartition.Error != nil {
+					log.Println("Delivery failed:", m.TopicPartition.Error)
+				} else {
+					fmt.Printf("Produced message: Topic=%s, Partition=%d, Offset=%d\n",
+						*m.TopicPartition.Topic, m.TopicPartition.Partition, m.TopicPartition.Offset)
 				}
 			}
-
 		}
 	}()
 
-	wg.Add(1)
+	// 消费者协程
 	go func() {
 		defer wg.Done()
-		err := consumer.SubscribeTopics([]string{"my-topic"}, nil)
+		consumer, err := kafka.NewConsumer(consumerConfig)
 		if err != nil {
-			fmt.Printf("subscribe error:%v", err)
-			return
+			log.Fatal(err)
 		}
+		defer consumer.Close()
+
+		err = consumer.SubscribeTopics([]string{topic}, nil)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		signals := make(chan os.Signal, 1)
+		signal.Notify(signals, os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
+
 		for {
-			message, err := consumer.ReadMessage(-1)
-			if err != nil {
-				fmt.Printf("received message:%s\n", string(message.Value))
-			} else {
-				fmt.Printf("error: %v\n", err.Error())
+			select {
+			case sig := <-signals:
+				fmt.Println("get signal ", sig)
+				return
+			default:
+				//msg, err := consumer.ReadMessage(-1)
+				msg, err := consumer.ReadMessage(5 * time.Second)
+				if err == nil {
+					fmt.Printf("Consumed message: Topic=%s, Partition=%d, Offset=%d, Key=%s, Value=%s\n",
+						*msg.TopicPartition.Topic, msg.TopicPartition.Partition, msg.TopicPartition.Offset,
+						string(msg.Key), string(msg.Value))
+				} else {
+					fmt.Println("Consumer error:", err)
+				}
 			}
 		}
 	}()
 
+	// 等待协程执行完毕
 	wg.Wait()
 }
-
-//func main() {
-//	producerConfig := kafka.ConfigMap{"bootstrap.servers": "localhost:9092"}
-//	consumerConfig := kafka.ConfigMap{
-//		"bootstrap.servers":  "localhost:9092",
-//		"group.id":           "my-consumer-group",
-//		"auto.offset.reset":  "earliest",
-//	}
-//
-//	// 创建生产者和消费者
-//	producer, err := kafka.NewProducer(&producerConfig)
-//	if err != nil {
-//		panic(err)
-//	}
-//	consumer, err := kafka.NewConsumer(&consumerConfig)
-//	if err != nil {
-//		panic(err)
-//	}
-//
-//	// 创建通道用于协程间的通信
-//	dataChan := make(chan []byte)
-//	wg := sync.WaitGroup{}
-//
-//	// 协程：写入数据到Kafka
-//	wg.Add(1)
-//	go func() {
-//		defer wg.Done()
-//		for {
-//			select {
-//			case data := <-dataChan:
-//				// 生产者发送消息
-//				err := producer.Produce(&kafka.Message{
-//					TopicPartition: kafka.TopicPartition{Topic: &topic, Partition: kafka.PartitionAny},
-//					Key:            []byte("key"),
-//					Value:          data,
-//					Headers:        []kafka.Header{{Key: "headerKey", Value: []byte("headerValue")}},
-//				}, nil)
-//				if err != nil {
-//					fmt.Printf("Failed to produce message: %v\n", err)
-//				}
-//			}
-//		}
-//	}()
-//
-//	// 协程：顺序消费Kafka消息
-//	wg.Add(1)
-//	go func() {
-//		defer wg.Done()
-//		consumer.SubscribeTopics([]string{"my-topic"}, nil)
-//		for {
-//			msg, err := consumer.ReadMessage(-1)
-//			if err == nil {
-//				fmt.Printf("Received message: %s\n", string(msg.Value))
-//				// 处理消费信息的逻辑
-//			} else {
-//				fmt.Printf("Error: %v\n", err.Error())
-//			}
-//		}
-//	}()
-//
-//	wg.Wait()
-//
-//	producer.Close()
-//	consumer.Close()
-//}
