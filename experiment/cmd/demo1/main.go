@@ -14,6 +14,15 @@ import (
 )
 
 func main() {
+	ticker := time.NewTicker(time.Second * 1)
+	defer ticker.Stop()
+	for {
+		select {
+		case <-ticker.C:
+			fmt.Println(time.Now().Format(time.RFC3339))
+			time.Sleep(2 * time.Second)
+		}
+	}
 }
 
 func Case1(a any) any {

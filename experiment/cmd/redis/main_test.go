@@ -10,17 +10,44 @@ import (
 	"time"
 )
 
+func keepExpireTime(rdc *redis.Client, lockKey string, expiration time.Duration, exitChan chan struct{}) {
+	ticker := time.NewTicker(1 * time.Second)
+	defer ticker.Stop()
+
+	for {
+		select {
+		case <-ticker.C:
+			err := rdc.Expire(context.Background(), lockKey, expiration).Err()
+			if err != nil {
+				fmt.Printf("续期失败：%v\n", err)
+				return
+			}
+
+			// 这里可以添加其他的处理逻辑，表示续期成功后执行的操作
+			fmt.Println("续期成功")
+		case <-exitChan:
+			return
+		}
+	}
+}
+
 func redisLock(rdc *redis.Client) {
+	exitChan := make(chan struct{})
+	defer close(exitChan)
 	ctx := context.Background()
 	lockKey := "myLock"
 	uuidV, _ := uuid.NewUUID()
 	lockValue := uuidV.String()
-	_, err := rdc.Set(ctx, lockKey, lockValue, 10*time.Second).Result()
+	expire := 10 * time.Second
+	_, err := rdc.Set(ctx, lockKey, lockValue, expire).Result()
 	if err != nil {
 		log.Fatalln("lock fail ", err)
 	} else {
 		// 成功获取到锁，执行业务逻辑
 		log.Println("get lock success.")
+		go keepExpireTime(rdc, lockKey, expire, exitChan)
+
+		//time.Sleep(1 * time.Second)
 
 		//释放锁
 		// 定义 Lua 脚本
