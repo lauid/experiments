@@ -13,8 +13,10 @@ require (
 	github.com/go-sql-driver/mysql v1.7.0
 	github.com/golang-jwt/jwt/v4 v4.0.0
 	github.com/golang/mock v1.6.0
+	github.com/google/uuid v1.3.0
 	github.com/gorilla/mux v1.8.0
 	github.com/gorilla/sessions v1.2.1
+	github.com/gorilla/websocket v1.5.0
 	github.com/mattn/go-sqlite3 v1.14.17
 	github.com/opentracing/opentracing-go v1.2.0
 	github.com/prometheus/client_golang v1.11.1
@@ -68,7 +70,6 @@ require (
 	github.com/google/gnostic v0.5.7-v3refs // indirect
 	github.com/google/go-cmp v0.5.9 // indirect
 	github.com/google/gofuzz v1.1.0 // indirect
-	github.com/google/uuid v1.3.0 // indirect
 	github.com/gopherjs/gopherjs v1.17.2 // indirect
 	github.com/gorilla/securecookie v1.1.1 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect

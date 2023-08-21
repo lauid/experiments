@@ -26,6 +26,9 @@ type User struct {
 }
 
 func RegisterRoutes(router *gin.Engine) {
+	// 设置WebSocket路由
+	router.GET("/websocket", handlers.HandleWebSocket)
+
 
 	// 用户登录路由
 	router.POST("/login", handlers.LoginHandler)
