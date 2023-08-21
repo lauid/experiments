@@ -20,6 +20,7 @@ require (
 	github.com/mattn/go-sqlite3 v1.14.17
 	github.com/opentracing/opentracing-go v1.2.0
 	github.com/prometheus/client_golang v1.11.1
+	github.com/robfig/cron v1.2.0
 	github.com/smartystreets/goconvey v1.8.1
 	github.com/streadway/amqp v1.0.0
 	github.com/stretchr/testify v1.8.4

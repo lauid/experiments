@@ -3,9 +3,10 @@ package main
 import (
 	"context"
 	"experiment/gin/middlewares"
-	svc "experiment/internal/server"
 	groute "experiment/gin/routes"
+	svc "experiment/internal/server"
 	"experiment/jaeger"
+	"github.com/robfig/cron"
 	//_ "experiment/cmd/gin/docs" // 导入自动生成的 Swagger 代码
 	_ "experiment/docs" // 导入自动生成的 Swagger 代码
 	"experiment/gin/metrics"
@@ -85,19 +86,19 @@ func main() {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	// 创建一个用于接收终止信号的通道
-	quit := make(chan os.Signal, 1)
-	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM) // 监听 SIGINT（Ctrl+C）和 SIGTERM（kill 命令）
-
 	// 启动服务器（非阻塞）
 	server := &http.Server{
 		Addr:    ":8080",
 		Handler: router,
 	}
 
+	startCron()
 	go func() {
+		// 创建一个用于接收终止信号的通道
+		sig := make(chan os.Signal, 1)
+		signal.Notify(sig, syscall.SIGINT, syscall.SIGTERM) // 监听 SIGINT（Ctrl+C）和 SIGTERM（kill 命令）
 		// 监听终止信号
-		<-quit
+		fmt.Println("get signal ", <-sig)
 
 		// 收到终止信号后开始关闭服务器
 		log.Println("Server is shutting down...")
@@ -126,4 +127,18 @@ func main() {
 
 	// 服务器已关闭
 	log.Println("Server exiting...")
+}
+
+func startCron() {
+	c := cron.New()
+
+	// Generate RSS
+	err := c.AddFunc("@every 10s", func() {
+		fmt.Println(time.Now().Format(time.RFC3339))
+	})
+	if err != nil {
+		return
+	}
+
+	c.Start()
 }
