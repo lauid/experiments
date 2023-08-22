@@ -70,6 +70,8 @@ func main() {
 	}()
 	// 设置 Gin 路由
 	router := gin.Default()
+	router.Static("/assets", "gin/assets")
+	router.LoadHTMLGlob("gin/templates/*")
 	// 创建 pprof 路由组
 	pprofGroup := router.Group("/debug/pprof")
 	{

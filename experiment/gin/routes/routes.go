@@ -10,6 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/swaggo/files"
 	"github.com/swaggo/gin-swagger"
+	"html/template"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
@@ -29,7 +30,6 @@ func RegisterRoutes(router *gin.Engine) {
 	// 设置WebSocket路由
 	router.GET("/websocket", handlers.HandleWebSocket)
 
-
 	// 用户登录路由
 	router.POST("/login", handlers.LoginHandler)
 
@@ -48,6 +48,42 @@ func RegisterRoutes(router *gin.Engine) {
 
 	// 设置Swagger中间件
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+
+	routeWeb(router)
+}
+
+func routeWeb(router *gin.Engine) {
+	//
+	web := router.Group("/web")
+	{
+		contactHandle := handlers.ContactHandle{}
+		web.GET("/contact", contactHandle.Contact)
+	}
+
+	//
+	var html = template.Must(template.New("https").Parse(`
+<html>
+<head>
+  <title>Https Test</title>
+  <script src="/assets/app.js"></script>
+</head>
+<body>
+  <h1 style="color:red;">Welcome, Ginner!</h1>
+</body>
+</html>
+`))
+	router.SetHTMLTemplate(html)
+	router.GET("/push", func(c *gin.Context) {
+		if pusher := c.Writer.Pusher(); pusher != nil {
+			// 使用 pusher.Push() 做服务器推送
+			//if err := pusher.Push("/assets/app.js", nil); err != nil {
+			//	log.Printf("Failed to push: %v", err)
+			//}
+		}
+		c.HTML(200, "https", gin.H{
+			"status": "success",
+		})
+	})
 }
 
 func routers(router *gin.Engine) {
