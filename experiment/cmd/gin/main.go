@@ -7,6 +7,8 @@ import (
 	svc "experiment/internal/server"
 	"experiment/jaeger"
 	"github.com/robfig/cron"
+	"net/http/pprof"
+
 	//_ "experiment/cmd/gin/docs" // 导入自动生成的 Swagger 代码
 	_ "experiment/docs" // 导入自动生成的 Swagger 代码
 	"experiment/gin/metrics"
@@ -15,6 +17,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
+	_ "net/http/pprof"
 	"os"
 	"os/signal"
 	"syscall"
@@ -39,6 +42,8 @@ func registerMiddlewares(router *gin.Engine) {
 		fmt.Println("after request")
 	})
 }
+
+var c *cron.Cron
 
 // @title           Swagger Example API
 // @version         1.0
@@ -65,6 +70,23 @@ func main() {
 	}()
 	// 设置 Gin 路由
 	router := gin.Default()
+	// 创建 pprof 路由组
+	pprofGroup := router.Group("/debug/pprof")
+	{
+		// 注册 pprof 路由处理函数
+		pprofGroup.GET("/", gin.WrapF(pprof.Index))
+		pprofGroup.GET("/cmdline", gin.WrapF(pprof.Cmdline))
+		pprofGroup.GET("/profile", gin.WrapF(pprof.Profile))
+		pprofGroup.POST("/symbol", gin.WrapF(pprof.Symbol))
+		pprofGroup.GET("/symbol", gin.WrapF(pprof.Symbol))
+		pprofGroup.GET("/trace", gin.WrapF(pprof.Trace))
+		pprofGroup.GET("/allocs", gin.WrapF(pprof.Handler("allocs").ServeHTTP))
+		pprofGroup.GET("/block", gin.WrapF(pprof.Handler("block").ServeHTTP))
+		pprofGroup.GET("/goroutine", gin.WrapF(pprof.Handler("goroutine").ServeHTTP))
+		pprofGroup.GET("/heap", gin.WrapF(pprof.Handler("heap").ServeHTTP))
+		pprofGroup.GET("/mutex", gin.WrapF(pprof.Handler("mutex").ServeHTTP))
+		pprofGroup.GET("/threadcreate", gin.WrapF(pprof.Handler("threadcreate").ServeHTTP))
+	}
 
 	registerMiddlewares(router)
 
@@ -113,6 +135,8 @@ func main() {
 			log.Fatalf("Server forced to shutdown: %v", err)
 		}
 
+		c.Stop()
+
 		// 执行清理操作
 		// ...
 
@@ -130,10 +154,10 @@ func main() {
 }
 
 func startCron() {
-	c := cron.New()
+	c = cron.New()
 
 	// Generate RSS
-	err := c.AddFunc("@every 10s", func() {
+	err := c.AddFunc("@every 30s", func() {
 		fmt.Println(time.Now().Format(time.RFC3339))
 	})
 	if err != nil {

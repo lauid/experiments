@@ -2,6 +2,8 @@ package main
 
 import (
 	"container/list"
+	"encoding/json"
+	"experiment/internal/utils"
 	"fmt"
 	"github.com/stretchr/testify/assert"
 	"go.uber.org/goleak"
@@ -9,8 +11,16 @@ import (
 	"math/rand"
 	"net/http"
 	"os/exec"
+	"sync"
 	"testing"
 )
+
+func TestCase3(t *testing.T) {
+	check := func(v int) bool {
+		return v > (10 - rand.Intn(10))
+	}
+	fmt.Println(utils.IF(check(5), "A", "B"))
+}
 
 func TestCommand3(t *testing.T) {
 	// Print Go Version
@@ -139,10 +149,48 @@ func TestHttpGet(t *testing.T) {
 		fmt.Println(err)
 	}
 	defer resp.Body.Close()
-	buf := make([]byte, 1024)
-	n, err := resp.Body.Read(buf)
-	if err != nil {
-		fmt.Println(n)
+
+	var res struct {
+		Answer string `json:"answer"`
+		Forced bool   `json:"forced"`
+		Image  string `json:"image"`
 	}
-	fmt.Println(buf)
+	err = json.NewDecoder(resp.Body).Decode(&res)
+	assert.Nil(t, err)
+	fmt.Printf("%+v\n", res)
+}
+
+func TestHttpGet2(t *testing.T) {
+	url := "https://yesno.wtf/api"
+	var wg sync.WaitGroup
+	type Answer struct {
+		Answer string `json:"answer"`
+		Forced bool   `json:"forced"`
+		Image  string `json:"image"`
+	}
+	var answers []Answer
+	n := 10
+	for i := 0; i < n; i++ {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			resp, err := http.Get(url)
+			if err != nil {
+				fmt.Println(err)
+			}
+			defer resp.Body.Close()
+
+			var answer Answer
+			err = json.NewDecoder(resp.Body).Decode(&answer)
+			if err != nil {
+				fmt.Println(err)
+				return
+			}
+			answers = append(answers, answer)
+		}()
+	}
+	wg.Wait()
+
+	fmt.Printf("%+v\n", answers)
+	assert.Equal(t, n, len(answers))
 }
