@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"math/rand"
 	"os"
 	"os/signal"
 	"syscall"
@@ -11,6 +12,10 @@ import (
 )
 
 func main() {
+	main1()
+}
+
+func main11() {
 	file, err := os.ReadFile("aa.log")
 	if err != nil {
 		log.Println(err)
@@ -82,7 +87,7 @@ func main1() {
 	ctx, cancelFunc := context.WithCancel(context.Background())
 
 	go func() {
-		ticker := time.NewTicker(2 * time.Second)
+		ticker := time.NewTicker(3 * time.Second)
 		defer ticker.Stop()
 		for true {
 			select {
@@ -92,6 +97,8 @@ func main1() {
 				fmt.Println("timer1 ,cancel")
 				return
 			}
+			sec := 5 - rand.Intn(5)
+			time.Sleep(time.Duration(sec) * time.Second)
 		}
 	}()
 
@@ -106,6 +113,8 @@ func main1() {
 				fmt.Println("timer2 ,cancel")
 				return
 			}
+			sec := 5 - rand.Intn(5)
+			time.Sleep(time.Duration(sec) * time.Second)
 		}
 	}()
 
@@ -116,5 +125,27 @@ func main1() {
 		fmt.Println("service get signal: ", sig)
 		cancelFunc()
 	}
+	time.Sleep(20 * time.Second)
 	fmt.Println(ctx.Err())
+}
+
+func main4() {
+	messages := make(chan string)
+	go func() {
+		for true {
+			msg := <-messages
+			fmt.Println("subscribe1 get message,", msg)
+		}
+	}()
+	go func() {
+		for true {
+			msg := <-messages
+			fmt.Println("subscribe2 get message,", msg)
+		}
+	}()
+
+	for i := 0; i < 10; i++ {
+		messages <- fmt.Sprintf("Message %d", i)
+	}
+	close(messages)
 }

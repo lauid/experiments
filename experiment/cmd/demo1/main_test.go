@@ -12,6 +12,7 @@ import (
 	"net/http"
 	"os/exec"
 	"sync"
+	"sync/atomic"
 	"testing"
 )
 
@@ -193,4 +194,71 @@ func TestHttpGet2(t *testing.T) {
 
 	fmt.Printf("%+v\n", answers)
 	assert.Equal(t, n, len(answers))
+}
+
+func TestAtomic1(t *testing.T) {
+	var number int64
+	//原子读取和写入
+	atomic.StoreInt64(&number, 10)
+	actual := atomic.LoadInt64(&number)
+	var expected int64 = 10
+	if actual != expected {
+		t.Errorf("expect: %d, actual: %d", expected, actual)
+	}
+
+	//原子增
+	atomic.AddInt64(&number, 5)
+	expected = 15
+	actual = atomic.LoadInt64(&number)
+	if actual != expected {
+		t.Errorf("expect: %d, actual: %d", expected, actual)
+	}
+
+	//原子减
+	atomic.AddInt64(&number, -5)
+	expected = 10
+	actual = atomic.LoadInt64(&number)
+	if actual != expected {
+		t.Errorf("expect: %d, actual: %d", expected, actual)
+	}
+
+	//原子比较并交换
+	ok := atomic.CompareAndSwapInt64(&number, 12, 20)
+	if ok {
+		t.Errorf("expect: %v, actual: %v", false, true)
+	}
+
+	expected = 30
+	ok = atomic.CompareAndSwapInt64(&number, 10, expected)
+	if !ok {
+		t.Errorf("expect: %v, actual: %v", true, false)
+	}
+	actual = atomic.LoadInt64(&number)
+	if actual != expected {
+		t.Errorf("expect: %d, actual: %d", expected, actual)
+	}
+
+	// 其他原子操作函数
+	actual = atomic.SwapInt64(&number, 50)
+	expected = 30
+	if actual != expected{
+		t.Errorf("expect: %d, actual: %d", expected, actual)
+	}
+
+	actual = atomic.LoadInt64(&number)
+	expected = 50
+	if actual != expected{
+		t.Errorf("expect: %d, actual: %d", expected, actual)
+	}
+
+	oldValue := atomic.LoadInt64(&number)
+	swapped := atomic.CompareAndSwapInt64(&number, oldValue, 60)
+	if !swapped {
+		t.Errorf("compare and swap fail")
+	}
+	expected = 60
+	actual = atomic.LoadInt64(&number)
+	if actual != expected {
+		t.Errorf("expect: %d, actual: %d", expected, actual)
+	}
 }
