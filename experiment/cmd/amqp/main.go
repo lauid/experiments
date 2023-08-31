@@ -1,14 +1,13 @@
 package main
 
 import (
+	amqp1 "experiment/internal/amqp"
 	"fmt"
 	"github.com/streadway/amqp"
 	"log"
-	"math/rand"
 	"os"
 	"os/signal"
 	"strconv"
-	"sync"
 	"syscall"
 	"time"
 )
@@ -20,9 +19,17 @@ func failOnError(err error, msg string) {
 }
 
 func main() {
+	//amqp1.SimpleQueue()
+	//amqp1.Pub()
+	//amqp1.TopicPub()
+	amqp1.RpcServer()
+}
+
+func main1() {
 	defer fmt.Println("exit.............")
 	// 连接到 RabbitMQ 服务器
-	conn, err := amqp.Dial("amqp://guest:guest@localhost:5672/")
+	//conn, err := amqp.Dial("amqp://guest:guest@localhost:5672/")
+	conn, err := amqp.Dial("amqp://user:password@localhost:5672/")
 	failOnError(err, "Failed to connect to RabbitMQ")
 	defer conn.Close()
 
@@ -35,7 +42,7 @@ func main() {
 
 	// 声明一个队列
 	q, err := ch.QueueDeclare(
-		"my_queue",
+		"q2-classic",
 		false,
 		false,
 		false,
@@ -59,9 +66,7 @@ func main() {
 func publish(ch *amqp.Channel, q amqp.Queue) {
 	// 发送消息到队列
 	body := "H"
-	counter := 0
 	for true {
-		counter += 1
 		err := ch.Publish(
 			"",
 			q.Name,
@@ -69,7 +74,7 @@ func publish(ch *amqp.Channel, q amqp.Queue) {
 			false,
 			amqp.Publishing{
 				ContentType: "text/plain",
-				Body:        []byte(body + strconv.Itoa(counter)),
+				Body:        []byte(body + time.Now().Format(time.RFC3339)),
 			},
 		)
 		failOnError(err, "Failed to publish a msg.")
@@ -81,34 +86,32 @@ func publish(ch *amqp.Channel, q amqp.Queue) {
 func consumeCtrl(ch *amqp.Channel, q amqp.Queue) {
 	// 启动多个消费者来处理消息
 	numConsumers := 3
-	wg := sync.WaitGroup{}
-	wg.Add(numConsumers)
 	for i := 0; i < numConsumers; i++ {
 		go consume(ch, q, i)
-		wg.Done()
 	}
-	wg.Wait()
 }
 
 func consume(ch *amqp.Channel, q amqp.Queue, i int) {
 	msgs, err := ch.Consume(
-		q.Name, // 队列名
-		"c"+strconv.Itoa(i),     // 消费者标签
-		false,  // 是否自动应答
-		false,  // 是否独占队列
-		false,  // 是否阻塞等待
-		false,  // 额外的属性
+		q.Name,              // 队列名
+		"c"+strconv.Itoa(i), // 消费者标签
+		false,               // 是否自动应答
+		false,               // 是否独占队列
+		false,               // 是否阻塞等待
+		false,               // 额外的属性
 		nil,
 	)
 	failOnError(err, "Failed to register a consumer")
 
-	//for d := range msgs {
-	//	//log.Printf("%d.Received a message: %s", i, d.Body)
-	//}
 	for d := range msgs {
-		fmt.Print(i, ",", string(d.Body), ".")
-		if rand.Intn(3) <= 2 {
-			time.Sleep(1 * time.Second)
+		log.Printf("consumer%d, Received a message: %s\n", i, d.Body)
+		err := d.Ack(true)
+		if err != nil {
+			return
 		}
+		//fmt.Print(i, ",", string(d.Body), ".")
+		//if rand.Intn(3) <= 2 {
+		//	time.Sleep(1 * time.Second)
+		//}
 	}
 }

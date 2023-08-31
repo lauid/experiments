@@ -17,6 +17,7 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @SpringBootTest
 public class BaseTest {
@@ -177,7 +178,7 @@ public class BaseTest {
     }
 
     public enum ProductSPU{
-        STATUS_A("1"),STATUS_B("2");
+        STATUS_A("1"),STATUS_B("4");
 
         private final String status;
 
@@ -190,12 +191,21 @@ public class BaseTest {
         }
 
         public Integer getStatus1() {
-            return  Integer.parseInt(this.status);
+            return Integer.parseInt(this.status);
+        }
+
+        public static boolean getStatus2(String a) {
+            return a.compareTo("3") > 0;
         }
     }
 
     @Test
-    public void testStream(){
+    public void testStream() {
+        double[] array1 = Arrays.stream(ProductSPU.values()).mapToDouble(a -> {
+            return Integer.parseInt(a.getStatus()) + 10;
+        }).toArray();
+        System.out.println(Arrays.toString(array1));
+
         int[] array = Arrays.stream(ProductSPU.values()).mapToInt(ProductSPU::getStatus1).toArray();
         System.out.println(Arrays.toString(array));
     }
