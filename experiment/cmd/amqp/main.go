@@ -1,7 +1,6 @@
 package main
 
 import (
-	amqp1 "experiment/internal/amqp"
 	"fmt"
 	"github.com/streadway/amqp"
 	"log"
@@ -22,7 +21,8 @@ func main() {
 	//amqp1.SimpleQueue()
 	//amqp1.Pub()
 	//amqp1.TopicPub()
-	amqp1.RpcServer()
+	//amqp1.RpcServer()
+	main1()
 }
 
 func main1() {
@@ -95,7 +95,7 @@ func consume(ch *amqp.Channel, q amqp.Queue, i int) {
 	msgs, err := ch.Consume(
 		q.Name,              // 队列名
 		"c"+strconv.Itoa(i), // 消费者标签
-		false,               // 是否自动应答
+		true,               // 是否自动应答
 		false,               // 是否独占队列
 		false,               // 是否阻塞等待
 		false,               // 额外的属性
@@ -105,10 +105,7 @@ func consume(ch *amqp.Channel, q amqp.Queue, i int) {
 
 	for d := range msgs {
 		log.Printf("consumer%d, Received a message: %s\n", i, d.Body)
-		err := d.Ack(true)
-		if err != nil {
-			return
-		}
+
 		//fmt.Print(i, ",", string(d.Body), ".")
 		//if rand.Intn(3) <= 2 {
 		//	time.Sleep(1 * time.Second)
