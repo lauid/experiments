@@ -54,6 +54,7 @@ func (m *EtcdMutex) TryLock() error {
 
 	// 创建一个事务
 	txn := m.cli.Txn(context.TODO())
+
 	// 尝试将锁的键值关联到租约
 	txn.If(clientv3.Compare(clientv3.CreateRevision(m.lockKey), "=", 0)).
 		Then(clientv3.OpPut(m.lockKey, m.lockValue, clientv3.WithLease(resp.ID))).
@@ -76,6 +77,7 @@ func (m *EtcdMutex) TryLock() error {
 			select {
 			case _, ok := <-keepAliveChan:
 				if !ok {
+					fmt.Println("Keep alive channel closed")
 					return
 				}
 			}
