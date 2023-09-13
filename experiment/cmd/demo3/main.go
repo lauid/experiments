@@ -3,8 +3,10 @@ package main
 import (
 	"context"
 	"fmt"
+	"github.com/gin-gonic/gin"
 	"log"
 	"math/rand"
+	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
@@ -12,7 +14,48 @@ import (
 )
 
 func main() {
-	main1()
+	//main1()
+	main12()
+}
+
+func main12() {
+	r := gin.Default()
+
+	r.POST("/zzmj/longwall/maintain/burnsoftwarecode", func(c *gin.Context) {
+		var req struct {
+			SoftwareCode string `json:"SoftwareCode"`
+			HardwareCode string `json:"HardwareCode"`
+			MAC          string `json:"MAC"`
+		}
+		err := c.ShouldBindJSON(&req)
+		if err != nil {
+			log.Println("bind json err:",err)
+			return
+		}
+		c.JSON(http.StatusOK, gin.H{"req": req})
+	})
+
+	r.GET("/zzmj/longwall/maintain/querysoftwarecode", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{"token": "ABC"})
+	})
+	server := &http.Server{
+		Addr:    ":8080",
+		Handler: r,
+	}
+	go func() {
+		err := server.ListenAndServe()
+		if err != nil {
+			return
+		}
+	}()
+
+	signalChan := make(chan os.Signal, 1)
+	signal.Notify(signalChan, syscall.SIGTERM, syscall.SIGINT)
+	fmt.Println(<-signalChan)
+	err := server.Shutdown(context.Background())
+	if err != nil {
+		return
+	}
 }
 
 func main11() {
