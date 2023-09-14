@@ -128,6 +128,8 @@ func main() {
 	}
 
 	// 执行互斥操作
+	time.Sleep(10 * time.Second)
+	fmt.Println("doing.........")
 
 	// 释放锁
 	err = mutex.Unlock()

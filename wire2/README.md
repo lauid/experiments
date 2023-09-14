@@ -1,0 +1,3 @@
+https://medium.com/faun/golang-dependency-injection-using-wire-753aa479640b
+
+wire ./...
