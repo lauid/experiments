@@ -1,123 +1,160 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"io"
 	"log"
+	"math/rand"
 	"os"
-	"sync"
-	"sync/atomic"
+	"os/signal"
+	"syscall"
 	"time"
 
 	"github.com/tarm/serial"
 )
 
 func main() {
-	var wg sync.WaitGroup
-	wg.Add(3)
-	var counter uint32 = 0
-	work := func(wg *sync.WaitGroup, i uint32) {
-		defer wg.Done()
-		atomic.AddUint32(
-			&counter,
-			i,
-		)
-	}
-
-	var i uint32 = 0
-	for ; i < 3; i++ {
-		go work(&wg, i)
-	}
-	wg.Wait()
-	fmt.Println(counter)
+	main1()
 }
 
-func Case1(a any) any {
-	if v, ok := a.(int); ok {
-		return v * 2
-	}
-	return a
+func main3() {
+	ctx1, cancel1 := context.WithTimeout(context.Background(), 10*time.Second)
+	go func() {
+		for {
+			select {
+			case <-ctx1.Done():
+				fmt.Println(ctx1.Err())
+				return
+			default:
+				fmt.Println("...")
+				time.Sleep(2 * time.Second)
+			}
+		}
+	}()
+
+	listen()
+	cancel1()
+	time.Sleep(2 * time.Second)
 }
 
-func Case2(a any) any {
-	if v, ok := a.(int); ok {
-		return v * 2
-	}
-	return a
+func listen() {
+	sig := make(chan os.Signal, 1)
+	signal.Notify(sig, os.Interrupt, syscall.SIGTERM, syscall.SIGINT)
+	fmt.Println(<-sig)
 }
 
-func main4() {
-OuterLoop:
-	for i := 0; i < 2; i++ {
-	innerLoop:
-		for j := 0; j < 5; j++ {
-			switch j {
-			case 2:
-				fmt.Println(i, j)
-				break innerLoop
-			case 3:
-				fmt.Println(i, j)
-				break OuterLoop
+func main2() {
+	ctx, cancel := context.WithCancel(context.Background())
+	worker := func(name string) {
+		for true {
+			select {
+			case <-ctx.Done():
+				fmt.Println(name, ",", ctx.Err())
+				return
+			default:
+				fmt.Println(name, time.Now().Format(time.RFC3339))
+				time.Sleep(time.Duration(3-rand.Intn(3)) * time.Second)
+			}
+		}
+	}
+	worker2 := func(name string) {
+		for true {
+			select {
+			case <-ctx.Done():
+				fmt.Println(name, ",", ctx.Err())
+				return
+			default:
+				fmt.Println(name, time.Now().Format(time.RFC3339))
+				time.Sleep(time.Duration(3-rand.Intn(3)) * time.Second)
 			}
 		}
 	}
 
-	fmt.Println("aaaaaaaaaaaa.")
-}
+	go worker("A")
+	go worker("B")
+	go worker2("C")
 
-func main3() {
-	res := Join([]string{"a=1", "b=2"}, "&")
-	fmt.Println(res)
-}
-
-func Join(a []string, sep string) string {
-	if len(a) == 0 {
-		return ""
-	}
-	if len(a) == 1 {
-		return a[0]
-	}
-	n := len(sep) * (len(a) - 1)
-	for i := 0; i < len(a); i++ {
-		n += len(a[i])
-	}
-
-	b := make([]byte, n)
-	bp := copy(b, a[0])
-	for _, s := range a[1:] {
-		bp += copy(b[bp:], sep)
-		bp += copy(b[bp:], s)
-	}
-	return string(b)
+	sig := make(chan os.Signal, 1)
+	signal.Notify(sig, os.Interrupt, syscall.SIGTERM, syscall.SIGINT)
+	fmt.Println(<-sig)
+	cancel()
+	time.Sleep(2 * time.Second)
 }
 
 func main1() {
-	c := &serial.Config{Name: "/dev/ttymxc4", Baud: 115200}
+	defer fmt.Println("exit.......")
+	c := &serial.Config{
+		Name:        "/dev/ttyS4",
+		Baud:        115200,
+		ReadTimeout: time.Millisecond * 10,
+	}
 	s, err := serial.OpenPort(c)
 	if err != nil {
 		log.Fatal(err)
+		return
 	}
+	defer func() {
+		// 关闭串口连接
+		err = s.Close()
+		if err != nil {
+			log.Fatal(err)
+		}
+		fmt.Println("close.")
+	}()
 
-	// 发送数据
-	n, err := s.Write([]byte("hello"))
-	if err != nil {
-		log.Fatal(err)
-	}
-	fmt.Printf("Sent %d bytes\n", n)
+	ctx, cancel := context.WithCancel(context.Background())
+	//ctx1, cancel1 := context.WithTimeout(context.Background(), 10*time.Second)
+	//go func() {
+	//	for {
+	//		select {
+	//		case <-ctx.Done():
+	//			fmt.Println("write.", ctx.Err())
+	//			return
+	//		default:
+	//			fmt.Println("writing.")
+	//			n, err := s.Write([]byte(time.Now().Format(time.RFC3339)))
+	//			if err != nil {
+	//				log.Fatal(err)
+	//			}
+	//			fmt.Printf("Sent %d bytes\n", n)
+	//			time.Sleep(1 * time.Second)
+	//		}
+	//	}
+	//}()
 
-	// 接收数据
-	buf := make([]byte, 128)
-	n, err = s.Read(buf)
-	if err != nil {
-		log.Fatal(err)
-	}
-	fmt.Printf("Received %d bytes: %s\n", n, string(buf[:n]))
+	go func() {
+		for {
+			select {
+			//case <-ctx1.Done():
+			//	fmt.Println("read.", ctx1.Err())
+			//	return
+			case <-ctx.Done():
+				fmt.Println("read2.", ctx.Err())
+				return
+			default:
+				fmt.Println("reading.")
+				// 接收数据
+				buf := make([]byte, 128)
+				n, err := s.Read(buf)
+				if err == io.EOF{
+					return
+				}
+				if err != nil {
+					log.Fatal(err)
+					return
+				}
+				fmt.Printf("Received %d bytes: %s\n", n, string(buf[:n]))
+			}
+		}
+	}()
 
-	// 关闭串口连接
-	err = s.Close()
-	if err != nil {
-		log.Fatal(err)
-	}
+	sig := make(chan os.Signal, 1)
+	signal.Notify(sig, os.Interrupt, syscall.SIGTERM, syscall.SIGINT)
+	fmt.Println(<-sig)
+	cancel()
+	fmt.Println("cancel")
+	time.Sleep(2*time.Second)
 }
 
 const (
