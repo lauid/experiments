@@ -44,3 +44,6 @@ docker rmi $(docker images -f "dangling=true" -q)
 
 清理已退出的容器
 docker ps -a --filter "status=exited" | awk '{print $1}'| xargs docker rm
+
+删除所有已停止的容器：
+docker container prune
