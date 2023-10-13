@@ -1,0 +1,9 @@
+DROP TABLE IF EXISTS product;
+
+CREATE TABLE product
+(
+    id BIGINT NOT NULL COMMENT '主键ID',
+    name VARCHAR(30) NOT NULL DEFAULT '' COMMENT '姓名',
+    price DECIMAL(10,2) NOT NULL DEFAULT 0 COMMENT '价格',
+    PRIMARY KEY (id)
+);

@@ -2,7 +2,10 @@ package com.example.sp;
 
 import com.example.sp.convert.IPersonMapper;
 import com.example.sp.entity.UserEntity;
+import com.example.sp.mapper.ProductMapper;
 import com.example.sp.po.UserPo;
+import com.example.sp.service.ProductService;
+import jakarta.annotation.Resource;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -11,6 +14,8 @@ import java.util.Date;
 
 @SpringBootTest
 class SpApplicationTests {
+    @Resource
+    private ProductService productService;
 
     @Test
     void contextLoads() {
@@ -32,5 +37,12 @@ class SpApplicationTests {
         UserEntity userEntity = IPersonMapper.INSTANCE.po2entity(userPo);
         System.out.println("-----------------");
         System.out.println(userEntity);
+    }
+
+    @Test
+    public void testProduct() {
+        //todo
+        Integer productId = productService.createProduct();
+        System.out.println(productId);
     }
 }
