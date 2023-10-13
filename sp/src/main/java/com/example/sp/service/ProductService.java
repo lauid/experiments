@@ -61,6 +61,14 @@ public class ProductService {
     private ProductMapper productMapper;
 
     public Map<Long, Product> getProductsByIdsFromDB(List<Long> productIds) {
+        List<Product> products = productMapper.selectBatchIds(productIds);
+        Map<Long, Product> productMap = new HashMap<>();
+        for (Product product : products) {
+            productMap.put(product.getId(), product);
+        }
+        return productMap;
+    }
+    public Map<Long, Product> getProductsByIdsFromDB1(List<Long> productIds) {
         List<Product> products = productMapper.selectByIds(productIds);
         Map<Long, Product> productMap = new HashMap<>();
         for (Product product : products) {
@@ -71,10 +79,13 @@ public class ProductService {
 
     public int createProduct() {
         Product product = new Product();
-        product.setId(1L);
+//        product.setId(21L);
         product.setName("test1");
         product.setPrice(BigDecimal.valueOf(11.11));
-        return productMapper.insert(product);
+        int res = productMapper.insert(product);
+
+        System.out.println(product);
+        return res;
     }
 }
 

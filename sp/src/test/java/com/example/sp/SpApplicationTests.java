@@ -1,6 +1,7 @@
 package com.example.sp;
 
 import com.example.sp.convert.IPersonMapper;
+import com.example.sp.entity.Product;
 import com.example.sp.entity.UserEntity;
 import com.example.sp.mapper.ProductMapper;
 import com.example.sp.po.UserPo;
@@ -10,7 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.imageio.IIOParam;
-import java.util.Date;
+import java.util.*;
 
 @SpringBootTest
 class SpApplicationTests {
@@ -42,7 +43,13 @@ class SpApplicationTests {
     @Test
     public void testProduct() {
         //todo
-        Integer productId = productService.createProduct();
-        System.out.println(productId);
+        Integer isCreate = productService.createProduct();
+        System.out.println(isCreate);
+        isCreate = productService.createProduct();
+        System.out.println(isCreate);
+
+        List<Long> productIds = Arrays.asList(1L,2L);
+        Map<Long, Product> productMap = productService.getProductsByIds(productIds);
+        System.out.println(productMap);
     }
 }
