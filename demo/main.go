@@ -1,30 +1,22 @@
 package main
 
-import (
-	"fmt"
-	"time"
-)
-
-func worker(errC chan error) {
-	time.Sleep(1 * time.Second)
-	//errC <- errors.New("this a err")
-	errC <- nil
-}
+import "fmt"
 
 func main() {
-	errC := make(chan error)
-	go worker(errC)
+	total := 0.0     //总量
+	interval := 21.0 //区块间隔，万单位
 
-	getErr := func(errC chan error) {
-		select {
-		case err := <-errC:
-			if err != nil {
-				fmt.Println("---------------------", err)
-			} else {
-				fmt.Println("no err")
-			}
-		}
+	reward := 50.0 //奖励数量，最初50个
+
+	for reward != 0 {
+		//累加挖矿值
+		amount := reward * interval
+
+		total += amount //总量
+
+		reward *= 0.5 //奖励减半
 	}
 
-	getErr(errC)
+	fmt.Println("total : ", total)
+	fmt.Printf("total : %f\n", total)
 }
