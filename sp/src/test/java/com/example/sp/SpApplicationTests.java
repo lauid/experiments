@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.imageio.IIOParam;
+import java.math.BigDecimal;
 import java.util.*;
 
 @SpringBootTest
@@ -51,5 +52,12 @@ class SpApplicationTests {
         List<Long> productIds = Arrays.asList(1L,2L);
         Map<Long, Product> productMap = productService.getProductsByIds(productIds);
         System.out.println(productMap);
+
+
+        Product product = new Product();
+        product.setId(3L);
+        product.setName("test1");
+        product.setPrice(BigDecimal.valueOf(17.11));
+        productService.updateProduct(product);
     }
 }

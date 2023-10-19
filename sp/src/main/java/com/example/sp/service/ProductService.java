@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class ProductService {
@@ -20,7 +21,7 @@ public class ProductService {
     public Map<Long, Product> getProductsByIds(List<Long> productIds) {
         List<String> cacheKeys = new ArrayList<>();
         for (Long productId : productIds) {
-            cacheKeys.add("product:" + productId);
+            cacheKeys.add(getCacheKey(productId));
         }
 
         // 从缓存中批量获取商品数据
@@ -47,8 +48,8 @@ public class ProductService {
                 Long productId = entry.getKey();
                 Product product = entry.getValue();
 
-                String cacheKey = "product:" + productId;
-                redisTemplate.opsForValue().set(cacheKey, product);
+                String cacheKey = getCacheKey(productId);
+                redisTemplate.opsForValue().set(cacheKey, product, 1, TimeUnit.MINUTES);
 
                 resultMap.put(productId, product);
             }
@@ -68,6 +69,7 @@ public class ProductService {
         }
         return productMap;
     }
+
     public Map<Long, Product> getProductsByIdsFromDB1(List<Long> productIds) {
         List<Product> products = productMapper.selectByIds(productIds);
         Map<Long, Product> productMap = new HashMap<>();
@@ -86,6 +88,18 @@ public class ProductService {
 
         System.out.println(product);
         return res;
+    }
+
+    public int updateProduct(Product product) {
+        int res = productMapper.updateById(product);
+        System.out.println(product);
+        redisTemplate.delete(getCacheKey(product.getId()));
+        return res;
+    }
+
+    private String getCacheKey(Long productId) {
+        String cacheKeyPrefix = "PRODUCT:";
+        return cacheKeyPrefix + productId;
     }
 }
 
