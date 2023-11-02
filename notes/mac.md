@@ -1,4 +1,4 @@
-brew install --cask sequel-ace
+➜  ~ brew install --cask sequel-ace
 
 
 ➜  ~ npm install -g commitizen cz-conventional-changelog
