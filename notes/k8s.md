@@ -1,3 +1,9 @@
+## Python
+apt-get update
+apt-get install python3 python3-pip -y
+pip3 install torch torchvision -i https://mirrors.aliyun.com/pypi/simple/
+pip3 install -i https://pypi.tuna.tsinghua.edu.cn/simple torch
+
 ## install kubelet
 
 curl https://mirrors.aliyun.com/kubernetes/apt/doc/apt-key.gpg | apt-key add -
