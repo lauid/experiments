@@ -1,8 +1,15 @@
 ## Python
+
 apt-get update
+
+apt-key adv --keyserver keyserver.ubuntu.com --recv-keys A4B469963BF863CC
+
 apt-get install python3 python3-pip -y
+
 pip3 install torch torchvision -i https://mirrors.aliyun.com/pypi/simple/
+
 pip3 install -i https://pypi.tuna.tsinghua.edu.cn/simple torch
+
 
 ## install kubelet
 
