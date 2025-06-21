@@ -1,0 +1,93 @@
+apiVersion: example.com/v1
+kind: Microservice
+metadata:
+  name: user-service
+  namespace: default
+  labels:
+    app: user-service
+    version: v1.0.0
+    environment: production
+spec:
+  name: user-service
+  image: myregistry.com/user-service:v1.0.0
+  version: "1.0.0"
+  replicas: 3
+  resources:
+    requests:
+      cpu: "200m"
+      memory: "256Mi"
+    limits:
+      cpu: "1000m"
+      memory: "1Gi"
+  ports:
+    - name: http
+      port: 8080
+      targetPort: 8080
+      protocol: TCP
+    - name: metrics
+      port: 9090
+      targetPort: 9090
+      protocol: TCP
+  environment:
+    - name: DATABASE_URL
+      value: "postgresql://user-service-db:5432/users"
+    - name: REDIS_URL
+      value: "redis://user-service-redis:6379"
+    - name: LOG_LEVEL
+      value: "INFO"
+    - name: API_KEY
+      valueFrom:
+        secretKeyRef:
+          name: user-service-secrets
+          key: api-key
+    - name: DB_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: user-service-secrets
+          key: db-password
+  configMaps:
+    - name: user-service-config
+      mountPath: "/app/config"
+    - name: logging-config
+      mountPath: "/app/logs"
+  secrets:
+    - name: user-service-secrets
+      mountPath: "/app/secrets"
+  healthCheck:
+    livenessProbe:
+      httpGet:
+        path: "/health/live"
+        port: 8080
+      initialDelaySeconds: 30
+      periodSeconds: 10
+    readinessProbe:
+      httpGet:
+        path: "/health/ready"
+        port: 8080
+      initialDelaySeconds: 5
+      periodSeconds: 5
+  networking:
+    serviceType: ClusterIP
+    ingress:
+      enabled: true
+      host: "user-service.example.com"
+      path: "/api/users"
+      tls: true
+status:
+  phase: Pending
+  replicas: 3
+  availableReplicas: 0
+  readyReplicas: 0
+  conditions:
+    - type: Available
+      status: "False"
+      lastTransitionTime: "2024-01-01T00:00:00Z"
+      reason: "Deploying"
+      message: "Microservice is being deployed"
+  endpoints:
+    - name: http
+      port: 8080
+      protocol: TCP
+    - name: metrics
+      port: 9090
+      protocol: TCP 

@@ -1,0 +1,33 @@
+apiVersion: example.com/v1
+kind: Microservice
+metadata:
+  name: simple-service
+  namespace: default
+spec:
+  name: simple-service
+  image: nginx:latest
+  version: "1.0.0"
+  replicas: 2
+  resources:
+    requests:
+      cpu: "100m"
+      memory: "128Mi"
+    limits:
+      cpu: "500m"
+      memory: "512Mi"
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80
+      protocol: TCP
+  environment:
+    - name: ENV
+      value: "production"
+    - name: DEBUG
+      value: "false"
+  networking:
+    serviceType: ClusterIP
+    ingress:
+      enabled: false
+status:
+  phase: Pending 

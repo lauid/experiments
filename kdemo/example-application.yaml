@@ -1,0 +1,11 @@
+apiVersion: example.com/v1
+kind: Application
+metadata:
+  name: my-app
+  namespace: default
+spec:
+  name: "My Application"
+  version: "1.0.0"
+  replicas: 3
+status:
+  phase: "Pending" 
