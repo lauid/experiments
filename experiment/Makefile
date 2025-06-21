@@ -2,7 +2,7 @@ MF_DOCKER_IMAGE_NAME_PREFIX ?= experiment
 BUILD_DIR = build
 BUILD_TAGS = buildTags
 #SERVICES = demo1 demo2 gin
-SERVICES = demo1 gin
+SERVICES = demo1 gin stock
 DOCKERS = $(addprefix docker_,$(SERVICES))
 DOCKERS_DEV = $(addprefix docker_dev_,$(SERVICES))
 CGO_ENABLED ?= 1
@@ -13,7 +13,7 @@ TIME ?= $(shell date +%F_%T)
 
 define compile_service
 	CGO_ENABLED=$(CGO_ENABLED) GOOS=$(GOOS) GOARCH=$(GOARCH) GOARM=$(GOARM) \
-	go build -race -mod=vendor -tags $(BUILD_TAGS) -ldflags "-s -w \
+	go build -race -tags $(BUILD_TAGS) -ldflags "-s -w \
 	-X 'experiment.BuildTime=$(TIME)' \
 	-X 'experiment.Version=$(VERSION)' \
 	-X 'experiment.Commit=$(COMMIT)'" \

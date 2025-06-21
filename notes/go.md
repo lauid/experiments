@@ -28,3 +28,12 @@ $ govulncheck ./...
 #### GC
 
 GODEBUG=gctrace=1 go run main.go
+
+
+#### go脚手架
+
+https://go-sponge.com/zh-cn/
+
+https://github.com/go-nunu/nunu
+
+https://github.com/golang-standards/project-layout
