@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.HashMap;
 
 @RestController
 @RequestMapping("/api/kubernetes")
@@ -173,16 +174,16 @@ public class KubernetesController {
     public ResponseEntity<Map<String, Object>> getApplications(@RequestParam(required = false) String namespace) {
         try {
             List<Application> applications = kubernetesService.getApplications(namespace);
-            return ResponseEntity.ok(Map.of(
-                    "namespace", namespace,
-                    "applications", applications,
-                    "count", applications.size()
-            ));
+            Map<String, Object> response = new HashMap<>();
+            response.put("namespace", namespace);
+            response.put("applications", applications);
+            response.put("count", applications.size());
+            return ResponseEntity.ok(response);
         } catch (Exception e) {
-            return ResponseEntity.internalServerError().body(Map.of(
-                    "error", "Failed to get applications",
-                    "message", e.getMessage()
-            ));
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("error", "Failed to get applications");
+            errorResponse.put("message", e.getMessage());
+            return ResponseEntity.internalServerError().body(errorResponse);
         }
     }
 
@@ -282,16 +283,16 @@ public class KubernetesController {
     public ResponseEntity<Map<String, Object>> getMicroservices(@RequestParam(required = false) String namespace) {
         try {
             List<Microservice> microservices = kubernetesService.getMicroservices(namespace);
-            return ResponseEntity.ok(Map.of(
-                    "namespace", namespace,
-                    "microservices", microservices,
-                    "count", microservices.size()
-            ));
+            Map<String, Object> response = new HashMap<>();
+            response.put("namespace", namespace);
+            response.put("microservices", microservices);
+            response.put("count", microservices.size());
+            return ResponseEntity.ok(response);
         } catch (Exception e) {
-            return ResponseEntity.internalServerError().body(Map.of(
-                    "error", "Failed to get microservices",
-                    "message", e.getMessage()
-            ));
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("error", "Failed to get microservices");
+            errorResponse.put("message", e.getMessage());
+            return ResponseEntity.internalServerError().body(errorResponse);
         }
     }
 

@@ -25,7 +25,12 @@ public class HomeController {
                         Map.entry("application_get", "/api/kubernetes/applications/{name}"),
                         Map.entry("application_create", "POST /api/kubernetes/applications"),
                         Map.entry("application_update", "PUT /api/kubernetes/applications/{name}"),
-                        Map.entry("application_delete", "DELETE /api/kubernetes/applications/{name}")
+                        Map.entry("application_delete", "DELETE /api/kubernetes/applications/{name}"),
+                        Map.entry("microservices_list", "/api/kubernetes/microservices"),
+                        Map.entry("microservice_get", "/api/kubernetes/microservices/{name}"),
+                        Map.entry("microservice_create", "POST /api/kubernetes/microservices"),
+                        Map.entry("microservice_update", "PUT /api/kubernetes/microservices/{name}"),
+                        Map.entry("microservice_delete", "DELETE /api/kubernetes/microservices/{name}")
                 ),
                 "version", "2.0.0",
                 "type_safe", true
