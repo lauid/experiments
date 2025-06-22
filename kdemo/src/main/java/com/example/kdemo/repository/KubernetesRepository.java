@@ -1,18 +1,14 @@
 package com.example.kdemo.repository;
 
 import com.example.kdemo.model.Application;
-import com.example.kdemo.model.ApplicationList;
 import com.example.kdemo.model.Microservice;
-import com.example.kdemo.model.MicroserviceList;
 import com.example.kdemo.model.GPU;
-import com.example.kdemo.model.GPUList;
 import io.kubernetes.client.openapi.models.V1CustomResourceDefinition;
 import io.kubernetes.client.openapi.models.V1CustomResourceDefinitionList;
 import io.kubernetes.client.openapi.models.V1NamespaceList;
 import io.kubernetes.client.openapi.models.V1PodList;
 
 import java.util.List;
-import java.util.Map;
 
 public interface KubernetesRepository {
     

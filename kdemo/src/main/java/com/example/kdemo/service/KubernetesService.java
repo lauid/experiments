@@ -1,8 +1,6 @@
 package com.example.kdemo.service;
 
 import com.example.kdemo.dto.*;
-import com.example.kdemo.exception.KubernetesException;
-import com.example.kdemo.exception.ResourceNotFoundException;
 import com.example.kdemo.model.Application;
 import com.example.kdemo.model.Microservice;
 import com.example.kdemo.model.GPU;
