@@ -1,6 +1,7 @@
 package com.example.kdemo.service;
 
 import com.example.kdemo.dto.PrometheusBatchQueryResponse;
+import com.example.kdemo.dto.PrometheusBatchRangeQueryRequest;
 import com.example.kdemo.dto.PrometheusQueryRequest;
 import com.example.kdemo.dto.PrometheusQueryResponse;
 import com.example.kdemo.exception.PrometheusException;
@@ -22,6 +23,16 @@ public interface PrometheusService {
      * @throws PrometheusException 查询异常
      */
     Mono<PrometheusBatchQueryResponse> batchQuery(String cluster, PrometheusQueryRequest request) throws PrometheusException;
+    
+    /**
+     * 批量范围查询多个指标
+     * 
+     * @param cluster 集群名
+     * @param request 批量范围查询请求
+     * @return 批量范围查询结果
+     * @throws PrometheusException 查询异常
+     */
+    Mono<PrometheusBatchQueryResponse> batchQueryRange(String cluster, PrometheusBatchRangeQueryRequest request) throws PrometheusException;
     
     /**
      * 执行单个范围查询

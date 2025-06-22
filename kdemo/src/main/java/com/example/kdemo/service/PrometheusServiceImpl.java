@@ -2,6 +2,7 @@ package com.example.kdemo.service;
 
 import com.example.kdemo.config.PrometheusConfig;
 import com.example.kdemo.dto.PrometheusBatchQueryResponse;
+import com.example.kdemo.dto.PrometheusBatchRangeQueryRequest;
 import com.example.kdemo.dto.PrometheusQueryRequest;
 import com.example.kdemo.dto.PrometheusQueryResponse;
 import com.example.kdemo.exception.PrometheusException;
@@ -84,6 +85,57 @@ public class PrometheusServiceImpl implements PrometheusService {
                 })
                 .doOnError(throwable -> {
                     logger.error("Batch query failed for cluster {}: {}", finalCluster, throwable.getMessage());
+                });
+    }
+    
+    @Override
+    public Mono<PrometheusBatchQueryResponse> batchQueryRange(String cluster, PrometheusBatchRangeQueryRequest request) throws PrometheusException {
+        if (cluster == null || cluster.isEmpty()) {
+            cluster = request.getCluster();
+        }
+        logger.info("Starting batch range query for cluster {} with {} metrics", cluster, request.getQueries().size());
+        long startTime = System.currentTimeMillis();
+        String finalCluster = cluster;
+        return Flux.fromIterable(request.getQueries())
+                .flatMap(rangeMetricQuery -> executeSingleRangeQuery(finalCluster, rangeMetricQuery, request)
+                        .map(result -> new PrometheusBatchQueryResponse.MetricResult(
+                                rangeMetricQuery.getName(),
+                                rangeMetricQuery.getDescription(),
+                                rangeMetricQuery.getQuery(),
+                                result,
+                                System.currentTimeMillis() - startTime
+                        ))
+                        .onErrorResume(throwable -> {
+                            logger.error("Range query failed for metric {}: {}", rangeMetricQuery.getName(), throwable.getMessage());
+                            return Mono.empty();
+                        }), config.getMaxConcurrency())
+                .collectList()
+                .flatMap(results -> {
+                    List<PrometheusBatchQueryResponse.QueryError> errors = new ArrayList<>();
+                    for (PrometheusBatchRangeQueryRequest.RangeMetricQuery query : request.getQueries()) {
+                        boolean found = results.stream()
+                                .anyMatch(result -> result.getName().equals(query.getName()));
+                        if (!found) {
+                            errors.add(new PrometheusBatchQueryResponse.QueryError(
+                                    query.getName(),
+                                    query.getQuery(),
+                                    "Range query execution failed",
+                                    "EXECUTION_ERROR"
+                            ));
+                        }
+                    }
+                    String status = errors.isEmpty() ? "success" : "partial_success";
+                    if (results.isEmpty()) {
+                        status = "failed";
+                    }
+                    return Mono.just(new PrometheusBatchQueryResponse(status, results, errors));
+                })
+                .doOnSuccess(response -> {
+                    logger.info("Batch range query completed for cluster {}. Successful: {}, Failed: {}", 
+                            finalCluster, response.getSuccessfulQueries(), response.getFailedQueries());
+                })
+                .doOnError(throwable -> {
+                    logger.error("Batch range query failed for cluster {}: {}", finalCluster, throwable.getMessage());
                 });
     }
     
@@ -192,5 +244,42 @@ public class PrometheusServiceImpl implements PrometheusService {
                         logger.debug("Instant query completed for {} in {}ms", metricQuery.getName(), duration);
                     });
         }
+    }
+    
+    /**
+     * 执行单个范围查询
+     */
+    private Mono<PrometheusQueryResponse> executeSingleRangeQuery(
+            String cluster,
+            PrometheusBatchRangeQueryRequest.RangeMetricQuery rangeMetricQuery, 
+            PrometheusBatchRangeQueryRequest request) {
+        long startTime = System.currentTimeMillis();
+        
+        // 优先使用查询级别的时间参数，如果没有则使用请求级别的时间参数
+        String startTimeParam = rangeMetricQuery.getStartTime() != null ? 
+                rangeMetricQuery.getStartTime() : request.getStartTime();
+        String endTimeParam = rangeMetricQuery.getEndTime() != null ? 
+                rangeMetricQuery.getEndTime() : request.getEndTime();
+        String stepParam = rangeMetricQuery.getStep() != null ? 
+                rangeMetricQuery.getStep() : request.getStep();
+        
+        if (startTimeParam == null || endTimeParam == null || stepParam == null) {
+            return Mono.error(new PrometheusException(
+                    "Missing required time parameters for range query: " + rangeMetricQuery.getName(),
+                    "PARAMETER_ERROR",
+                    rangeMetricQuery.getQuery(),
+                    null));
+        }
+        
+        return prometheusRepository.queryRange(
+                cluster,
+                rangeMetricQuery.getQuery(),
+                startTimeParam,
+                endTimeParam,
+                stepParam
+        ).doOnSuccess(result -> {
+            long duration = System.currentTimeMillis() - startTime;
+            logger.debug("Range query completed for {} in {}ms", rangeMetricQuery.getName(), duration);
+        });
     }
 } 

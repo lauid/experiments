@@ -34,15 +34,23 @@ public class HomeController {
         endpoints.put("gpu_create", "POST /api/kubernetes/gpus?namespace={namespace}&cluster={cluster}");
         endpoints.put("gpu_update", "PUT /api/kubernetes/gpus/{name}?namespace={namespace}&cluster={cluster}");
         endpoints.put("gpu_delete", "DELETE /api/kubernetes/gpus/{name}?namespace={namespace}&cluster={cluster}");
+        endpoints.put("prometheus_health", "/api/prometheus/health?cluster={cluster}");
+        endpoints.put("prometheus_version", "/api/prometheus/version?cluster={cluster}");
+        endpoints.put("prometheus_templates", "/api/prometheus/templates");
+        endpoints.put("prometheus_query", "/api/prometheus/query?query={query}&time={time}&cluster={cluster}");
+        endpoints.put("prometheus_query_range", "/api/prometheus/query-range?query={query}&start={start}&end={end}&step={step}&cluster={cluster}");
+        endpoints.put("prometheus_batch_query", "POST /api/prometheus/batch-query?cluster={cluster}");
+        endpoints.put("prometheus_batch_query_range", "POST /api/prometheus/batch-query-range?cluster={cluster}");
 
         return Map.of(
                 "message", "Welcome to K8s Demo Application",
-                "version", "2.2.0",
+                "version", "2.3.0",
                 "type_safe", true,
                 "multi_cluster", true,
                 "default_cluster", "cluster-local",
-                "description", "A Spring Boot application with Kubernetes OpenAPI integration supporting multiple clusters and GPU resources",
+                "description", "A Spring Boot application with Kubernetes OpenAPI integration supporting multiple clusters, GPU resources, and Prometheus batch queries",
                 "supported_resources", new String[]{"Application", "Microservice", "GPU"},
+                "supported_apis", new String[]{"Kubernetes", "Prometheus"},
                 "endpoints", endpoints
         );
     }

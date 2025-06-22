@@ -1,6 +1,7 @@
 package com.example.kdemo.controller;
 
 import com.example.kdemo.dto.PrometheusBatchQueryResponse;
+import com.example.kdemo.dto.PrometheusBatchRangeQueryRequest;
 import com.example.kdemo.dto.PrometheusQueryRequest;
 import com.example.kdemo.dto.PrometheusQueryResponse;
 import com.example.kdemo.exception.PrometheusException;
@@ -47,6 +48,26 @@ public class PrometheusController {
                 })
                 .onErrorResume(PrometheusException.class, e -> {
                     logger.error("Batch query failed: {}", e.getMessage());
+                    return Mono.just(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                            .body(new PrometheusBatchQueryResponse("error", null, null)));
+                });
+    }
+    
+    /**
+     * 批量范围查询多个指标
+     */
+    @PostMapping("/batch-query-range")
+    public Mono<ResponseEntity<PrometheusBatchQueryResponse>> batchQueryRange(
+            @RequestParam(value = "cluster", required = false) String cluster,
+            @RequestBody PrometheusBatchRangeQueryRequest request) {
+        logger.info("Received batch range query request for cluster {} with {} metrics", cluster, request.getQueries().size());
+        return prometheusService.batchQueryRange(cluster, request)
+                .map(response -> {
+                    logger.info("Batch range query completed successfully");
+                    return ResponseEntity.ok(response);
+                })
+                .onErrorResume(PrometheusException.class, e -> {
+                    logger.error("Batch range query failed: {}", e.getMessage());
                     return Mono.just(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                             .body(new PrometheusBatchQueryResponse("error", null, null)));
                 });
