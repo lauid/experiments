@@ -285,8 +285,24 @@ public class KubernetesService {
     public OperationResult updateGPU(String cluster, String namespace, String name, String resourceYaml) {
         String clusterName = getClusterName(cluster);
         try {
+            // 先检查资源是否存在
+            repository.getGPU(clusterName, namespace, name);
+            
+            // 解析JSON
             GPU gpu = objectMapper.readValue(resourceYaml, GPU.class);
+            if (gpu == null) {
+                return OperationResult.failure(clusterName, name, "Failed to update GPU", "Parsed GPU object is null");
+            }
+            
+            // 确保metadata不为null
+            if (gpu.getMetadata() == null) {
+                return OperationResult.failure(clusterName, name, "Failed to update GPU", "GPU metadata is null");
+            }
+            
             GPU updated = repository.updateGPU(clusterName, namespace, name, gpu);
+            if (updated == null) {
+                return OperationResult.failure(clusterName, name, "Failed to update GPU", "Update operation returned null");
+            }
             return OperationResult.success(clusterName, updated.getMetadata().getName(), "GPU updated successfully");
         } catch (Exception e) {
             return OperationResult.failure(clusterName, name, "Failed to update GPU", e.getMessage());

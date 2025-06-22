@@ -401,8 +401,20 @@ public class KubernetesRepositoryImpl implements KubernetesRepository {
     @Override
     public GPU updateGPU(String cluster, String namespace, String name, GPU gpu) {
         try {
+            if (gpu == null) {
+                throw new IllegalArgumentException("GPU object cannot be null");
+            }
+            
             GenericKubernetesApi<GPU, GPUList> api = getGPUApi(cluster);
-            return api.update(gpu, new UpdateOptions()).getObject();
+            GPU updated = api.update(gpu, new UpdateOptions()).getObject();
+            
+            if (updated == null) {
+                throw new KubernetesException("Failed to update GPU: " + name, 
+                                            getClusterName(cluster), "updateGPU", 
+                                            new Exception("Update returned null"));
+            }
+            
+            return updated;
         } catch (Exception e) {
             throw new KubernetesException("Failed to update GPU: " + name, 
                                         getClusterName(cluster), "updateGPU", e);
