@@ -8,6 +8,8 @@ import com.example.kdemo.model.Application;
 import com.example.kdemo.model.ApplicationList;
 import com.example.kdemo.model.Microservice;
 import com.example.kdemo.model.MicroserviceList;
+import com.example.kdemo.model.GPU;
+import com.example.kdemo.model.GPUList;
 import io.kubernetes.client.openapi.ApiClient;
 import io.kubernetes.client.openapi.ApiException;
 import io.kubernetes.client.openapi.apis.ApiextensionsV1Api;
@@ -33,6 +35,7 @@ public class KubernetesRepositoryImpl implements KubernetesRepository {
     private final Map<String, ApiextensionsV1Api> crdApiClients;
     private final Map<String, GenericKubernetesApi<Application, ApplicationList>> applicationApis;
     private final Map<String, GenericKubernetesApi<Microservice, MicroserviceList>> microserviceApis;
+    private final Map<String, GenericKubernetesApi<GPU, GPUList>> gpuApis;
     private final ApiClient defaultApiClient;
     private static final String DEFAULT_CLUSTER = "cluster-local";
 
@@ -43,6 +46,7 @@ public class KubernetesRepositoryImpl implements KubernetesRepository {
         this.crdApiClients = new ConcurrentHashMap<>();
         this.applicationApis = new ConcurrentHashMap<>();
         this.microserviceApis = new ConcurrentHashMap<>();
+        this.gpuApis = new ConcurrentHashMap<>();
         
         // 初始化默认集群
         initializeCluster(DEFAULT_CLUSTER);
@@ -70,6 +74,15 @@ public class KubernetesRepositoryImpl implements KubernetesRepository {
                 "example.com",
                 "v1",
                 "microservices",
+                defaultApiClient
+        ));
+        
+        gpuApis.put(clusterName, new GenericKubernetesApi<>(
+                GPU.class,
+                GPUList.class,
+                "example.com",
+                "v1",
+                "gpus",
                 defaultApiClient
         ));
     }
@@ -108,6 +121,14 @@ public class KubernetesRepositoryImpl implements KubernetesRepository {
             initializeCluster(clusterName);
         }
         return microserviceApis.get(clusterName);
+    }
+
+    private GenericKubernetesApi<GPU, GPUList> getGPUApi(String cluster) {
+        String clusterName = getClusterName(cluster);
+        if (!gpuApis.containsKey(clusterName)) {
+            initializeCluster(clusterName);
+        }
+        return gpuApis.get(clusterName);
     }
 
     @Override
@@ -324,6 +345,82 @@ public class KubernetesRepositoryImpl implements KubernetesRepository {
         } catch (Exception e) {
             throw new KubernetesException("Failed to delete microservice: " + name, 
                                         getClusterName(cluster), "deleteMicroservice", e);
+        }
+    }
+
+    @Override
+    public List<GPU> getGPUs(String cluster, String namespace) {
+        try {
+            GenericKubernetesApi<GPU, GPUList> api = getGPUApi(cluster);
+            if (namespace != null && !namespace.isEmpty()) {
+                return api.list(namespace).getObject().getItems();
+            } else {
+                return api.list().getObject().getItems();
+            }
+        } catch (Exception e) {
+            throw new KubernetesException("Failed to get GPUs", getClusterName(cluster), "listGPUs", e);
+        }
+    }
+
+    @Override
+    public GPU getGPU(String cluster, String namespace, String name) {
+        try {
+            GenericKubernetesApi<GPU, GPUList> api = getGPUApi(cluster);
+            GPU gpu;
+            if (namespace != null && !namespace.isEmpty()) {
+                gpu = api.get(namespace, name).getObject();
+            } else {
+                gpu = api.get(name).getObject();
+            }
+            if (gpu == null) {
+                throw new ResourceNotFoundException("GPU", name, namespace, getClusterName(cluster));
+            }
+            return gpu;
+        } catch (ResourceNotFoundException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new KubernetesException("Failed to get GPU: " + name, 
+                                        getClusterName(cluster), "getGPU", e);
+        }
+    }
+
+    @Override
+    public GPU createGPU(String cluster, String namespace, GPU gpu) {
+        try {
+            GenericKubernetesApi<GPU, GPUList> api = getGPUApi(cluster);
+            if (namespace != null && !namespace.isEmpty()) {
+                return api.create(namespace, gpu, new CreateOptions()).getObject();
+            } else {
+                return api.create(gpu, new CreateOptions()).getObject();
+            }
+        } catch (Exception e) {
+            throw new KubernetesException("Failed to create GPU", getClusterName(cluster), "createGPU", e);
+        }
+    }
+
+    @Override
+    public GPU updateGPU(String cluster, String namespace, String name, GPU gpu) {
+        try {
+            GenericKubernetesApi<GPU, GPUList> api = getGPUApi(cluster);
+            return api.update(gpu, new UpdateOptions()).getObject();
+        } catch (Exception e) {
+            throw new KubernetesException("Failed to update GPU: " + name, 
+                                        getClusterName(cluster), "updateGPU", e);
+        }
+    }
+
+    @Override
+    public void deleteGPU(String cluster, String namespace, String name) {
+        try {
+            GenericKubernetesApi<GPU, GPUList> api = getGPUApi(cluster);
+            if (namespace != null && !namespace.isEmpty()) {
+                api.delete(namespace, name);
+            } else {
+                api.delete(name);
+            }
+        } catch (Exception e) {
+            throw new KubernetesException("Failed to delete GPU: " + name, 
+                                        getClusterName(cluster), "deleteGPU", e);
         }
     }
 } 

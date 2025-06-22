@@ -1,0 +1,151 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: gpus.example.com
+spec:
+  group: example.com
+  names:
+    kind: GPU
+    listKind: GPUList
+    plural: gpus
+    singular: gpu
+    shortNames:
+    - gpu
+  scope: Namespaced
+  versions:
+  - name: v1
+    served: true
+    storage: true
+    schema:
+      openAPIV3Schema:
+        type: object
+        properties:
+          spec:
+            type: object
+            properties:
+              model:
+                type: string
+                description: GPU model name (e.g., RTX 4090, A100)
+              memory:
+                type: object
+                properties:
+                  total:
+                    type: string
+                    description: Total GPU memory (e.g., "24GB", "80GB")
+                  available:
+                    type: string
+                    description: Available GPU memory
+              computeCapability:
+                type: string
+                description: CUDA compute capability (e.g., "8.9", "9.0")
+              architecture:
+                type: string
+                description: GPU architecture (e.g., "Ada Lovelace", "Hopper")
+              powerLimit:
+                type: object
+                properties:
+                  max:
+                    type: integer
+                    description: Maximum power limit in watts
+                  current:
+                    type: integer
+                    description: Current power limit in watts
+              temperature:
+                type: object
+                properties:
+                  current:
+                    type: integer
+                    description: Current temperature in Celsius
+                  max:
+                    type: integer
+                    description: Maximum safe temperature in Celsius
+              utilization:
+                type: object
+                properties:
+                  gpu:
+                    type: integer
+                    description: GPU utilization percentage (0-100)
+                  memory:
+                    type: integer
+                    description: Memory utilization percentage (0-100)
+              status:
+                type: string
+                enum: ["available", "in-use", "maintenance", "offline"]
+                description: Current GPU status
+              nodeName:
+                type: string
+                description: Name of the node where GPU is located
+              driverVersion:
+                type: string
+                description: NVIDIA driver version
+              cudaVersion:
+                type: string
+                description: CUDA toolkit version
+              processes:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    pid:
+                      type: integer
+                      description: Process ID
+                    name:
+                      type: string
+                      description: Process name
+                    memoryUsed:
+                      type: string
+                      description: Memory used by this process
+                    gpuUtilization:
+                      type: integer
+                      description: GPU utilization by this process
+            required:
+            - model
+            - memory
+            - status
+            - nodeName
+          status:
+            type: object
+            properties:
+              phase:
+                type: string
+                enum: ["Pending", "Running", "Failed", "Terminated"]
+                description: Current phase of the GPU resource
+              conditions:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    type:
+                      type: string
+                    status:
+                      type: string
+                    lastTransitionTime:
+                      type: string
+                      format: date-time
+                    reason:
+                      type: string
+                    message:
+                      type: string
+              lastUpdated:
+                type: string
+                format: date-time
+                description: Last time the status was updated
+    additionalPrinterColumns:
+    - name: Model
+      type: string
+      jsonPath: .spec.model
+    - name: Status
+      type: string
+      jsonPath: .spec.status
+    - name: Node
+      type: string
+      jsonPath: .spec.nodeName
+    - name: Memory
+      type: string
+      jsonPath: .spec.memory.total
+    - name: Utilization
+      type: string
+      jsonPath: .spec.utilization.gpu
+    - name: Age
+      type: date
+      jsonPath: .metadata.creationTimestamp 

@@ -5,6 +5,7 @@ import com.example.kdemo.exception.KubernetesException;
 import com.example.kdemo.exception.ResourceNotFoundException;
 import com.example.kdemo.model.Application;
 import com.example.kdemo.model.Microservice;
+import com.example.kdemo.model.GPU;
 import com.example.kdemo.repository.KubernetesRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -244,6 +245,66 @@ public class KubernetesService {
             return OperationResult.success(clusterName, name, "Microservice deleted successfully");
         } catch (Exception e) {
             return OperationResult.failure(clusterName, name, "Failed to delete microservice", e.getMessage());
+        }
+    }
+
+    // ========== GPU 资源操作 ==========
+
+    /**
+     * 获取所有 GPU 资源
+     */
+    public ResourceResponse<GPU> getGPUs(String cluster, String namespace) {
+        String clusterName = getClusterName(cluster);
+        List<GPU> gpus = repository.getGPUs(clusterName, namespace);
+        return new ResourceResponse<>(clusterName, namespace, gpus);
+    }
+
+    /**
+     * 获取指定的 GPU 资源
+     */
+    public GPU getGPU(String cluster, String namespace, String name) {
+        String clusterName = getClusterName(cluster);
+        return repository.getGPU(clusterName, namespace, name);
+    }
+
+    /**
+     * 创建 GPU 资源
+     */
+    public OperationResult createGPU(String cluster, String namespace, String resourceYaml) {
+        String clusterName = getClusterName(cluster);
+        try {
+            GPU gpu = objectMapper.readValue(resourceYaml, GPU.class);
+            GPU created = repository.createGPU(clusterName, namespace, gpu);
+            return OperationResult.success(clusterName, created.getMetadata().getName(), "GPU created successfully");
+        } catch (Exception e) {
+            return OperationResult.failure(clusterName, "GPU", "Failed to create GPU", e.getMessage());
+        }
+    }
+
+    /**
+     * 更新 GPU 资源
+     */
+    public OperationResult updateGPU(String cluster, String namespace, String name, String resourceYaml) {
+        String clusterName = getClusterName(cluster);
+        try {
+            GPU gpu = objectMapper.readValue(resourceYaml, GPU.class);
+            GPU updated = repository.updateGPU(clusterName, namespace, name, gpu);
+            return OperationResult.success(clusterName, updated.getMetadata().getName(), "GPU updated successfully");
+        } catch (Exception e) {
+            return OperationResult.failure(clusterName, name, "Failed to update GPU", e.getMessage());
+        }
+    }
+
+    /**
+     * 删除 GPU 资源
+     */
+    public OperationResult deleteGPU(String cluster, String namespace, String name) {
+        String clusterName = getClusterName(cluster);
+        try {
+            repository.deleteGPU(clusterName, namespace, name);
+            return OperationResult.success(clusterName, name, "GPU deleted successfully");
+        } catch (Exception e) {
+            return OperationResult.failure(clusterName, name, "Failed to delete GPU", e.getMessage());
         }
     }
 } 

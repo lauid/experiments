@@ -14,7 +14,7 @@ public class HomeController {
         Map<String, String> endpoints = new HashMap<>();
         endpoints.put("kubernetes_connection", "/api/kubernetes/connection?cluster={cluster}");
         endpoints.put("kubernetes_namespaces", "/api/kubernetes/namespaces?cluster={cluster}");
-        endpoints.put("kubernetes_pods", "/api/kubernetes/namespaces/{namespace}/pods?cluster={cluster}");
+        endpoints.put("kubernetes_pods", "/api/kubernetes/pods?namespace={namespace}&cluster={cluster}");
         endpoints.put("kubernetes_overview", "/api/kubernetes/overview?cluster={cluster}");
         endpoints.put("crd_list", "/api/kubernetes/crds?cluster={cluster}");
         endpoints.put("crd_detail", "/api/kubernetes/crds/{name}?cluster={cluster}");
@@ -29,14 +29,20 @@ public class HomeController {
         endpoints.put("microservice_create", "POST /api/kubernetes/microservices?namespace={namespace}&cluster={cluster}");
         endpoints.put("microservice_update", "PUT /api/kubernetes/microservices/{name}?namespace={namespace}&cluster={cluster}");
         endpoints.put("microservice_delete", "DELETE /api/kubernetes/microservices/{name}?namespace={namespace}&cluster={cluster}");
+        endpoints.put("gpus_list", "/api/kubernetes/gpus?namespace={namespace}&cluster={cluster}");
+        endpoints.put("gpu_get", "/api/kubernetes/gpus/{name}?namespace={namespace}&cluster={cluster}");
+        endpoints.put("gpu_create", "POST /api/kubernetes/gpus?namespace={namespace}&cluster={cluster}");
+        endpoints.put("gpu_update", "PUT /api/kubernetes/gpus/{name}?namespace={namespace}&cluster={cluster}");
+        endpoints.put("gpu_delete", "DELETE /api/kubernetes/gpus/{name}?namespace={namespace}&cluster={cluster}");
 
         return Map.of(
                 "message", "Welcome to K8s Demo Application",
-                "version", "2.1.0",
+                "version", "2.2.0",
                 "type_safe", true,
                 "multi_cluster", true,
                 "default_cluster", "cluster-local",
-                "description", "A Spring Boot application with Kubernetes OpenAPI integration supporting multiple clusters",
+                "description", "A Spring Boot application with Kubernetes OpenAPI integration supporting multiple clusters and GPU resources",
+                "supported_resources", new String[]{"Application", "Microservice", "GPU"},
                 "endpoints", endpoints
         );
     }

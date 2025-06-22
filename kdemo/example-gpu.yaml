@@ -1,0 +1,46 @@
+apiVersion: example.com/v1
+kind: GPU
+metadata:
+  name: rtx-4090-01
+  namespace: default
+  labels:
+    gpu-type: gaming
+    manufacturer: nvidia
+spec:
+  model: "RTX 4090"
+  memory:
+    total: "24GB"
+    available: "20GB"
+  computeCapability: "8.9"
+  architecture: "Ada Lovelace"
+  powerLimit:
+    max: 450
+    current: 350
+  temperature:
+    current: 65
+    max: 88
+  utilization:
+    gpu: 45
+    memory: 60
+  status: "available"
+  nodeName: "gpu-node-01"
+  driverVersion: "535.86.10"
+  cudaVersion: "12.2"
+  processes:
+    - pid: 12345
+      name: "tensorflow"
+      memoryUsed: "4GB"
+      gpuUtilization: 30
+    - pid: 12346
+      name: "pytorch"
+      memoryUsed: "2GB"
+      gpuUtilization: 15
+status:
+  phase: "Running"
+  conditions:
+    - type: "Ready"
+      status: "True"
+      lastTransitionTime: "2024-01-15T10:30:00Z"
+      reason: "GPUAvailable"
+      message: "GPU is ready for use"
+  lastUpdated: "2024-01-15T10:30:00Z" 

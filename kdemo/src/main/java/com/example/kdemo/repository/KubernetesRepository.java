@@ -4,6 +4,8 @@ import com.example.kdemo.model.Application;
 import com.example.kdemo.model.ApplicationList;
 import com.example.kdemo.model.Microservice;
 import com.example.kdemo.model.MicroserviceList;
+import com.example.kdemo.model.GPU;
+import com.example.kdemo.model.GPUList;
 import io.kubernetes.client.openapi.models.V1CustomResourceDefinition;
 import io.kubernetes.client.openapi.models.V1CustomResourceDefinitionList;
 import io.kubernetes.client.openapi.models.V1NamespaceList;
@@ -34,6 +36,13 @@ public interface KubernetesRepository {
     Microservice createMicroservice(String cluster, String namespace, Microservice microservice);
     Microservice updateMicroservice(String cluster, String namespace, String name, Microservice microservice);
     void deleteMicroservice(String cluster, String namespace, String name);
+    
+    // GPU资源操作
+    List<GPU> getGPUs(String cluster, String namespace);
+    GPU getGPU(String cluster, String namespace, String name);
+    GPU createGPU(String cluster, String namespace, GPU gpu);
+    GPU updateGPU(String cluster, String namespace, String name, GPU gpu);
+    void deleteGPU(String cluster, String namespace, String name);
     
     // 连接检查
     boolean isConnected(String cluster);
