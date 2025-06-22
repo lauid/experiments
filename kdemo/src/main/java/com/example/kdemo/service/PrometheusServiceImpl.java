@@ -1,0 +1,196 @@
+package com.example.kdemo.service;
+
+import com.example.kdemo.config.PrometheusConfig;
+import com.example.kdemo.dto.PrometheusBatchQueryResponse;
+import com.example.kdemo.dto.PrometheusQueryRequest;
+import com.example.kdemo.dto.PrometheusQueryResponse;
+import com.example.kdemo.exception.PrometheusException;
+import com.example.kdemo.repository.PrometheusRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * Prometheus服务实现类
+ */
+@Service
+public class PrometheusServiceImpl implements PrometheusService {
+    
+    private static final Logger logger = LoggerFactory.getLogger(PrometheusServiceImpl.class);
+    
+    private final PrometheusRepository prometheusRepository;
+    private final PrometheusConfig config;
+    
+    @Autowired
+    public PrometheusServiceImpl(PrometheusRepository prometheusRepository, PrometheusConfig config) {
+        this.prometheusRepository = prometheusRepository;
+        this.config = config;
+    }
+    
+    @Override
+    public Mono<PrometheusBatchQueryResponse> batchQuery(String cluster, PrometheusQueryRequest request) throws PrometheusException {
+        if (cluster == null || cluster.isEmpty()) {
+            cluster = request.getCluster();
+        }
+        logger.info("Starting batch query for cluster {} with {} metrics", cluster, request.getQueries().size());
+        long startTime = System.currentTimeMillis();
+        String finalCluster = cluster;
+        return Flux.fromIterable(request.getQueries())
+                .flatMap(metricQuery -> executeSingleQuery(finalCluster, metricQuery, request)
+                        .map(result -> new PrometheusBatchQueryResponse.MetricResult(
+                                metricQuery.getName(),
+                                metricQuery.getDescription(),
+                                metricQuery.getQuery(),
+                                result,
+                                System.currentTimeMillis() - startTime
+                        ))
+                        .onErrorResume(throwable -> {
+                            logger.error("Query failed for metric {}: {}", metricQuery.getName(), throwable.getMessage());
+                            return Mono.empty();
+                        }), config.getMaxConcurrency())
+                .collectList()
+                .flatMap(results -> {
+                    List<PrometheusBatchQueryResponse.QueryError> errors = new ArrayList<>();
+                    for (PrometheusQueryRequest.MetricQuery query : request.getQueries()) {
+                        boolean found = results.stream()
+                                .anyMatch(result -> result.getName().equals(query.getName()));
+                        if (!found) {
+                            errors.add(new PrometheusBatchQueryResponse.QueryError(
+                                    query.getName(),
+                                    query.getQuery(),
+                                    "Query execution failed",
+                                    "EXECUTION_ERROR"
+                            ));
+                        }
+                    }
+                    String status = errors.isEmpty() ? "success" : "partial_success";
+                    if (results.isEmpty()) {
+                        status = "failed";
+                    }
+                    return Mono.just(new PrometheusBatchQueryResponse(status, results, errors));
+                })
+                .doOnSuccess(response -> {
+                    logger.info("Batch query completed for cluster {}. Successful: {}, Failed: {}", 
+                            finalCluster, response.getSuccessfulQueries(), response.getFailedQueries());
+                })
+                .doOnError(throwable -> {
+                    logger.error("Batch query failed for cluster {}: {}", finalCluster, throwable.getMessage());
+                });
+    }
+    
+    @Override
+    public Mono<PrometheusQueryResponse> queryRange(String cluster, String query, String startTime, String endTime, String step) throws PrometheusException {
+        logger.debug("Executing range query for cluster {}: {} from {} to {} with step {}", cluster, query, startTime, endTime, step);
+        return prometheusRepository.queryRange(cluster, query, startTime, endTime, step);
+    }
+    
+    @Override
+    public Mono<PrometheusQueryResponse> query(String cluster, String query, String time) throws PrometheusException {
+        logger.debug("Executing instant query for cluster {}: {} at time {}", cluster, query, time);
+        return prometheusRepository.query(cluster, query, time);
+    }
+    
+    @Override
+    public Mono<Boolean> checkConnection(String cluster) throws PrometheusException {
+        logger.debug("Checking Prometheus connection for cluster {}", cluster);
+        return prometheusRepository.checkConnection(cluster);
+    }
+    
+    @Override
+    public Mono<String> getVersion(String cluster) throws PrometheusException {
+        logger.debug("Getting Prometheus version for cluster {}", cluster);
+        return prometheusRepository.getVersion(cluster);
+    }
+    
+    @Override
+    public List<PrometheusQueryRequest.MetricQuery> getMetricTemplates() {
+        List<PrometheusQueryRequest.MetricQuery> templates = new ArrayList<>();
+        
+        // CPU使用率
+        templates.add(new PrometheusQueryRequest.MetricQuery(
+                "cpu_usage",
+                "rate(container_cpu_usage_seconds_total{container!=\"\"}[5m]) * 100",
+                "Container CPU usage percentage",
+                new HashMap<>()
+        ));
+        
+        // 内存使用率
+        templates.add(new PrometheusQueryRequest.MetricQuery(
+                "memory_usage",
+                "container_memory_usage_bytes{container!=\"\"} / container_spec_memory_limit_bytes{container!=\"\"} * 100",
+                "Container memory usage percentage",
+                new HashMap<>()
+        ));
+        
+        // 网络流量
+        templates.add(new PrometheusQueryRequest.MetricQuery(
+                "network_traffic",
+                "rate(container_network_receive_bytes_total{container!=\"\"}[5m])",
+                "Container network receive traffic",
+                new HashMap<>()
+        ));
+        
+        // 磁盘IO
+        templates.add(new PrometheusQueryRequest.MetricQuery(
+                "disk_io",
+                "rate(container_fs_reads_bytes_total{container!=\"\"}[5m])",
+                "Container disk read operations",
+                new HashMap<>()
+        ));
+        
+        // Pod状态
+        templates.add(new PrometheusQueryRequest.MetricQuery(
+                "pod_status",
+                "kube_pod_status_phase",
+                "Kubernetes pod status",
+                new HashMap<>()
+        ));
+        
+        // 节点资源使用
+        templates.add(new PrometheusQueryRequest.MetricQuery(
+                "node_cpu",
+                "100 - (avg by (instance) (irate(node_cpu_seconds_total{mode=\"idle\"}[5m])) * 100)",
+                "Node CPU usage percentage",
+                new HashMap<>()
+        ));
+        
+        return templates;
+    }
+    
+    /**
+     * 执行单个查询
+     */
+    private Mono<PrometheusQueryResponse> executeSingleQuery(
+            String cluster,
+            PrometheusQueryRequest.MetricQuery metricQuery, 
+            PrometheusQueryRequest request) {
+        long startTime = System.currentTimeMillis();
+        if (request.getStartTime() != null && request.getEndTime() != null && request.getStep() != null) {
+            return prometheusRepository.queryRange(
+                    cluster,
+                    metricQuery.getQuery(),
+                    request.getStartTime(),
+                    request.getEndTime(),
+                    request.getStep()
+            ).doOnSuccess(result -> {
+                long duration = System.currentTimeMillis() - startTime;
+                logger.debug("Range query completed for {} in {}ms", metricQuery.getName(), duration);
+            });
+        } else {
+            return prometheusRepository.query(cluster, metricQuery.getQuery(), null)
+                    .doOnSuccess(result -> {
+                        long duration = System.currentTimeMillis() - startTime;
+                        logger.debug("Instant query completed for {} in {}ms", metricQuery.getName(), duration);
+                    });
+        }
+    }
+} 

@@ -4,7 +4,9 @@ import com.example.kdemo.model.Application;
 import com.example.kdemo.model.Microservice;
 import com.example.kdemo.model.GPU;
 import com.example.kdemo.exception.KubernetesException;
+import com.example.kdemo.exception.ResourceNotFoundException;
 import io.kubernetes.client.openapi.ApiClient;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -14,7 +16,14 @@ import static org.junit.jupiter.api.Assertions.*;
 @ExtendWith(MockitoExtension.class)
 class KubernetesRepositoryImplTest {
 
-    private KubernetesRepositoryImpl repository = new KubernetesRepositoryImpl(new ApiClient());
+    private KubernetesRepositoryImpl repository;
+
+    @BeforeEach
+    void setUp() {
+        ApiClient client = new ApiClient();
+        client.setBasePath("http://localhost:1234");
+        repository = new KubernetesRepositoryImpl(client);
+    }
 
     @Test
     void testGetNamespaces() {
@@ -57,7 +66,7 @@ class KubernetesRepositoryImplTest {
         String name = "applications.example.com";
 
         // When & Then
-        assertThrows(KubernetesException.class, () -> {
+        assertThrows(ResourceNotFoundException.class, () -> {
             repository.getCustomResourceDefinition(cluster, name);
         });
     }
@@ -275,8 +284,6 @@ class KubernetesRepositoryImplTest {
         String cluster = "test-cluster";
 
         // When & Then
-        assertThrows(KubernetesException.class, () -> {
-            repository.isConnected(cluster);
-        });
+        assertFalse(repository.isConnected(cluster));
     }
-} 
+}

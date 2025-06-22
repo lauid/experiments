@@ -48,6 +48,19 @@
 			<version>24.0.0</version>
 		</dependency>
 		
+		<!-- Prometheus客户端 -->
+		<dependency>
+			<groupId>io.prometheus</groupId>
+			<artifactId>simpleclient</artifactId>
+			<version>0.16.0</version>
+		</dependency>
+		
+		<!-- HTTP客户端 -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-webflux</artifactId>
+		</dependency>
+		
 		<!-- JSON处理 -->
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
@@ -57,6 +70,13 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		
+		<!-- Reactor测试依赖 -->
+		<dependency>
+			<groupId>io.projectreactor</groupId>
+			<artifactId>reactor-test</artifactId>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>

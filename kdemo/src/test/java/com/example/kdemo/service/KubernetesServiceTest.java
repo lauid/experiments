@@ -572,9 +572,19 @@ class KubernetesServiceTest {
         // Add spec to avoid null pointer exceptions
         io.kubernetes.client.openapi.models.V1CustomResourceDefinitionSpec spec = new io.kubernetes.client.openapi.models.V1CustomResourceDefinitionSpec();
         spec.setGroup("example.com");
-        spec.setVersions(List.of(new io.kubernetes.client.openapi.models.V1CustomResourceDefinitionVersion()));
+        
+        io.kubernetes.client.openapi.models.V1CustomResourceDefinitionVersion version = new io.kubernetes.client.openapi.models.V1CustomResourceDefinitionVersion();
+        version.setName("v1");
+        spec.setVersions(List.of(version));
+        
         spec.setScope("Namespaced");
-        spec.setNames(new io.kubernetes.client.openapi.models.V1CustomResourceDefinitionNames());
+        
+        io.kubernetes.client.openapi.models.V1CustomResourceDefinitionNames names = new io.kubernetes.client.openapi.models.V1CustomResourceDefinitionNames();
+        names.setKind("Application");
+        names.setPlural("applications");
+        names.setSingular("application");
+        spec.setNames(names);
+        
         crd.setSpec(spec);
         
         return crd;
