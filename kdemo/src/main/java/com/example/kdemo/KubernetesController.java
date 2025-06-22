@@ -22,33 +22,35 @@ public class KubernetesController {
     }
 
     /**
-     * 检查 Kubernetes 连接状态
+     * 检查 Kubernetes 连接
      */
     @GetMapping("/connection")
-    public ResponseEntity<Map<String, Object>> checkConnection() {
-        boolean isConnected = kubernetesService.isConnected();
-        return ResponseEntity.ok(Map.of(
-                "connected", isConnected,
-                "message", isConnected ? "Successfully connected to Kubernetes" : "Failed to connect to Kubernetes"
-        ));
+    public ResponseEntity<Map<String, Object>> checkConnection(@RequestParam(required = false) String cluster) {
+        boolean connected = kubernetesService.isConnected(cluster);
+        Map<String, Object> response = new HashMap<>();
+        response.put("connected", connected);
+        response.put("cluster", cluster != null ? cluster : "cluster-local");
+        return ResponseEntity.ok(response);
     }
 
     /**
      * 获取所有命名空间
      */
     @GetMapping("/namespaces")
-    public ResponseEntity<Map<String, Object>> getNamespaces() {
+    public ResponseEntity<Map<String, Object>> getNamespaces(@RequestParam(required = false) String cluster) {
         try {
-            List<String> namespaces = kubernetesService.getNamespaces();
-            return ResponseEntity.ok(Map.of(
-                    "namespaces", namespaces,
-                    "count", namespaces.size()
-            ));
+            List<String> namespaces = kubernetesService.getNamespaces(cluster);
+            Map<String, Object> response = new HashMap<>();
+            response.put("namespaces", namespaces);
+            response.put("count", namespaces.size());
+            response.put("cluster", cluster != null ? cluster : "cluster-local");
+            return ResponseEntity.ok(response);
         } catch (Exception e) {
-            return ResponseEntity.internalServerError().body(Map.of(
-                    "error", "Failed to get namespaces",
-                    "message", e.getMessage()
-            ));
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("error", "Failed to get namespaces");
+            errorResponse.put("cluster", cluster != null ? cluster : "cluster-local");
+            errorResponse.put("message", e.getMessage());
+            return ResponseEntity.internalServerError().body(errorResponse);
         }
     }
 
@@ -56,55 +58,60 @@ public class KubernetesController {
      * 获取指定命名空间中的所有 Pod
      */
     @GetMapping("/namespaces/{namespace}/pods")
-    public ResponseEntity<Map<String, Object>> getPodsInNamespace(@PathVariable String namespace) {
+    public ResponseEntity<Map<String, Object>> getPodsInNamespace(
+            @PathVariable String namespace,
+            @RequestParam(required = false) String cluster) {
         try {
-            List<String> pods = kubernetesService.getPodsInNamespace(namespace);
-            return ResponseEntity.ok(Map.of(
-                    "namespace", namespace,
-                    "pods", pods,
-                    "count", pods.size()
-            ));
+            List<String> pods = kubernetesService.getPodsInNamespace(cluster, namespace);
+            Map<String, Object> response = new HashMap<>();
+            response.put("namespace", namespace);
+            response.put("pods", pods);
+            response.put("count", pods.size());
+            response.put("cluster", cluster != null ? cluster : "cluster-local");
+            return ResponseEntity.ok(response);
         } catch (Exception e) {
-            return ResponseEntity.internalServerError().body(Map.of(
-                    "error", "Failed to get pods in namespace: " + namespace,
-                    "message", e.getMessage()
-            ));
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("error", "Failed to get pods in namespace: " + namespace);
+            errorResponse.put("cluster", cluster != null ? cluster : "cluster-local");
+            errorResponse.put("message", e.getMessage());
+            return ResponseEntity.internalServerError().body(errorResponse);
         }
     }
 
     /**
-     * 获取集群信息概览
+     * 获取集群概览
      */
     @GetMapping("/overview")
-    public ResponseEntity<Map<String, Object>> getClusterOverview() {
+    public ResponseEntity<Map<String, Object>> getClusterOverview(@RequestParam(required = false) String cluster) {
         try {
-            boolean isConnected = kubernetesService.isConnected();
-            if (!isConnected) {
-                return ResponseEntity.ok(Map.of(
-                        "connected", false,
-                        "message", "Not connected to Kubernetes cluster"
-                ));
-            }
-
-            List<String> namespaces = kubernetesService.getNamespaces();
-            int totalPods = 0;
+            List<String> namespaces = kubernetesService.getNamespaces(cluster);
+            Map<String, Object> response = new HashMap<>();
+            response.put("cluster", cluster != null ? cluster : "cluster-local");
+            response.put("namespaces", namespaces);
+            response.put("namespaceCount", namespaces.size());
             
+            // 获取每个命名空间的Pod数量
+            Map<String, Integer> podsPerNamespace = new HashMap<>();
             for (String namespace : namespaces) {
-                List<String> pods = kubernetesService.getPodsInNamespace(namespace);
-                totalPods += pods.size();
+                try {
+                    List<String> pods = kubernetesService.getPodsInNamespace(cluster, namespace);
+                    podsPerNamespace.put(namespace, pods.size());
+                } catch (Exception e) {
+                    podsPerNamespace.put(namespace, 0);
+                }
             }
-
-            return ResponseEntity.ok(Map.of(
-                    "connected", true,
-                    "namespaces", namespaces.size(),
-                    "totalPods", totalPods,
-                    "namespaceList", namespaces
-            ));
+            response.put("podsPerNamespace", podsPerNamespace);
+            
+            int totalPods = podsPerNamespace.values().stream().mapToInt(Integer::intValue).sum();
+            response.put("totalPods", totalPods);
+            
+            return ResponseEntity.ok(response);
         } catch (Exception e) {
-            return ResponseEntity.internalServerError().body(Map.of(
-                    "error", "Failed to get cluster overview",
-                    "message", e.getMessage()
-            ));
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("error", "Failed to get cluster overview");
+            errorResponse.put("cluster", cluster != null ? cluster : "cluster-local");
+            errorResponse.put("message", e.getMessage());
+            return ResponseEntity.internalServerError().body(errorResponse);
         }
     }
 
@@ -114,18 +121,20 @@ public class KubernetesController {
      * 获取所有CRD
      */
     @GetMapping("/crds")
-    public ResponseEntity<Map<String, Object>> getCustomResourceDefinitions() {
+    public ResponseEntity<Map<String, Object>> getCustomResourceDefinitions(@RequestParam(required = false) String cluster) {
         try {
-            List<String> crds = kubernetesService.getCustomResourceDefinitions();
-            return ResponseEntity.ok(Map.of(
-                    "crds", crds,
-                    "count", crds.size()
-            ));
+            List<String> crds = kubernetesService.getCustomResourceDefinitions(cluster);
+            Map<String, Object> response = new HashMap<>();
+            response.put("crds", crds);
+            response.put("count", crds.size());
+            response.put("cluster", cluster != null ? cluster : "cluster-local");
+            return ResponseEntity.ok(response);
         } catch (Exception e) {
-            return ResponseEntity.internalServerError().body(Map.of(
-                    "error", "Failed to get CRDs",
-                    "message", e.getMessage()
-            ));
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("error", "Failed to get CRDs");
+            errorResponse.put("cluster", cluster != null ? cluster : "cluster-local");
+            errorResponse.put("message", e.getMessage());
+            return ResponseEntity.internalServerError().body(errorResponse);
         }
     }
 
@@ -133,15 +142,21 @@ public class KubernetesController {
      * 获取指定CRD的详细信息
      */
     @GetMapping("/crds/{name}")
-    public ResponseEntity<Map<String, Object>> getCustomResourceDefinition(@PathVariable String name) {
+    public ResponseEntity<Map<String, Object>> getCustomResourceDefinition(
+            @PathVariable String name,
+            @RequestParam(required = false) String cluster) {
         try {
-            Map<String, Object> crd = kubernetesService.getCustomResourceDefinition(name);
-            return ResponseEntity.ok(crd);
+            Map<String, Object> crd = kubernetesService.getCustomResourceDefinition(cluster, name);
+            Map<String, Object> response = new HashMap<>();
+            response.put("crd", crd);
+            response.put("cluster", cluster != null ? cluster : "cluster-local");
+            return ResponseEntity.ok(response);
         } catch (Exception e) {
-            return ResponseEntity.internalServerError().body(Map.of(
-                    "error", "Failed to get CRD: " + name,
-                    "message", e.getMessage()
-            ));
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("error", "Failed to get CRD: " + name);
+            errorResponse.put("cluster", cluster != null ? cluster : "cluster-local");
+            errorResponse.put("message", e.getMessage());
+            return ResponseEntity.internalServerError().body(errorResponse);
         }
     }
 
@@ -149,19 +164,22 @@ public class KubernetesController {
      * 创建CRD
      */
     @PostMapping("/crds")
-    public ResponseEntity<Map<String, Object>> createCustomResourceDefinition(@RequestBody String crdYaml) {
+    public ResponseEntity<Map<String, Object>> createCustomResourceDefinition(
+            @RequestBody String crdYaml,
+            @RequestParam(required = false) String cluster) {
         try {
-            Map<String, Object> result = kubernetesService.createCustomResourceDefinition(crdYaml);
+            Map<String, Object> result = kubernetesService.createCustomResourceDefinition(cluster, crdYaml);
             if ((Boolean) result.get("success")) {
                 return ResponseEntity.ok(result);
             } else {
                 return ResponseEntity.badRequest().body(result);
             }
         } catch (Exception e) {
-            return ResponseEntity.internalServerError().body(Map.of(
-                    "error", "Failed to create CRD",
-                    "message", e.getMessage()
-            ));
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("error", "Failed to create CRD");
+            errorResponse.put("cluster", cluster != null ? cluster : "cluster-local");
+            errorResponse.put("message", e.getMessage());
+            return ResponseEntity.internalServerError().body(errorResponse);
         }
     }
 
@@ -171,17 +189,21 @@ public class KubernetesController {
      * 获取所有 Application 资源
      */
     @GetMapping("/applications")
-    public ResponseEntity<Map<String, Object>> getApplications(@RequestParam(required = false) String namespace) {
+    public ResponseEntity<Map<String, Object>> getApplications(
+            @RequestParam(required = false) String namespace,
+            @RequestParam(required = false) String cluster) {
         try {
-            List<Application> applications = kubernetesService.getApplications(namespace);
+            List<Application> applications = kubernetesService.getApplications(cluster, namespace);
             Map<String, Object> response = new HashMap<>();
             response.put("namespace", namespace);
             response.put("applications", applications);
             response.put("count", applications.size());
+            response.put("cluster", cluster != null ? cluster : "cluster-local");
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             Map<String, Object> errorResponse = new HashMap<>();
             errorResponse.put("error", "Failed to get applications");
+            errorResponse.put("cluster", cluster != null ? cluster : "cluster-local");
             errorResponse.put("message", e.getMessage());
             return ResponseEntity.internalServerError().body(errorResponse);
         }
@@ -193,17 +215,20 @@ public class KubernetesController {
     @GetMapping("/applications/{name}")
     public ResponseEntity<Map<String, Object>> getApplication(
             @PathVariable String name,
-            @RequestParam(required = false) String namespace) {
+            @RequestParam(required = false) String namespace,
+            @RequestParam(required = false) String cluster) {
         try {
-            Application application = kubernetesService.getApplication(namespace, name);
-            return ResponseEntity.ok(Map.of(
-                    "application", application
-            ));
+            Application application = kubernetesService.getApplication(cluster, namespace, name);
+            Map<String, Object> response = new HashMap<>();
+            response.put("application", application);
+            response.put("cluster", cluster != null ? cluster : "cluster-local");
+            return ResponseEntity.ok(response);
         } catch (Exception e) {
-            return ResponseEntity.internalServerError().body(Map.of(
-                    "error", "Failed to get application: " + name,
-                    "message", e.getMessage()
-            ));
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("error", "Failed to get application: " + name);
+            errorResponse.put("cluster", cluster != null ? cluster : "cluster-local");
+            errorResponse.put("message", e.getMessage());
+            return ResponseEntity.internalServerError().body(errorResponse);
         }
     }
 
@@ -213,19 +238,21 @@ public class KubernetesController {
     @PostMapping("/applications")
     public ResponseEntity<Map<String, Object>> createApplication(
             @RequestParam(required = false) String namespace,
+            @RequestParam(required = false) String cluster,
             @RequestBody String resourceYaml) {
         try {
-            Map<String, Object> result = kubernetesService.createApplication(namespace, resourceYaml);
+            Map<String, Object> result = kubernetesService.createApplication(cluster, namespace, resourceYaml);
             if ((Boolean) result.get("success")) {
                 return ResponseEntity.ok(result);
             } else {
                 return ResponseEntity.badRequest().body(result);
             }
         } catch (Exception e) {
-            return ResponseEntity.internalServerError().body(Map.of(
-                    "error", "Failed to create application",
-                    "message", e.getMessage()
-            ));
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("error", "Failed to create application");
+            errorResponse.put("cluster", cluster != null ? cluster : "cluster-local");
+            errorResponse.put("message", e.getMessage());
+            return ResponseEntity.internalServerError().body(errorResponse);
         }
     }
 
@@ -236,19 +263,21 @@ public class KubernetesController {
     public ResponseEntity<Map<String, Object>> updateApplication(
             @PathVariable String name,
             @RequestParam(required = false) String namespace,
+            @RequestParam(required = false) String cluster,
             @RequestBody String resourceYaml) {
         try {
-            Map<String, Object> result = kubernetesService.updateApplication(namespace, name, resourceYaml);
+            Map<String, Object> result = kubernetesService.updateApplication(cluster, namespace, name, resourceYaml);
             if ((Boolean) result.get("success")) {
                 return ResponseEntity.ok(result);
             } else {
                 return ResponseEntity.badRequest().body(result);
             }
         } catch (Exception e) {
-            return ResponseEntity.internalServerError().body(Map.of(
-                    "error", "Failed to update application: " + name,
-                    "message", e.getMessage()
-            ));
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("error", "Failed to update application: " + name);
+            errorResponse.put("cluster", cluster != null ? cluster : "cluster-local");
+            errorResponse.put("message", e.getMessage());
+            return ResponseEntity.internalServerError().body(errorResponse);
         }
     }
 
@@ -258,19 +287,21 @@ public class KubernetesController {
     @DeleteMapping("/applications/{name}")
     public ResponseEntity<Map<String, Object>> deleteApplication(
             @PathVariable String name,
-            @RequestParam(required = false) String namespace) {
+            @RequestParam(required = false) String namespace,
+            @RequestParam(required = false) String cluster) {
         try {
-            Map<String, Object> result = kubernetesService.deleteApplication(namespace, name);
+            Map<String, Object> result = kubernetesService.deleteApplication(cluster, namespace, name);
             if ((Boolean) result.get("success")) {
                 return ResponseEntity.ok(result);
             } else {
                 return ResponseEntity.badRequest().body(result);
             }
         } catch (Exception e) {
-            return ResponseEntity.internalServerError().body(Map.of(
-                    "error", "Failed to delete application: " + name,
-                    "message", e.getMessage()
-            ));
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("error", "Failed to delete application: " + name);
+            errorResponse.put("cluster", cluster != null ? cluster : "cluster-local");
+            errorResponse.put("message", e.getMessage());
+            return ResponseEntity.internalServerError().body(errorResponse);
         }
     }
 
@@ -280,17 +311,21 @@ public class KubernetesController {
      * 获取所有 Microservice 资源
      */
     @GetMapping("/microservices")
-    public ResponseEntity<Map<String, Object>> getMicroservices(@RequestParam(required = false) String namespace) {
+    public ResponseEntity<Map<String, Object>> getMicroservices(
+            @RequestParam(required = false) String namespace,
+            @RequestParam(required = false) String cluster) {
         try {
-            List<Microservice> microservices = kubernetesService.getMicroservices(namespace);
+            List<Microservice> microservices = kubernetesService.getMicroservices(cluster, namespace);
             Map<String, Object> response = new HashMap<>();
             response.put("namespace", namespace);
             response.put("microservices", microservices);
             response.put("count", microservices.size());
+            response.put("cluster", cluster != null ? cluster : "cluster-local");
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             Map<String, Object> errorResponse = new HashMap<>();
             errorResponse.put("error", "Failed to get microservices");
+            errorResponse.put("cluster", cluster != null ? cluster : "cluster-local");
             errorResponse.put("message", e.getMessage());
             return ResponseEntity.internalServerError().body(errorResponse);
         }
@@ -302,17 +337,20 @@ public class KubernetesController {
     @GetMapping("/microservices/{name}")
     public ResponseEntity<Map<String, Object>> getMicroservice(
             @PathVariable String name,
-            @RequestParam(required = false) String namespace) {
+            @RequestParam(required = false) String namespace,
+            @RequestParam(required = false) String cluster) {
         try {
-            Microservice microservice = kubernetesService.getMicroservice(namespace, name);
-            return ResponseEntity.ok(Map.of(
-                    "microservice", microservice
-            ));
+            Microservice microservice = kubernetesService.getMicroservice(cluster, namespace, name);
+            Map<String, Object> response = new HashMap<>();
+            response.put("microservice", microservice);
+            response.put("cluster", cluster != null ? cluster : "cluster-local");
+            return ResponseEntity.ok(response);
         } catch (Exception e) {
-            return ResponseEntity.internalServerError().body(Map.of(
-                    "error", "Failed to get microservice: " + name,
-                    "message", e.getMessage()
-            ));
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("error", "Failed to get microservice: " + name);
+            errorResponse.put("cluster", cluster != null ? cluster : "cluster-local");
+            errorResponse.put("message", e.getMessage());
+            return ResponseEntity.internalServerError().body(errorResponse);
         }
     }
 
@@ -322,19 +360,21 @@ public class KubernetesController {
     @PostMapping("/microservices")
     public ResponseEntity<Map<String, Object>> createMicroservice(
             @RequestParam(required = false) String namespace,
+            @RequestParam(required = false) String cluster,
             @RequestBody String resourceYaml) {
         try {
-            Map<String, Object> result = kubernetesService.createMicroservice(namespace, resourceYaml);
+            Map<String, Object> result = kubernetesService.createMicroservice(cluster, namespace, resourceYaml);
             if ((Boolean) result.get("success")) {
                 return ResponseEntity.ok(result);
             } else {
                 return ResponseEntity.badRequest().body(result);
             }
         } catch (Exception e) {
-            return ResponseEntity.internalServerError().body(Map.of(
-                    "error", "Failed to create microservice",
-                    "message", e.getMessage()
-            ));
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("error", "Failed to create microservice");
+            errorResponse.put("cluster", cluster != null ? cluster : "cluster-local");
+            errorResponse.put("message", e.getMessage());
+            return ResponseEntity.internalServerError().body(errorResponse);
         }
     }
 
@@ -345,19 +385,21 @@ public class KubernetesController {
     public ResponseEntity<Map<String, Object>> updateMicroservice(
             @PathVariable String name,
             @RequestParam(required = false) String namespace,
+            @RequestParam(required = false) String cluster,
             @RequestBody String resourceYaml) {
         try {
-            Map<String, Object> result = kubernetesService.updateMicroservice(namespace, name, resourceYaml);
+            Map<String, Object> result = kubernetesService.updateMicroservice(cluster, namespace, name, resourceYaml);
             if ((Boolean) result.get("success")) {
                 return ResponseEntity.ok(result);
             } else {
                 return ResponseEntity.badRequest().body(result);
             }
         } catch (Exception e) {
-            return ResponseEntity.internalServerError().body(Map.of(
-                    "error", "Failed to update microservice: " + name,
-                    "message", e.getMessage()
-            ));
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("error", "Failed to update microservice: " + name);
+            errorResponse.put("cluster", cluster != null ? cluster : "cluster-local");
+            errorResponse.put("message", e.getMessage());
+            return ResponseEntity.internalServerError().body(errorResponse);
         }
     }
 
@@ -367,19 +409,21 @@ public class KubernetesController {
     @DeleteMapping("/microservices/{name}")
     public ResponseEntity<Map<String, Object>> deleteMicroservice(
             @PathVariable String name,
-            @RequestParam(required = false) String namespace) {
+            @RequestParam(required = false) String namespace,
+            @RequestParam(required = false) String cluster) {
         try {
-            Map<String, Object> result = kubernetesService.deleteMicroservice(namespace, name);
+            Map<String, Object> result = kubernetesService.deleteMicroservice(cluster, namespace, name);
             if ((Boolean) result.get("success")) {
                 return ResponseEntity.ok(result);
             } else {
                 return ResponseEntity.badRequest().body(result);
             }
         } catch (Exception e) {
-            return ResponseEntity.internalServerError().body(Map.of(
-                    "error", "Failed to delete microservice: " + name,
-                    "message", e.getMessage()
-            ));
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("error", "Failed to delete microservice: " + name);
+            errorResponse.put("cluster", cluster != null ? cluster : "cluster-local");
+            errorResponse.put("message", e.getMessage());
+            return ResponseEntity.internalServerError().body(errorResponse);
         }
     }
 } 

@@ -24,94 +24,185 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class KubernetesService {
 
-    private final CoreV1Api api;
-    private final ApiextensionsV1Api crdApi;
-    private final ApiClient apiClient;
-    private final GenericKubernetesApi<Application, ApplicationList> applicationApi;
-    private final GenericKubernetesApi<Microservice, MicroserviceList> microserviceApi;
+    private final Map<String, CoreV1Api> apiClients;
+    private final Map<String, ApiextensionsV1Api> crdApiClients;
+    private final Map<String, GenericKubernetesApi<Application, ApplicationList>> applicationApis;
+    private final Map<String, GenericKubernetesApi<Microservice, MicroserviceList>> microserviceApis;
+    private static final String DEFAULT_CLUSTER = "cluster-local";
 
     public KubernetesService() {
-        CoreV1Api tempApi;
-        ApiextensionsV1Api tempCrdApi;
-        ApiClient tempApiClient;
+        this.apiClients = new ConcurrentHashMap<>();
+        this.crdApiClients = new ConcurrentHashMap<>();
+        this.applicationApis = new ConcurrentHashMap<>();
+        this.microserviceApis = new ConcurrentHashMap<>();
         
+        // 初始化默认集群
+        initializeCluster(DEFAULT_CLUSTER);
+    }
+
+    private void initializeCluster(String clusterName) {
         try {
-            tempApiClient = ClientBuilder.standard().build();
-            Configuration.setDefaultApiClient(tempApiClient);
-            tempApi = new CoreV1Api();
-            tempCrdApi = new ApiextensionsV1Api();
+            ApiClient apiClient = ClientBuilder.standard().build();
+            Configuration.setDefaultApiClient(apiClient);
+            
+            CoreV1Api api = new CoreV1Api();
+            ApiextensionsV1Api crdApi = new ApiextensionsV1Api();
+            
+            apiClients.put(clusterName, api);
+            crdApiClients.put(clusterName, crdApi);
+            
+            applicationApis.put(clusterName, new GenericKubernetesApi<>(
+                    Application.class,
+                    ApplicationList.class,
+                    "example.com",
+                    "v1",
+                    "applications",
+                    apiClient
+            ));
+            
+            microserviceApis.put(clusterName, new GenericKubernetesApi<>(
+                    Microservice.class,
+                    MicroserviceList.class,
+                    "example.com",
+                    "v1",
+                    "microservices",
+                    apiClient
+            ));
         } catch (Exception e) {
             try {
-                tempApiClient = ClientBuilder.cluster().build();
-                Configuration.setDefaultApiClient(tempApiClient);
-                tempApi = new CoreV1Api();
-                tempCrdApi = new ApiextensionsV1Api();
+                ApiClient apiClient = ClientBuilder.cluster().build();
+                Configuration.setDefaultApiClient(apiClient);
+                
+                CoreV1Api api = new CoreV1Api();
+                ApiextensionsV1Api crdApi = new ApiextensionsV1Api();
+                
+                apiClients.put(clusterName, api);
+                crdApiClients.put(clusterName, crdApi);
+                
+                applicationApis.put(clusterName, new GenericKubernetesApi<>(
+                        Application.class,
+                        ApplicationList.class,
+                        "example.com",
+                        "v1",
+                        "applications",
+                        apiClient
+                ));
+                
+                microserviceApis.put(clusterName, new GenericKubernetesApi<>(
+                        Microservice.class,
+                        MicroserviceList.class,
+                        "example.com",
+                        "v1",
+                        "microservices",
+                        apiClient
+                ));
             } catch (IOException ioException) {
-                tempApiClient = new ApiClient();
-                tempApi = new CoreV1Api();
-                tempCrdApi = new ApiextensionsV1Api();
+                ApiClient apiClient = new ApiClient();
+                
+                CoreV1Api api = new CoreV1Api();
+                ApiextensionsV1Api crdApi = new ApiextensionsV1Api();
+                
+                apiClients.put(clusterName, api);
+                crdApiClients.put(clusterName, crdApi);
+                
+                applicationApis.put(clusterName, new GenericKubernetesApi<>(
+                        Application.class,
+                        ApplicationList.class,
+                        "example.com",
+                        "v1",
+                        "applications",
+                        apiClient
+                ));
+                
+                microserviceApis.put(clusterName, new GenericKubernetesApi<>(
+                        Microservice.class,
+                        MicroserviceList.class,
+                        "example.com",
+                        "v1",
+                        "microservices",
+                        apiClient
+                ));
             }
         }
-        this.api = tempApi;
-        this.crdApi = tempCrdApi;
-        this.apiClient = tempApiClient;
-        
-        this.applicationApi = new GenericKubernetesApi<>(
-                Application.class,
-                ApplicationList.class,
-                "example.com",
-                "v1",
-                "applications",
-                tempApiClient
-        );
-        
-        this.microserviceApi = new GenericKubernetesApi<>(
-                Microservice.class,
-                MicroserviceList.class,
-                "example.com",
-                "v1",
-                "microservices",
-                tempApiClient
-        );
+    }
+
+    private String getClusterName(String cluster) {
+        return cluster != null && !cluster.isEmpty() ? cluster : DEFAULT_CLUSTER;
+    }
+
+    private CoreV1Api getApi(String cluster) {
+        String clusterName = getClusterName(cluster);
+        if (!apiClients.containsKey(clusterName)) {
+            initializeCluster(clusterName);
+        }
+        return apiClients.get(clusterName);
+    }
+
+    private ApiextensionsV1Api getCrdApi(String cluster) {
+        String clusterName = getClusterName(cluster);
+        if (!crdApiClients.containsKey(clusterName)) {
+            initializeCluster(clusterName);
+        }
+        return crdApiClients.get(clusterName);
+    }
+
+    private GenericKubernetesApi<Application, ApplicationList> getApplicationApi(String cluster) {
+        String clusterName = getClusterName(cluster);
+        if (!applicationApis.containsKey(clusterName)) {
+            initializeCluster(clusterName);
+        }
+        return applicationApis.get(clusterName);
+    }
+
+    private GenericKubernetesApi<Microservice, MicroserviceList> getMicroserviceApi(String cluster) {
+        String clusterName = getClusterName(cluster);
+        if (!microserviceApis.containsKey(clusterName)) {
+            initializeCluster(clusterName);
+        }
+        return microserviceApis.get(clusterName);
     }
 
     /**
      * 获取所有命名空间
      */
-    public List<String> getNamespaces() {
+    public List<String> getNamespaces(String cluster) {
         try {
+            CoreV1Api api = getApi(cluster);
             V1NamespaceList namespaceList = api.listNamespace().execute();
             return namespaceList.getItems().stream()
                     .map(namespace -> namespace.getMetadata().getName())
                     .toList();
         } catch (ApiException e) {
-            throw new RuntimeException("Failed to get namespaces", e);
+            throw new RuntimeException("Failed to get namespaces from cluster: " + getClusterName(cluster), e);
         }
     }
 
     /**
      * 获取指定命名空间中的所有 Pod
      */
-    public List<String> getPodsInNamespace(String namespace) {
+    public List<String> getPodsInNamespace(String cluster, String namespace) {
         try {
+            CoreV1Api api = getApi(cluster);
             V1PodList podList = api.listNamespacedPod(namespace).execute();
             return podList.getItems().stream()
                     .map(pod -> pod.getMetadata().getName())
                     .toList();
         } catch (ApiException e) {
-            throw new RuntimeException("Failed to get pods in namespace: " + namespace, e);
+            throw new RuntimeException("Failed to get pods in namespace: " + namespace + " from cluster: " + getClusterName(cluster), e);
         }
     }
 
     /**
      * 检查 Kubernetes 连接
      */
-    public boolean isConnected() {
+    public boolean isConnected(String cluster) {
         try {
+            CoreV1Api api = getApi(cluster);
             api.listNamespace().execute();
             return true;
         } catch (ApiException e) {
@@ -122,22 +213,24 @@ public class KubernetesService {
     /**
      * 获取所有CRD
      */
-    public List<String> getCustomResourceDefinitions() {
+    public List<String> getCustomResourceDefinitions(String cluster) {
         try {
+            ApiextensionsV1Api crdApi = getCrdApi(cluster);
             V1CustomResourceDefinitionList crdList = crdApi.listCustomResourceDefinition().execute();
             return crdList.getItems().stream()
                     .map(crd -> crd.getMetadata().getName())
                     .toList();
         } catch (ApiException e) {
-            throw new RuntimeException("Failed to get CRDs", e);
+            throw new RuntimeException("Failed to get CRDs from cluster: " + getClusterName(cluster), e);
         }
     }
 
     /**
      * 获取指定CRD的详细信息
      */
-    public Map<String, Object> getCustomResourceDefinition(String name) {
+    public Map<String, Object> getCustomResourceDefinition(String cluster, String name) {
         try {
+            ApiextensionsV1Api crdApi = getCrdApi(cluster);
             V1CustomResourceDefinition crd = crdApi.readCustomResourceDefinition(name).execute();
             return Map.of(
                     "name", crd.getMetadata().getName(),
@@ -149,32 +242,33 @@ public class KubernetesService {
                     "scope", crd.getSpec().getScope()
             );
         } catch (ApiException e) {
-            throw new RuntimeException("Failed to get CRD: " + name, e);
+            throw new RuntimeException("Failed to get CRD: " + name + " from cluster: " + getClusterName(cluster), e);
         }
     }
 
     /**
      * 创建CRD
      */
-    public Map<String, Object> createCustomResourceDefinition(String crdYaml) {
+    public Map<String, Object> createCustomResourceDefinition(String cluster, String crdYaml) {
         try {
+            ApiextensionsV1Api crdApi = getCrdApi(cluster);
             ObjectMapper mapper = new ObjectMapper();
             JsonNode crdJson = mapper.readTree(crdYaml);
             
-            // 从JSON创建CRD对象
             V1CustomResourceDefinition crd = mapper.treeToValue(crdJson, V1CustomResourceDefinition.class);
-            
             V1CustomResourceDefinition createdCrd = crdApi.createCustomResourceDefinition(crd).execute();
             
             return Map.of(
                     "success", true,
                     "name", createdCrd.getMetadata().getName(),
+                    "cluster", getClusterName(cluster),
                     "message", "CRD created successfully"
             );
         } catch (Exception e) {
             return Map.of(
                     "success", false,
                     "error", "Failed to create CRD",
+                    "cluster", getClusterName(cluster),
                     "message", e.getMessage()
             );
         }
@@ -185,51 +279,55 @@ public class KubernetesService {
     /**
      * 获取所有 Application 资源
      */
-    public List<Application> getApplications(String namespace) {
+    public List<Application> getApplications(String cluster, String namespace) {
         try {
+            GenericKubernetesApi<Application, ApplicationList> api = getApplicationApi(cluster);
             if (namespace != null && !namespace.isEmpty()) {
-                return applicationApi.list(namespace).getObject().getItems();
+                return api.list(namespace).getObject().getItems();
             } else {
-                return applicationApi.list().getObject().getItems();
+                return api.list().getObject().getItems();
             }
         } catch (Exception e) {
-            throw new RuntimeException("Failed to get applications", e);
+            throw new RuntimeException("Failed to get applications from cluster: " + getClusterName(cluster), e);
         }
     }
 
     /**
      * 获取指定的 Application 资源
      */
-    public Application getApplication(String namespace, String name) {
+    public Application getApplication(String cluster, String namespace, String name) {
         try {
+            GenericKubernetesApi<Application, ApplicationList> api = getApplicationApi(cluster);
             if (namespace != null && !namespace.isEmpty()) {
-                return applicationApi.get(namespace, name).getObject();
+                return api.get(namespace, name).getObject();
             } else {
-                return applicationApi.get(name).getObject();
+                return api.get(name).getObject();
             }
         } catch (Exception e) {
-            throw new RuntimeException("Failed to get application: " + name, e);
+            throw new RuntimeException("Failed to get application: " + name + " from cluster: " + getClusterName(cluster), e);
         }
     }
 
     /**
      * 创建 Application 资源
      */
-    public Map<String, Object> createApplication(String namespace, String resourceYaml) {
+    public Map<String, Object> createApplication(String cluster, String namespace, String resourceYaml) {
         try {
+            GenericKubernetesApi<Application, ApplicationList> api = getApplicationApi(cluster);
             ObjectMapper mapper = new ObjectMapper();
             Application application = mapper.readValue(resourceYaml, Application.class);
             
             Application created;
             if (namespace != null && !namespace.isEmpty()) {
-                created = applicationApi.create(namespace, application, new CreateOptions()).getObject();
+                created = api.create(namespace, application, new CreateOptions()).getObject();
             } else {
-                created = applicationApi.create(application, new CreateOptions()).getObject();
+                created = api.create(application, new CreateOptions()).getObject();
             }
             
             return Map.of(
                     "success", true,
                     "name", created.getMetadata().getName(),
+                    "cluster", getClusterName(cluster),
                     "message", "Application created successfully"
             );
         } catch (Exception e) {
@@ -237,6 +335,7 @@ public class KubernetesService {
             return Map.of(
                     "success", false,
                     "error", "Failed to create application",
+                    "cluster", getClusterName(cluster),
                     "message", e.getMessage()
             );
         }
@@ -245,16 +344,18 @@ public class KubernetesService {
     /**
      * 更新 Application 资源
      */
-    public Map<String, Object> updateApplication(String namespace, String name, String resourceYaml) {
+    public Map<String, Object> updateApplication(String cluster, String namespace, String name, String resourceYaml) {
         try {
+            GenericKubernetesApi<Application, ApplicationList> api = getApplicationApi(cluster);
             ObjectMapper mapper = new ObjectMapper();
             Application application = mapper.readValue(resourceYaml, Application.class);
             
-            Application updated = applicationApi.update(application, new UpdateOptions()).getObject();
+            Application updated = api.update(application, new UpdateOptions()).getObject();
             
             return Map.of(
                     "success", true,
                     "name", updated.getMetadata().getName(),
+                    "cluster", getClusterName(cluster),
                     "message", "Application updated successfully"
             );
         } catch (Exception e) {
@@ -262,6 +363,7 @@ public class KubernetesService {
             return Map.of(
                     "success", false,
                     "error", "Failed to update application",
+                    "cluster", getClusterName(cluster),
                     "message", e.getMessage()
             );
         }
@@ -270,23 +372,26 @@ public class KubernetesService {
     /**
      * 删除 Application 资源
      */
-    public Map<String, Object> deleteApplication(String namespace, String name) {
+    public Map<String, Object> deleteApplication(String cluster, String namespace, String name) {
         try {
+            GenericKubernetesApi<Application, ApplicationList> api = getApplicationApi(cluster);
             if (namespace != null && !namespace.isEmpty()) {
-                applicationApi.delete(namespace, name);
+                api.delete(namespace, name);
             } else {
-                applicationApi.delete(name);
+                api.delete(name);
             }
             
             return Map.of(
                     "success", true,
                     "name", name,
+                    "cluster", getClusterName(cluster),
                     "message", "Application deleted successfully"
             );
         } catch (Exception e) {
             return Map.of(
                     "success", false,
                     "error", "Failed to delete application",
+                    "cluster", getClusterName(cluster),
                     "message", e.getMessage()
             );
         }
@@ -294,45 +399,49 @@ public class KubernetesService {
 
     // ========== Microservice 资源操作 ==========
 
-    public List<Microservice> getMicroservices(String namespace) {
+    public List<Microservice> getMicroservices(String cluster, String namespace) {
         try {
+            GenericKubernetesApi<Microservice, MicroserviceList> api = getMicroserviceApi(cluster);
             if (namespace != null && !namespace.isEmpty()) {
-                return microserviceApi.list(namespace).getObject().getItems();
+                return api.list(namespace).getObject().getItems();
             } else {
-                return microserviceApi.list().getObject().getItems();
+                return api.list().getObject().getItems();
             }
         } catch (Exception e) {
-            throw new RuntimeException("Failed to get microservices", e);
+            throw new RuntimeException("Failed to get microservices from cluster: " + getClusterName(cluster), e);
         }
     }
 
-    public Microservice getMicroservice(String namespace, String name) {
+    public Microservice getMicroservice(String cluster, String namespace, String name) {
         try {
+            GenericKubernetesApi<Microservice, MicroserviceList> api = getMicroserviceApi(cluster);
             if (namespace != null && !namespace.isEmpty()) {
-                return microserviceApi.get(namespace, name).getObject();
+                return api.get(namespace, name).getObject();
             } else {
-                return microserviceApi.get(name).getObject();
+                return api.get(name).getObject();
             }
         } catch (Exception e) {
-            throw new RuntimeException("Failed to get microservice: " + name, e);
+            throw new RuntimeException("Failed to get microservice: " + name + " from cluster: " + getClusterName(cluster), e);
         }
     }
 
-    public Map<String, Object> createMicroservice(String namespace, String resourceYaml) {
+    public Map<String, Object> createMicroservice(String cluster, String namespace, String resourceYaml) {
         try {
+            GenericKubernetesApi<Microservice, MicroserviceList> api = getMicroserviceApi(cluster);
             ObjectMapper mapper = new ObjectMapper();
             Microservice microservice = mapper.readValue(resourceYaml, Microservice.class);
             
             Microservice created;
             if (namespace != null && !namespace.isEmpty()) {
-                created = microserviceApi.create(namespace, microservice, new CreateOptions()).getObject();
+                created = api.create(namespace, microservice, new CreateOptions()).getObject();
             } else {
-                created = microserviceApi.create(microservice, new CreateOptions()).getObject();
+                created = api.create(microservice, new CreateOptions()).getObject();
             }
             
             return Map.of(
                     "success", true,
                     "name", created.getMetadata().getName(),
+                    "cluster", getClusterName(cluster),
                     "message", "Microservice created successfully"
             );
         } catch (Exception e) {
@@ -340,21 +449,24 @@ public class KubernetesService {
             return Map.of(
                     "success", false,
                     "error", "Failed to create microservice",
+                    "cluster", getClusterName(cluster),
                     "message", e.getMessage()
             );
         }
     }
 
-    public Map<String, Object> updateMicroservice(String namespace, String name, String resourceYaml) {
+    public Map<String, Object> updateMicroservice(String cluster, String namespace, String name, String resourceYaml) {
         try {
+            GenericKubernetesApi<Microservice, MicroserviceList> api = getMicroserviceApi(cluster);
             ObjectMapper mapper = new ObjectMapper();
             Microservice microservice = mapper.readValue(resourceYaml, Microservice.class);
             
-            Microservice updated = microserviceApi.update(microservice, new UpdateOptions()).getObject();
+            Microservice updated = api.update(microservice, new UpdateOptions()).getObject();
             
             return Map.of(
                     "success", true,
                     "name", updated.getMetadata().getName(),
+                    "cluster", getClusterName(cluster),
                     "message", "Microservice updated successfully"
             );
         } catch (Exception e) {
@@ -362,28 +474,32 @@ public class KubernetesService {
             return Map.of(
                     "success", false,
                     "error", "Failed to update microservice",
+                    "cluster", getClusterName(cluster),
                     "message", e.getMessage()
             );
         }
     }
 
-    public Map<String, Object> deleteMicroservice(String namespace, String name) {
+    public Map<String, Object> deleteMicroservice(String cluster, String namespace, String name) {
         try {
+            GenericKubernetesApi<Microservice, MicroserviceList> api = getMicroserviceApi(cluster);
             if (namespace != null && !namespace.isEmpty()) {
-                microserviceApi.delete(namespace, name);
+                api.delete(namespace, name);
             } else {
-                microserviceApi.delete(name);
+                api.delete(name);
             }
             
             return Map.of(
                     "success", true,
                     "name", name,
+                    "cluster", getClusterName(cluster),
                     "message", "Microservice deleted successfully"
             );
         } catch (Exception e) {
             return Map.of(
                     "success", false,
                     "error", "Failed to delete microservice",
+                    "cluster", getClusterName(cluster),
                     "message", e.getMessage()
             );
         }
