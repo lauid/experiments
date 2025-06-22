@@ -3,6 +3,7 @@ package com.example.kdemo.dto;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import java.util.Objects;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
@@ -92,5 +93,33 @@ public class OperationResult {
     
     public void setError(String error) {
         this.error = error;
+    }
+    
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        OperationResult that = (OperationResult) o;
+        return success == that.success &&
+                Objects.equals(cluster, that.cluster) &&
+                Objects.equals(name, that.name) &&
+                Objects.equals(message, that.message) &&
+                Objects.equals(error, that.error);
+    }
+    
+    @Override
+    public int hashCode() {
+        return Objects.hash(success, cluster, name, message, error);
+    }
+    
+    @Override
+    public String toString() {
+        return "OperationResult{" +
+                "success=" + success +
+                ", cluster='" + cluster + '\'' +
+                ", name='" + name + '\'' +
+                ", message='" + message + '\'' +
+                ", error='" + error + '\'' +
+                '}';
     }
 } 

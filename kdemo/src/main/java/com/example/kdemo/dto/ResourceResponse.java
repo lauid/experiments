@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import java.util.List;
+import java.util.Objects;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
@@ -66,5 +67,31 @@ public class ResourceResponse<T> {
     public void setResources(List<T> resources) {
         this.resources = resources;
         this.count = resources != null ? resources.size() : 0;
+    }
+    
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ResourceResponse<?> that = (ResourceResponse<?>) o;
+        return count == that.count &&
+                Objects.equals(cluster, that.cluster) &&
+                Objects.equals(namespace, that.namespace) &&
+                Objects.equals(resources, that.resources);
+    }
+    
+    @Override
+    public int hashCode() {
+        return Objects.hash(cluster, namespace, count, resources);
+    }
+    
+    @Override
+    public String toString() {
+        return "ResourceResponse{" +
+                "cluster='" + cluster + '\'' +
+                ", namespace='" + namespace + '\'' +
+                ", count=" + count +
+                ", resources=" + resources +
+                '}';
     }
 } 

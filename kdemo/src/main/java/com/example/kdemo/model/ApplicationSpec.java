@@ -2,6 +2,7 @@ package com.example.kdemo.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import java.util.Objects;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ApplicationSpec {
@@ -47,5 +48,29 @@ public class ApplicationSpec {
     
     public void setReplicas(Integer replicas) {
         this.replicas = replicas;
+    }
+    
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ApplicationSpec that = (ApplicationSpec) o;
+        return Objects.equals(name, that.name) &&
+                Objects.equals(version, that.version) &&
+                Objects.equals(replicas, that.replicas);
+    }
+    
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, version, replicas);
+    }
+    
+    @Override
+    public String toString() {
+        return "ApplicationSpec{" +
+                "name='" + name + '\'' +
+                ", version='" + version + '\'' +
+                ", replicas=" + replicas +
+                '}';
     }
 } 
