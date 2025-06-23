@@ -53,11 +53,7 @@ public class PrometheusServiceImpl implements PrometheusService {
                                 metricQuery.getQuery(),
                                 result,
                                 System.currentTimeMillis() - startTime
-                        ))
-                        .onErrorResume(throwable -> {
-                            logger.error("Query failed for metric {}: {}", metricQuery.getName(), throwable.getMessage());
-                            return Mono.empty();
-                        }), config.getMaxConcurrency())
+                        )), config.getMaxConcurrency())
                 .collectList()
                 .flatMap(results -> {
                     List<PrometheusBatchQueryResponse.QueryError> errors = new ArrayList<>();
@@ -73,11 +69,14 @@ public class PrometheusServiceImpl implements PrometheusService {
                             ));
                         }
                     }
-                    String status = errors.isEmpty() ? "success" : "partial_success";
-                    if (results.isEmpty()) {
-                        status = "failed";
-                    }
-                    return Mono.just(new PrometheusBatchQueryResponse(status, results, errors));
+                    PrometheusBatchQueryResponse response = new PrometheusBatchQueryResponse();
+                    response.setStatus(errors.isEmpty() ? "success" : (results.isEmpty() ? "error" : "partial_success"));
+                    response.setData(results);
+                    response.setErrors(errors);
+                    response.setTotalQueries(request.getQueries().size());
+                    response.setSuccessfulQueries(results.size());
+                    response.setFailedQueries(errors.size());
+                    return Mono.just(response);
                 })
                 .doOnSuccess(response -> {
                     logger.info("Batch query completed for cluster {}. Successful: {}, Failed: {}", 
@@ -104,11 +103,7 @@ public class PrometheusServiceImpl implements PrometheusService {
                                 rangeMetricQuery.getQuery(),
                                 result,
                                 System.currentTimeMillis() - startTime
-                        ))
-                        .onErrorResume(throwable -> {
-                            logger.error("Range query failed for metric {}: {}", rangeMetricQuery.getName(), throwable.getMessage());
-                            return Mono.empty();
-                        }), config.getMaxConcurrency())
+                        )), config.getMaxConcurrency())
                 .collectList()
                 .flatMap(results -> {
                     List<PrometheusBatchQueryResponse.QueryError> errors = new ArrayList<>();
@@ -124,11 +119,14 @@ public class PrometheusServiceImpl implements PrometheusService {
                             ));
                         }
                     }
-                    String status = errors.isEmpty() ? "success" : "partial_success";
-                    if (results.isEmpty()) {
-                        status = "failed";
-                    }
-                    return Mono.just(new PrometheusBatchQueryResponse(status, results, errors));
+                    PrometheusBatchQueryResponse response = new PrometheusBatchQueryResponse();
+                    response.setStatus(errors.isEmpty() ? "success" : (results.isEmpty() ? "error" : "partial_success"));
+                    response.setData(results);
+                    response.setErrors(errors);
+                    response.setTotalQueries(request.getQueries().size());
+                    response.setSuccessfulQueries(results.size());
+                    response.setFailedQueries(errors.size());
+                    return Mono.just(response);
                 })
                 .doOnSuccess(response -> {
                     logger.info("Batch range query completed for cluster {}. Successful: {}, Failed: {}", 

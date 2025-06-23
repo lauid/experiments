@@ -127,13 +127,24 @@ public class PrometheusRepositoryImpl implements PrometheusRepository {
                 .build();
     }
 
+    private <T> Mono<T> executeWithRetry(Mono<T> mono, String operation) {
+        if (config.isEnableRetry() && config.getMaxRetries() > 0) {
+            return mono.retryWhen(
+                reactor.util.retry.Retry.backoff(config.getMaxRetries(), java.time.Duration.ofMillis(config.getRetryDelay()))
+                    .onRetryExhaustedThrow((spec, signal) -> signal.failure())
+            );
+        } else {
+            return mono;
+        }
+    }
+
     @Override
     public Mono<PrometheusQueryResponse> queryRange(String cluster, String query, String startTime, String endTime, String step)
             throws PrometheusException {
         String encodedQuery = URLEncoder.encode(query, StandardCharsets.UTF_8);
         String url = String.format("/api/v1/query_range?query=%s&start=%s&end=%s&step=%s",
                 encodedQuery, startTime, endTime, step);
-        return executeQuery(cluster, url, "query_range", query);
+        return executeWithRetry(executeQuery(cluster, url, "query_range", query), "query_range");
     }
 
     @Override
@@ -143,7 +154,7 @@ public class PrometheusRepositoryImpl implements PrometheusRepository {
         if (time != null && !time.isEmpty()) {
             url += "&time=" + time;
         }
-        return executeQuery(cluster, url, "query", query);
+        return executeWithRetry(executeQuery(cluster, url, "query", query), "query");
     }
 
     @Override
