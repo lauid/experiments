@@ -42,81 +42,53 @@ class KubernetesServiceTest {
 
     @Test
     void testCheckConnection() {
-        // Given
-        String cluster = "test-cluster";
-        when(repository.isConnected(cluster)).thenReturn(true);
-
-        // When
-        ClusterInfo result = service.checkConnection(cluster);
-
-        // Then
+        when(repository.isConnected()).thenReturn(true);
+        ClusterInfo result = service.checkConnection("test-cluster");
         assertNotNull(result);
         assertTrue(result.isConnected());
-        assertEquals(cluster, result.getCluster());
-        verify(repository).isConnected(cluster);
+        verify(repository).isConnected();
     }
 
     @Test
     void testCheckConnectionWithNullCluster() {
-        // Given
-        when(repository.isConnected("cluster-local")).thenReturn(false);
-
-        // When
+        when(repository.isConnected()).thenReturn(false);
         ClusterInfo result = service.checkConnection(null);
-
-        // Then
         assertNotNull(result);
         assertFalse(result.isConnected());
-        assertEquals("cluster-local", result.getCluster());
-        verify(repository).isConnected("cluster-local");
+        verify(repository).isConnected();
     }
 
     @Test
     void testGetNamespaces() {
-        // Given
-        String cluster = "test-cluster";
         V1NamespaceList namespaceList = new V1NamespaceList();
         namespaceList.setItems(Arrays.asList(
             createNamespace("default"),
             createNamespace("kube-system")
         ));
-        when(repository.getNamespaces(cluster)).thenReturn(namespaceList);
-
-        // When
-        NamespaceInfo result = service.getNamespaces(cluster);
-
-        // Then
+        when(repository.getNamespaces()).thenReturn(namespaceList);
+        NamespaceInfo result = service.getNamespaces("test-cluster");
         assertNotNull(result);
-        assertEquals(cluster, result.getCluster());
         assertEquals(2, result.getCount());
         assertTrue(result.getNamespaces().contains("default"));
         assertTrue(result.getNamespaces().contains("kube-system"));
-        verify(repository).getNamespaces(cluster);
+        verify(repository).getNamespaces();
     }
 
     @Test
     void testGetPodsInNamespace() {
-        // Given
-        String cluster = "test-cluster";
-        String namespace = "default";
         V1PodList podList = new V1PodList();
         podList.setItems(Arrays.asList(
             createPod("pod1"),
             createPod("pod2")
         ));
-        when(repository.getPodsInNamespace(cluster, namespace)).thenReturn(podList);
-
-        // When
-        PodInfo result = service.getPodsInNamespace(cluster, namespace);
-
-        // Then
+        when(repository.getPodsInNamespace()).thenReturn(podList);
+        PodInfo result = service.getPodsInNamespace("test-cluster", "default");
         assertNotNull(result);
-        assertEquals(cluster, result.getCluster());
-        assertEquals(namespace, result.getNamespace());
+        assertEquals("default", result.getNamespace());
         assertEquals(2, result.getCount());
         assertTrue(result.getPods().contains("pod1"));
         assertTrue(result.getPods().contains("pod2"));
-        verify(repository).getPodsInNamespace(cluster, namespace);
+        verify(repository).getPodsInNamespace();
     }
 
     @Test
@@ -133,16 +105,15 @@ class KubernetesServiceTest {
         V1PodList podList2 = new V1PodList();
         podList2.setItems(Arrays.asList(createPod("pod3")));
 
-        when(repository.getNamespaces(cluster)).thenReturn(namespaceList);
-        when(repository.getPodsInNamespace(cluster, "default")).thenReturn(podList1);
-        when(repository.getPodsInNamespace(cluster, "kube-system")).thenReturn(podList2);
+        when(repository.getNamespaces()).thenReturn(namespaceList);
+        when(repository.getPodsInNamespace()).thenReturn(podList1);
+        when(repository.getPodsInNamespace()).thenReturn(podList2);
 
         // When
-        ClusterOverview result = service.getClusterOverview(cluster);
+        ClusterOverview result = service.getClusterOverview("test-cluster");
 
         // Then
         assertNotNull(result);
-        assertEquals(cluster, result.getCluster());
         assertEquals(2, result.getNamespaceCount());
         assertEquals(3, result.getTotalPods());
         assertEquals(2, result.getPodsPerNamespace().get("default"));
@@ -158,392 +129,297 @@ class KubernetesServiceTest {
             createCRD("applications.example.com"),
             createCRD("microservices.example.com")
         ));
-        when(repository.getCustomResourceDefinitions(cluster)).thenReturn(crdList);
+        when(repository.getCustomResourceDefinitions()).thenReturn(crdList);
 
         // When
-        CrdInfo result = service.getCustomResourceDefinitions(cluster);
+        CrdInfo result = service.getCustomResourceDefinitions("test-cluster");
 
         // Then
         assertNotNull(result);
-        assertEquals(cluster, result.getCluster());
         assertEquals(2, result.getCount());
         assertTrue(result.getCrds().contains("applications.example.com"));
         assertTrue(result.getCrds().contains("microservices.example.com"));
-        verify(repository).getCustomResourceDefinitions(cluster);
+        verify(repository).getCustomResourceDefinitions();
     }
 
     @Test
     void testGetCustomResourceDefinition() {
-        // Given
         String cluster = "test-cluster";
         String name = "applications.example.com";
         V1CustomResourceDefinition crd = createCRD(name);
-        when(repository.getCustomResourceDefinition(cluster, name)).thenReturn(crd);
-
-        // When
+        when(repository.getCustomResourceDefinition(name)).thenReturn(crd);
         Map<String, Object> result = service.getCustomResourceDefinition(cluster, name);
-
-        // Then
         assertNotNull(result);
         assertEquals(name, result.get("name"));
-        verify(repository).getCustomResourceDefinition(cluster, name);
+        verify(repository).getCustomResourceDefinition(name);
     }
 
     @Test
     void testCreateCustomResourceDefinition() {
-        // Given
         String cluster = "test-cluster";
         String crdYaml = "apiVersion: apiextensions.k8s.io/v1\nkind: CustomResourceDefinition";
         V1CustomResourceDefinition crd = createCRD("test.example.com");
-        when(repository.createCustomResourceDefinition(cluster, crdYaml)).thenReturn(crd);
-
-        // When
+        when(repository.createCustomResourceDefinition(crdYaml)).thenReturn(crd);
         OperationResult result = service.createCustomResourceDefinition(cluster, crdYaml);
-
-        // Then
         assertNotNull(result);
         assertTrue(result.isSuccess());
         assertEquals(cluster, result.getCluster());
         assertEquals("test.example.com", result.getName());
-        verify(repository).createCustomResourceDefinition(cluster, crdYaml);
+        verify(repository).createCustomResourceDefinition(crdYaml);
     }
 
     @Test
     void testCreateCustomResourceDefinitionFailure() {
-        // Given
         String cluster = "test-cluster";
         String crdYaml = "invalid yaml";
-        when(repository.createCustomResourceDefinition(cluster, crdYaml))
-            .thenThrow(new RuntimeException("Invalid CRD"));
-
-        // When
+        when(repository.createCustomResourceDefinition(crdYaml)).thenThrow(new RuntimeException("Invalid CRD"));
         OperationResult result = service.createCustomResourceDefinition(cluster, crdYaml);
-
-        // Then
         assertNotNull(result);
         assertFalse(result.isSuccess());
         assertEquals(cluster, result.getCluster());
         assertEquals("CRD", result.getName());
         assertNotNull(result.getError());
-        verify(repository).createCustomResourceDefinition(cluster, crdYaml);
+        verify(repository).createCustomResourceDefinition(crdYaml);
     }
 
     // Application tests
     @Test
     void testGetApplications() {
-        // Given
         String cluster = "test-cluster";
         String namespace = "default";
         List<Application> applications = Arrays.asList(
             createApplication("app1"),
             createApplication("app2")
         );
-        when(repository.getApplications(cluster, namespace)).thenReturn(applications);
-
-        // When
+        when(repository.getApplications()).thenReturn(applications);
         ResourceResponse<Application> result = service.getApplications(cluster, namespace);
-
-        // Then
         assertNotNull(result);
-        assertEquals(cluster, result.getCluster());
         assertEquals(namespace, result.getNamespace());
         assertEquals(2, result.getCount());
         assertEquals(applications, result.getResources());
-        verify(repository).getApplications(cluster, namespace);
+        verify(repository).getApplications();
     }
 
     @Test
     void testGetApplication() {
-        // Given
         String cluster = "test-cluster";
         String namespace = "default";
         String name = "test-app";
         Application application = createApplication(name);
-        when(repository.getApplication(cluster, namespace, name)).thenReturn(application);
-
-        // When
+        when(repository.getApplication(name)).thenReturn(application);
         Application result = service.getApplication(cluster, namespace, name);
-
-        // Then
         assertNotNull(result);
         assertEquals(name, result.getMetadata().getName());
-        verify(repository).getApplication(cluster, namespace, name);
+        verify(repository).getApplication(name);
     }
 
     @Test
     void testCreateApplication() throws Exception {
-        // Given
         String cluster = "test-cluster";
         String namespace = "default";
         String resourceYaml = "{\"metadata\":{\"name\":\"test-app\"}}";
         Application application = createApplication("test-app");
         when(objectMapper.readValue(resourceYaml, Application.class)).thenReturn(application);
-        when(repository.createApplication(cluster, namespace, application)).thenReturn(application);
-
-        // When
+        when(repository.createApplication(application)).thenReturn(application);
         OperationResult result = service.createApplication(cluster, namespace, resourceYaml);
-
-        // Then
         assertNotNull(result);
         assertTrue(result.isSuccess());
         assertEquals(cluster, result.getCluster());
         assertEquals("test-app", result.getName());
         verify(objectMapper).readValue(resourceYaml, Application.class);
-        verify(repository).createApplication(cluster, namespace, application);
+        verify(repository).createApplication(application);
     }
 
     @Test
     void testUpdateApplication() throws Exception {
-        // Given
         String cluster = "test-cluster";
         String namespace = "default";
         String name = "test-app";
         String resourceYaml = "{\"metadata\":{\"name\":\"test-app\"}}";
         Application application = createApplication(name);
         when(objectMapper.readValue(resourceYaml, Application.class)).thenReturn(application);
-        when(repository.updateApplication(cluster, namespace, name, application)).thenReturn(application);
-
-        // When
+        when(repository.updateApplication(name, application)).thenReturn(application);
         OperationResult result = service.updateApplication(cluster, namespace, name, resourceYaml);
-
-        // Then
         assertNotNull(result);
         assertTrue(result.isSuccess());
         assertEquals(cluster, result.getCluster());
         assertEquals(name, result.getName());
         verify(objectMapper).readValue(resourceYaml, Application.class);
-        verify(repository).updateApplication(cluster, namespace, name, application);
+        verify(repository).updateApplication(name, application);
     }
 
     @Test
     void testDeleteApplication() {
-        // Given
         String cluster = "test-cluster";
         String namespace = "default";
         String name = "test-app";
-        doNothing().when(repository).deleteApplication(cluster, namespace, name);
-
-        // When
+        doNothing().when(repository).deleteApplication(name);
         OperationResult result = service.deleteApplication(cluster, namespace, name);
-
-        // Then
         assertNotNull(result);
         assertTrue(result.isSuccess());
         assertEquals(cluster, result.getCluster());
         assertEquals(name, result.getName());
-        verify(repository).deleteApplication(cluster, namespace, name);
+        verify(repository).deleteApplication(name);
     }
 
     // Microservice tests
     @Test
     void testGetMicroservices() {
-        // Given
         String cluster = "test-cluster";
         String namespace = "default";
         List<Microservice> microservices = Arrays.asList(
             createMicroservice("svc1"),
             createMicroservice("svc2")
         );
-        when(repository.getMicroservices(cluster, namespace)).thenReturn(microservices);
-
-        // When
+        when(repository.getMicroservices()).thenReturn(microservices);
         ResourceResponse<Microservice> result = service.getMicroservices(cluster, namespace);
-
-        // Then
         assertNotNull(result);
-        assertEquals(cluster, result.getCluster());
         assertEquals(namespace, result.getNamespace());
         assertEquals(2, result.getCount());
         assertEquals(microservices, result.getResources());
-        verify(repository).getMicroservices(cluster, namespace);
+        verify(repository).getMicroservices();
     }
 
     @Test
     void testGetMicroservice() {
-        // Given
         String cluster = "test-cluster";
         String namespace = "default";
         String name = "test-svc";
         Microservice microservice = createMicroservice(name);
-        when(repository.getMicroservice(cluster, namespace, name)).thenReturn(microservice);
-
-        // When
+        when(repository.getMicroservice(name)).thenReturn(microservice);
         Microservice result = service.getMicroservice(cluster, namespace, name);
-
-        // Then
         assertNotNull(result);
         assertEquals(name, result.getMetadata().getName());
-        verify(repository).getMicroservice(cluster, namespace, name);
+        verify(repository).getMicroservice(name);
     }
 
     @Test
     void testCreateMicroservice() throws Exception {
-        // Given
         String cluster = "test-cluster";
         String namespace = "default";
         String resourceYaml = "{\"metadata\":{\"name\":\"test-svc\"}}";
         Microservice microservice = createMicroservice("test-svc");
         when(objectMapper.readValue(resourceYaml, Microservice.class)).thenReturn(microservice);
-        when(repository.createMicroservice(cluster, namespace, microservice)).thenReturn(microservice);
-
-        // When
+        when(repository.createMicroservice(microservice)).thenReturn(microservice);
         OperationResult result = service.createMicroservice(cluster, namespace, resourceYaml);
-
-        // Then
         assertNotNull(result);
         assertTrue(result.isSuccess());
         assertEquals(cluster, result.getCluster());
         assertEquals("test-svc", result.getName());
         verify(objectMapper).readValue(resourceYaml, Microservice.class);
-        verify(repository).createMicroservice(cluster, namespace, microservice);
+        verify(repository).createMicroservice(microservice);
     }
 
     @Test
     void testUpdateMicroservice() throws Exception {
-        // Given
         String cluster = "test-cluster";
         String namespace = "default";
         String name = "test-svc";
         String resourceYaml = "{\"metadata\":{\"name\":\"test-svc\"}}";
         Microservice microservice = createMicroservice(name);
         when(objectMapper.readValue(resourceYaml, Microservice.class)).thenReturn(microservice);
-        when(repository.updateMicroservice(cluster, namespace, name, microservice)).thenReturn(microservice);
-
-        // When
+        when(repository.updateMicroservice(name, microservice)).thenReturn(microservice);
         OperationResult result = service.updateMicroservice(cluster, namespace, name, resourceYaml);
-
-        // Then
         assertNotNull(result);
         assertTrue(result.isSuccess());
         assertEquals(cluster, result.getCluster());
         assertEquals(name, result.getName());
         verify(objectMapper).readValue(resourceYaml, Microservice.class);
-        verify(repository).updateMicroservice(cluster, namespace, name, microservice);
+        verify(repository).updateMicroservice(name, microservice);
     }
 
     @Test
     void testDeleteMicroservice() {
-        // Given
         String cluster = "test-cluster";
         String namespace = "default";
         String name = "test-svc";
-        doNothing().when(repository).deleteMicroservice(cluster, namespace, name);
-
-        // When
+        doNothing().when(repository).deleteMicroservice(name);
         OperationResult result = service.deleteMicroservice(cluster, namespace, name);
-
-        // Then
         assertNotNull(result);
         assertTrue(result.isSuccess());
         assertEquals(cluster, result.getCluster());
         assertEquals(name, result.getName());
-        verify(repository).deleteMicroservice(cluster, namespace, name);
+        verify(repository).deleteMicroservice(name);
     }
 
     // GPU tests
     @Test
     void testGetGPUs() {
-        // Given
         String cluster = "test-cluster";
         String namespace = "default";
         List<GPU> gpus = Arrays.asList(
             createGPU("gpu1"),
             createGPU("gpu2")
         );
-        when(repository.getGPUs(cluster, namespace)).thenReturn(gpus);
-
-        // When
+        when(repository.getGPUs()).thenReturn(gpus);
         ResourceResponse<GPU> result = service.getGPUs(cluster, namespace);
-
-        // Then
         assertNotNull(result);
-        assertEquals(cluster, result.getCluster());
         assertEquals(namespace, result.getNamespace());
         assertEquals(2, result.getCount());
         assertEquals(gpus, result.getResources());
-        verify(repository).getGPUs(cluster, namespace);
+        verify(repository).getGPUs();
     }
 
     @Test
     void testGetGPU() {
-        // Given
         String cluster = "test-cluster";
         String namespace = "default";
         String name = "test-gpu";
         GPU gpu = createGPU(name);
-        when(repository.getGPU(cluster, namespace, name)).thenReturn(gpu);
-
-        // When
+        when(repository.getGPU(name)).thenReturn(gpu);
         GPU result = service.getGPU(cluster, namespace, name);
-
-        // Then
         assertNotNull(result);
         assertEquals(name, result.getMetadata().getName());
-        verify(repository).getGPU(cluster, namespace, name);
+        verify(repository).getGPU(name);
     }
 
     @Test
     void testCreateGPU() throws Exception {
-        // Given
         String cluster = "test-cluster";
         String namespace = "default";
         String resourceYaml = "{\"metadata\":{\"name\":\"test-gpu\"}}";
         GPU gpu = createGPU("test-gpu");
         when(objectMapper.readValue(resourceYaml, GPU.class)).thenReturn(gpu);
-        when(repository.createGPU(cluster, namespace, gpu)).thenReturn(gpu);
-
-        // When
+        when(repository.createGPU(gpu)).thenReturn(gpu);
         OperationResult result = service.createGPU(cluster, namespace, resourceYaml);
-
-        // Then
         assertNotNull(result);
         assertTrue(result.isSuccess());
         assertEquals(cluster, result.getCluster());
         assertEquals("test-gpu", result.getName());
         verify(objectMapper).readValue(resourceYaml, GPU.class);
-        verify(repository).createGPU(cluster, namespace, gpu);
+        verify(repository).createGPU(gpu);
     }
 
     @Test
     void testUpdateGPU() throws Exception {
-        // Given
         String cluster = "test-cluster";
         String namespace = "default";
         String name = "test-gpu";
         String resourceYaml = "{\"metadata\":{\"name\":\"test-gpu\"}}";
         GPU gpu = createGPU(name);
         when(objectMapper.readValue(resourceYaml, GPU.class)).thenReturn(gpu);
-        when(repository.updateGPU(cluster, namespace, name, gpu)).thenReturn(gpu);
-
-        // When
+        when(repository.updateGPU(name, gpu)).thenReturn(gpu);
         OperationResult result = service.updateGPU(cluster, namespace, name, resourceYaml);
-
-        // Then
         assertNotNull(result);
         assertTrue(result.isSuccess());
         assertEquals(cluster, result.getCluster());
         assertEquals(name, result.getName());
         verify(objectMapper).readValue(resourceYaml, GPU.class);
-        verify(repository).updateGPU(cluster, namespace, name, gpu);
+        verify(repository).updateGPU(name, gpu);
     }
 
     @Test
     void testDeleteGPU() {
-        // Given
         String cluster = "test-cluster";
         String namespace = "default";
         String name = "test-gpu";
-        doNothing().when(repository).deleteGPU(cluster, namespace, name);
-
-        // When
+        doNothing().when(repository).deleteGPU(name);
         OperationResult result = service.deleteGPU(cluster, namespace, name);
-
-        // Then
         assertNotNull(result);
         assertTrue(result.isSuccess());
         assertEquals(cluster, result.getCluster());
         assertEquals(name, result.getName());
-        verify(repository).deleteGPU(cluster, namespace, name);
+        verify(repository).deleteGPU(name);
     }
 
     // Helper methods
