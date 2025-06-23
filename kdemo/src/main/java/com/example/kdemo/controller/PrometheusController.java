@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import reactor.core.publisher.Mono;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -35,230 +34,220 @@ public class PrometheusController {
      * 批量查询多个指标
      */
     @PostMapping("/prometheus/batch-query")
-    public Mono<ResponseEntity<PrometheusBatchQueryResponse>> batchQuery(
+    public ResponseEntity<PrometheusBatchQueryResponse> batchQuery(
             @RequestParam(value = "cluster", required = false) String cluster,
             @RequestBody PrometheusQueryRequest request) {
         log.info("Received batch query request for cluster {} with {} metrics", cluster, request.getQueries().size());
-        return prometheusService.batchQuery(cluster, request)
-                .map(response -> {
-                    log.info("Batch query completed successfully");
-                    return ResponseEntity.ok(response);
-                })
-                .onErrorResume(PrometheusException.class, e -> {
-                    log.error("Batch query failed: {}", e.getMessage());
-                    return Mono.just(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                            .body(new PrometheusBatchQueryResponse("error", null, null)));
-                });
+        try {
+            PrometheusBatchQueryResponse response = prometheusService.batchQuery(cluster, request);
+            log.info("Batch query completed successfully");
+            return ResponseEntity.ok(response);
+        } catch (PrometheusException e) {
+            log.error("Batch query failed: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new PrometheusBatchQueryResponse("error", null, null));
+        }
     }
     
     /**
      * 批量查询多个指标（指定集群）
      */
     @PostMapping("/clusters/{cluster}/prometheus/batch-query")
-    public Mono<ResponseEntity<PrometheusBatchQueryResponse>> batchQueryWithCluster(
+    public ResponseEntity<PrometheusBatchQueryResponse> batchQueryWithCluster(
             @PathVariable String cluster,
             @RequestBody PrometheusQueryRequest request) {
         log.info("Received batch query request for cluster {} with {} metrics", cluster, request.getQueries().size());
-        return prometheusService.batchQuery(cluster, request)
-                .map(response -> {
-                    log.info("Batch query completed successfully");
-                    return ResponseEntity.ok(response);
-                })
-                .onErrorResume(PrometheusException.class, e -> {
-                    log.error("Batch query failed: {}", e.getMessage());
-                    return Mono.just(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                            .body(new PrometheusBatchQueryResponse("error", null, null)));
-                });
+        try {
+            PrometheusBatchQueryResponse response = prometheusService.batchQuery(cluster, request);
+            log.info("Batch query completed successfully");
+            return ResponseEntity.ok(response);
+        } catch (PrometheusException e) {
+            log.error("Batch query failed: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new PrometheusBatchQueryResponse("error", null, null));
+        }
     }
     
     /**
      * 批量范围查询多个指标
      */
     @PostMapping("/prometheus/batch-query-range")
-    public Mono<ResponseEntity<PrometheusBatchQueryResponse>> batchQueryRange(
+    public ResponseEntity<PrometheusBatchQueryResponse> batchQueryRange(
             @RequestParam(value = "cluster", required = false) String cluster,
             @RequestBody PrometheusBatchRangeQueryRequest request) {
         log.info("Received batch range query request for cluster {} with {} metrics", cluster, request.getQueries().size());
-        return prometheusService.batchQueryRange(cluster, request)
-                .map(response -> {
-                    log.info("Batch range query completed successfully");
-                    return ResponseEntity.ok(response);
-                })
-                .onErrorResume(PrometheusException.class, e -> {
-                    log.error("Batch range query failed: {}", e.getMessage());
-                    return Mono.just(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                            .body(new PrometheusBatchQueryResponse("error", null, null)));
-                });
+        try {
+            PrometheusBatchQueryResponse response = prometheusService.batchQueryRange(cluster, request);
+            log.info("Batch range query completed successfully");
+            return ResponseEntity.ok(response);
+        } catch (PrometheusException e) {
+            log.error("Batch range query failed: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new PrometheusBatchQueryResponse("error", null, null));
+        }
     }
     
     /**
      * 批量范围查询多个指标（指定集群）
      */
     @PostMapping("/clusters/{cluster}/prometheus/batch-query-range")
-    public Mono<ResponseEntity<PrometheusBatchQueryResponse>> batchQueryRangeWithCluster(
+    public ResponseEntity<PrometheusBatchQueryResponse> batchQueryRangeWithCluster(
             @PathVariable String cluster,
             @RequestBody PrometheusBatchRangeQueryRequest request) {
         log.info("Received batch range query request for cluster {} with {} metrics", cluster, request.getQueries().size());
-        return prometheusService.batchQueryRange(cluster, request)
-                .map(response -> {
-                    log.info("Batch range query completed successfully");
-                    return ResponseEntity.ok(response);
-                })
-                .onErrorResume(PrometheusException.class, e -> {
-                    log.error("Batch range query failed: {}", e.getMessage());
-                    return Mono.just(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                            .body(new PrometheusBatchQueryResponse("error", null, null)));
-                });
+        try {
+            PrometheusBatchQueryResponse response = prometheusService.batchQueryRange(cluster, request);
+            log.info("Batch range query completed successfully");
+            return ResponseEntity.ok(response);
+        } catch (PrometheusException e) {
+            log.error("Batch range query failed: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new PrometheusBatchQueryResponse("error", null, null));
+        }
     }
     
     /**
      * 执行范围查询
      */
     @GetMapping("/prometheus/query-range")
-    public Mono<ResponseEntity<PrometheusQueryResponse>> queryRange(
+    public ResponseEntity<PrometheusQueryResponse> queryRange(
             @RequestParam String query,
             @RequestParam String start,
             @RequestParam String end,
             @RequestParam String step,
             @RequestParam(value = "cluster", required = false) String cluster) {
         log.debug("Received range query request for cluster {}: {} from {} to {} with step {}", cluster, query, start, end, step);
-        return prometheusService.queryRange(cluster, query, start, end, step)
-                .map(ResponseEntity::ok)
-                .onErrorResume(PrometheusException.class, e -> {
-                    log.error("Range query failed: {}", e.getMessage());
-                    return Mono.just(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                            .body(createErrorResponse(e)));
-                });
+        try {
+            PrometheusQueryResponse response = prometheusService.queryRange(cluster, query, start, end, step);
+            return ResponseEntity.ok(response);
+        } catch (PrometheusException e) {
+            log.error("Range query failed: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(createErrorResponse(e));
+        }
     }
     
     /**
      * 执行范围查询（指定集群）
      */
     @GetMapping("/clusters/{cluster}/prometheus/query-range")
-    public Mono<ResponseEntity<PrometheusQueryResponse>> queryRangeWithCluster(
+    public ResponseEntity<PrometheusQueryResponse> queryRangeWithCluster(
             @PathVariable String cluster,
             @RequestParam String query,
             @RequestParam String start,
             @RequestParam String end,
             @RequestParam String step) {
         log.debug("Received range query request for cluster {}: {} from {} to {} with step {}", cluster, query, start, end, step);
-        return prometheusService.queryRange(cluster, query, start, end, step)
-                .map(ResponseEntity::ok)
-                .onErrorResume(PrometheusException.class, e -> {
-                    log.error("Range query failed: {}", e.getMessage());
-                    return Mono.just(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                            .body(createErrorResponse(e)));
-                });
+        try {
+            PrometheusQueryResponse response = prometheusService.queryRange(cluster, query, start, end, step);
+            return ResponseEntity.ok(response);
+        } catch (PrometheusException e) {
+            log.error("Range query failed: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(createErrorResponse(e));
+        }
     }
     
     /**
      * 执行即时查询
      */
     @GetMapping("/prometheus/query")
-    public Mono<ResponseEntity<PrometheusQueryResponse>> query(
+    public ResponseEntity<PrometheusQueryResponse> query(
             @RequestParam String query,
             @RequestParam(required = false) String time,
             @RequestParam(value = "cluster", required = false) String cluster) {
         log.debug("Received instant query request for cluster {}: {} at time {}", cluster, query, time);
-        return prometheusService.query(cluster, query, time)
-                .map(ResponseEntity::ok)
-                .onErrorResume(PrometheusException.class, e -> {
-                    log.error("Instant query failed: {}", e.getMessage());
-                    return Mono.just(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                            .body(createErrorResponse(e)));
-                });
+        try {
+            PrometheusQueryResponse response = prometheusService.query(cluster, query, time);
+            return ResponseEntity.ok(response);
+        } catch (PrometheusException e) {
+            log.error("Instant query failed: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(createErrorResponse(e));
+        }
     }
     
     /**
      * 执行即时查询（指定集群）
      */
     @GetMapping("/clusters/{cluster}/prometheus/query")
-    public Mono<ResponseEntity<PrometheusQueryResponse>> queryWithCluster(
+    public ResponseEntity<PrometheusQueryResponse> queryWithCluster(
             @PathVariable String cluster,
             @RequestParam String query,
             @RequestParam(required = false) String time) {
         log.debug("Received instant query request for cluster {}: {} at time {}", cluster, query, time);
-        return prometheusService.query(cluster, query, time)
-                .map(ResponseEntity::ok)
-                .onErrorResume(PrometheusException.class, e -> {
-                    log.error("Instant query failed: {}", e.getMessage());
-                    return Mono.just(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                            .body(createErrorResponse(e)));
-                });
+        try {
+            PrometheusQueryResponse response = prometheusService.query(cluster, query, time);
+            return ResponseEntity.ok(response);
+        } catch (PrometheusException e) {
+            log.error("Instant query failed: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(createErrorResponse(e));
+        }
     }
     
     /**
      * 检查Prometheus连接状态
      */
     @GetMapping("/prometheus/health")
-    public Mono<ResponseEntity<Map<String, Object>>> checkHealth(@RequestParam(value = "cluster", required = false) String cluster) {
+    public ResponseEntity<Map<String, Object>> checkHealth(@RequestParam(value = "cluster", required = false) String cluster) {
         log.debug("Received health check request for cluster {}", cluster);
-        return prometheusService.checkConnection(cluster)
-                .flatMap(connected -> {
-                    Map<String, Object> response = new HashMap<>();
-                    response.put("status", connected ? "healthy" : "unhealthy");
-                    response.put("connected", connected);
-                    
-                    if (connected) {
-                        return prometheusService.getVersion(cluster)
-                                .map(version -> {
-                                    response.put("version", version);
-                                    return ResponseEntity.ok(response);
-                                })
-                                .onErrorResume(e -> {
-                                    response.put("version", "unknown");
-                                    return Mono.just(ResponseEntity.ok(response));
-                                });
-                    } else {
-                        return Mono.just(ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(response));
-                    }
-                })
-                .onErrorResume(e -> {
-                    log.error("Health check failed: {}", e.getMessage());
-                    Map<String, Object> response = new HashMap<>();
-                    response.put("status", "error");
-                    response.put("connected", false);
-                    response.put("error", e.getMessage());
-                    return Mono.just(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response));
-                });
+        Map<String, Object> response = new HashMap<>();
+        try {
+            Boolean connected = prometheusService.checkConnection(cluster);
+            response.put("status", connected ? "healthy" : "unhealthy");
+            response.put("connected", connected);
+            if (connected) {
+                try {
+                    String version = prometheusService.getVersion(cluster);
+                    response.put("version", version);
+                } catch (Exception e) {
+                    response.put("version", "unknown");
+                }
+                return ResponseEntity.ok(response);
+            } else {
+                return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(response);
+            }
+        } catch (Exception e) {
+            log.error("Health check failed: {}", e.getMessage());
+            response.put("status", "error");
+            response.put("connected", false);
+            response.put("error", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
     }
     
     /**
      * 检查Prometheus连接状态（指定集群）
      */
     @GetMapping("/clusters/{cluster}/prometheus/health")
-    public Mono<ResponseEntity<Map<String, Object>>> checkHealthWithCluster(@PathVariable String cluster) {
+    public ResponseEntity<Map<String, Object>> checkHealthWithCluster(@PathVariable String cluster) {
         log.debug("Received health check request for cluster {}", cluster);
-        return prometheusService.checkConnection(cluster)
-                .flatMap(connected -> {
-                    Map<String, Object> response = new HashMap<>();
-                    response.put("status", connected ? "healthy" : "unhealthy");
-                    response.put("connected", connected);
-                    response.put("cluster", cluster);
-                    
-                    if (connected) {
-                        return prometheusService.getVersion(cluster)
-                                .map(version -> {
-                                    response.put("version", version);
-                                    return ResponseEntity.ok(response);
-                                })
-                                .onErrorResume(e -> {
-                                    response.put("version", "unknown");
-                                    return Mono.just(ResponseEntity.ok(response));
-                                });
-                    } else {
-                        return Mono.just(ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(response));
-                    }
-                })
-                .onErrorResume(e -> {
-                    log.error("Health check failed: {}", e.getMessage());
-                    Map<String, Object> response = new HashMap<>();
-                    response.put("status", "error");
-                    response.put("connected", false);
-                    response.put("cluster", cluster);
-                    response.put("error", e.getMessage());
-                    return Mono.just(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response));
-                });
+        Map<String, Object> response = new HashMap<>();
+        try {
+            Boolean connected = prometheusService.checkConnection(cluster);
+            response.put("status", connected ? "healthy" : "unhealthy");
+            response.put("connected", connected);
+            response.put("cluster", cluster);
+            if (connected) {
+                try {
+                    String version = prometheusService.getVersion(cluster);
+                    response.put("version", version);
+                } catch (Exception e) {
+                    response.put("version", "unknown");
+                }
+                return ResponseEntity.ok(response);
+            } else {
+                return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(response);
+            }
+        } catch (Exception e) {
+            log.error("Health check failed: {}", e.getMessage());
+            response.put("status", "error");
+            response.put("connected", false);
+            response.put("cluster", cluster);
+            response.put("error", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
     }
     
     /**
@@ -267,11 +256,9 @@ public class PrometheusController {
     @GetMapping("/prometheus/templates")
     public ResponseEntity<Map<String, Object>> getTemplates() {
         log.debug("Received templates request");
-        
         Map<String, Object> response = new HashMap<>();
         response.put("templates", prometheusService.getMetricTemplates());
         response.put("count", prometheusService.getMetricTemplates().size());
-        
         return ResponseEntity.ok(response);
     }
     
@@ -279,44 +266,38 @@ public class PrometheusController {
      * 获取Prometheus版本信息
      */
     @GetMapping("/prometheus/version")
-    public Mono<ResponseEntity<Map<String, String>>> getVersion(@RequestParam(value = "cluster", required = false) String cluster) {
+    public ResponseEntity<Map<String, String>> getVersion(@RequestParam(value = "cluster", required = false) String cluster) {
         log.debug("Received version request for cluster {}", cluster);
-        
-        return prometheusService.getVersion(cluster)
-                .map(version -> {
-                    Map<String, String> response = new HashMap<>();
-                    response.put("version", version);
-                    return ResponseEntity.ok(response);
-                })
-                .onErrorResume(PrometheusException.class, e -> {
-                    log.error("Version request failed: {}", e.getMessage());
-                    Map<String, String> response = new HashMap<>();
-                    response.put("error", e.getMessage());
-                    return Mono.just(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response));
-                });
+        Map<String, String> response = new HashMap<>();
+        try {
+            String version = prometheusService.getVersion(cluster);
+            response.put("version", version);
+            return ResponseEntity.ok(response);
+        } catch (PrometheusException e) {
+            log.error("Version request failed: {}", e.getMessage());
+            response.put("error", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
     }
     
     /**
      * 获取Prometheus版本信息（指定集群）
      */
     @GetMapping("/clusters/{cluster}/prometheus/version")
-    public Mono<ResponseEntity<Map<String, String>>> getVersionWithCluster(@PathVariable String cluster) {
+    public ResponseEntity<Map<String, String>> getVersionWithCluster(@PathVariable String cluster) {
         log.debug("Received version request for cluster {}", cluster);
-        
-        return prometheusService.getVersion(cluster)
-                .map(version -> {
-                    Map<String, String> response = new HashMap<>();
-                    response.put("version", version);
-                    response.put("cluster", cluster);
-                    return ResponseEntity.ok(response);
-                })
-                .onErrorResume(PrometheusException.class, e -> {
-                    log.error("Version request failed: {}", e.getMessage());
-                    Map<String, String> response = new HashMap<>();
-                    response.put("error", e.getMessage());
-                    response.put("cluster", cluster);
-                    return Mono.just(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response));
-                });
+        Map<String, String> response = new HashMap<>();
+        try {
+            String version = prometheusService.getVersion(cluster);
+            response.put("version", version);
+            response.put("cluster", cluster);
+            return ResponseEntity.ok(response);
+        } catch (PrometheusException e) {
+            log.error("Version request failed: {}", e.getMessage());
+            response.put("error", e.getMessage());
+            response.put("cluster", cluster);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
     }
     
     /**
@@ -325,18 +306,16 @@ public class PrometheusController {
     @ExceptionHandler(PrometheusException.class)
     public ResponseEntity<Map<String, String>> handlePrometheusException(PrometheusException e) {
         log.error("Prometheus exception: {}", e.getMessage());
-        
         Map<String, String> response = new HashMap<>();
         response.put("error", e.getMessage());
         response.put("error_type", e.getErrorType());
         if (e.getQuery() != null) {
             response.put("query", e.getQuery());
         }
-        
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
 
-        // 错误响应方法
+    // 错误响应方法
     private PrometheusQueryResponse createErrorResponse(PrometheusException e) {
         PrometheusQueryResponse errorResponse = new PrometheusQueryResponse();
         errorResponse.setStatus("error");

@@ -2,7 +2,6 @@ package com.example.kdemo.repository;
 
 import com.example.kdemo.dto.PrometheusQueryResponse;
 import com.example.kdemo.exception.PrometheusException;
-import reactor.core.publisher.Mono;
 
 /**
  * Prometheus数据访问接口
@@ -20,7 +19,7 @@ public interface PrometheusRepository {
      * @return 查询结果
      * @throws PrometheusException 查询异常
      */
-    Mono<PrometheusQueryResponse> queryRange(String cluster, String query, String startTime, String endTime, String step) 
+    PrometheusQueryResponse queryRange(String cluster, String query, String startTime, String endTime, String step) 
             throws PrometheusException;
     
     /**
@@ -32,7 +31,7 @@ public interface PrometheusRepository {
      * @return 查询结果
      * @throws PrometheusException 查询异常
      */
-    Mono<PrometheusQueryResponse> query(String cluster, String query, String time) throws PrometheusException;
+    PrometheusQueryResponse query(String cluster, String query, String time) throws PrometheusException;
     
     /**
      * 检查Prometheus连接状态
@@ -41,7 +40,7 @@ public interface PrometheusRepository {
      * @return 连接状态
      * @throws PrometheusException 连接异常
      */
-    Mono<Boolean> checkConnection(String cluster) throws PrometheusException;
+    Boolean checkConnection(String cluster) throws PrometheusException;
     
     /**
      * 获取Prometheus版本信息
@@ -50,5 +49,5 @@ public interface PrometheusRepository {
      * @return 版本信息
      * @throws PrometheusException 查询异常
      */
-    Mono<String> getVersion(String cluster) throws PrometheusException;
+    String getVersion(String cluster) throws PrometheusException;
 } 

@@ -6,25 +6,18 @@ import com.example.kdemo.exception.PrometheusException;
 import com.example.kdemo.util.KubernetesSecretUtils;
 import com.example.kdemo.util.TlsUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.netty.handler.ssl.SslContext;
-import io.netty.handler.ssl.SslContextBuilder;
-import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.client.reactive.ReactorClientHttpConnector;
 import org.springframework.stereotype.Repository;
-import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.reactive.function.client.WebClientResponseException;
-import reactor.core.publisher.Mono;
-import reactor.netty.http.client.HttpClient;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 
-import javax.net.ssl.SSLContext;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.time.Duration;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.*;
+import java.util.List;
+import java.util.concurrent.Semaphore;
 
 /**
  * Prometheus数据访问实现类
@@ -36,175 +29,132 @@ public class PrometheusRepositoryImpl implements PrometheusRepository {
     private final ObjectMapper objectMapper;
     private final KubernetesSecretUtils kubernetesSecretUtils;
     private final TlsUtils tlsUtils;
-    // 缓存每个集群的WebClient
-    private final ConcurrentMap<String, WebClient> webClientCache = new ConcurrentHashMap<>();
+    private final RestTemplate restTemplate;
+    private final ExecutorService executor;
 
     @Autowired
-    public PrometheusRepositoryImpl(PrometheusConfig config, ObjectMapper objectMapper, 
-                                   KubernetesSecretUtils kubernetesSecretUtils, TlsUtils tlsUtils) {
+    public PrometheusRepositoryImpl(PrometheusConfig config, ObjectMapper objectMapper,
+                                   KubernetesSecretUtils kubernetesSecretUtils, TlsUtils tlsUtils, RestTemplate restTemplate) {
         this.config = config;
         this.objectMapper = objectMapper;
         this.kubernetesSecretUtils = kubernetesSecretUtils;
         this.tlsUtils = tlsUtils;
-    }
-
-    private WebClient getWebClient(String cluster) {
-        return webClientCache.computeIfAbsent(cluster == null ? "cluster-local" : cluster, c -> {
-            try {
-                return createWebClientWithTls(c);
-            } catch (Exception e) {
-                logger.error("Failed to create WebClient for cluster {}: {}", c, e.getMessage());
-                // 如果TLS配置失败，创建默认的WebClient
-                return createDefaultWebClient(c);
-            }
-        });
-    }
-
-    /**
-     * 创建支持TLS的WebClient
-     */
-    private WebClient createWebClientWithTls(String cluster) throws Exception {
-        // 如果是cluster-local，直接使用默认WebClient
-        if ("cluster-local".equals(cluster)) {
-            logger.debug("Using default WebClient for cluster-local");
-            return createDefaultWebClient(cluster);
-        }
-        
-        // 获取Secret TLS配置
-        PrometheusConfig.SecretTlsConfig secretTlsConfig = config.getSecretTlsConfig(cluster);
-        if (secretTlsConfig == null || !secretTlsConfig.isValid()) {
-            logger.debug("No valid Secret TLS configuration for cluster {}, using default WebClient", cluster);
-            return createDefaultWebClient(cluster);
-        }
-        
-        // 从Kubernetes Secret获取TLS证书
-        KubernetesSecretUtils.TlsConfig tlsConfig = kubernetesSecretUtils.getTlsConfigFromSecret(
-            cluster, secretTlsConfig.getNamespace(), secretTlsConfig.getSecretName()
+        this.restTemplate = restTemplate;
+        this.executor = new ThreadPoolExecutor(
+                8, // corePoolSize
+                16, // maxPoolSize
+                60L, TimeUnit.SECONDS, // keepAliveTime
+                new LinkedBlockingQueue<>(50), // queueCapacity
+                new ThreadPoolExecutor.AbortPolicy() // 拒绝策略，默认推荐
         );
-        
-        if (tlsConfig == null || !tlsConfig.hasTlsConfig()) {
-            logger.warn("No TLS configuration found in secret for cluster {}, using default WebClient", cluster);
-            return createDefaultWebClient(cluster);
-        }
-        
-        logger.debug("Creating WebClient with TLS configuration for cluster {}", cluster);
-        
-        // 创建HttpClient
-        HttpClient httpClient = HttpClient.create()
-                .secure(spec -> {
-                    try {
-                        if (tlsConfig.isSkipSslVerification() || secretTlsConfig.isSkipSslVerification()) {
-                            spec.sslContext(SslContextBuilder.forClient()
-                                    .trustManager(InsecureTrustManagerFactory.INSTANCE)
-                                    .build());
-                        } else {
-                            // 使用默认的SSL上下文
-                            spec.sslContext(SslContextBuilder.forClient()
-                                    .build());
-                        }
-                    } catch (Exception e) {
-                        logger.error("Failed to configure SSL context for cluster {}: {}", cluster, e.getMessage());
-                        throw new RuntimeException("SSL configuration failed", e);
-                    }
-                })
-                .option(io.netty.channel.ChannelOption.CONNECT_TIMEOUT_MILLIS, config.getTimeout())
-                .responseTimeout(Duration.ofMillis(config.getTimeout()));
-        
-        return WebClient.builder()
-                .baseUrl(config.getPrometheusBaseUrl(cluster))
-                .clientConnector(new ReactorClientHttpConnector(httpClient))
-                .codecs(cfg -> cfg.defaultCodecs().maxInMemorySize(10 * 1024 * 1024))
-                .build();
-    }
-    
-    /**
-     * 创建默认的WebClient（无TLS）
-     */
-    private WebClient createDefaultWebClient(String cluster) {
-        return WebClient.builder()
-                .baseUrl(config.getPrometheusBaseUrl(cluster))
-                .codecs(cfg -> cfg.defaultCodecs().maxInMemorySize(10 * 1024 * 1024))
-                .build();
     }
 
     @Override
-    public Mono<PrometheusQueryResponse> queryRange(String cluster, String query, String startTime, String endTime, String step)
+    public PrometheusQueryResponse queryRange(String cluster, String query, String startTime, String endTime, String step)
             throws PrometheusException {
         String encodedQuery = URLEncoder.encode(query, StandardCharsets.UTF_8);
-        String url = String.format("/api/v1/query_range?query=%s&start=%s&end=%s&step=%s",
-                encodedQuery, startTime, endTime, step);
-        return executeQuery(cluster, url, "query_range", query);
+        String url = String.format("%s/api/v1/query_range?query=%s&start=%s&end=%s&step=%s",
+                config.getPrometheusBaseUrl(cluster), encodedQuery, startTime, endTime, step);
+        return executeQueryWithRetry(url, PrometheusQueryResponse.class, config.getMaxRetries(), config.getRetryDelay());
     }
 
     @Override
-    public Mono<PrometheusQueryResponse> query(String cluster, String query, String time) throws PrometheusException {
+    public PrometheusQueryResponse query(String cluster, String query, String time) throws PrometheusException {
         String encodedQuery = URLEncoder.encode(query, StandardCharsets.UTF_8);
-        String url = "/api/v1/query?query=" + encodedQuery;
+        String url = String.format("%s/api/v1/query?query=%s", config.getPrometheusBaseUrl(cluster), encodedQuery);
         if (time != null && !time.isEmpty()) {
             url += "&time=" + time;
         }
-        return executeQuery(cluster, url, "query", query);
+        return executeQueryWithRetry(url, PrometheusQueryResponse.class, config.getMaxRetries(), config.getRetryDelay());
     }
 
     @Override
-    public Mono<Boolean> checkConnection(String cluster) throws PrometheusException {
-        return getWebClient(cluster).get()
-                .uri("/api/v1/status/config")
-                .retrieve()
-                .bodyToMono(String.class)
-                .map(response -> {
-                    logger.info("Prometheus connection check successful for cluster: {}", cluster);
-                    return true;
-                })
-                .timeout(Duration.ofMillis(config.getTimeout()))
-                .onErrorResume(throwable -> {
-                    logger.error("Prometheus connection check failed for cluster {}: {}", cluster, throwable.getMessage());
-                    return Mono.just(false);
-                });
+    public Boolean checkConnection(String cluster) throws PrometheusException {
+        String url = String.format("%s/api/v1/status/config", config.getPrometheusBaseUrl(cluster));
+        try {
+            restTemplate.getForObject(url, String.class);
+            logger.info("Prometheus connection check successful for cluster: {}", cluster);
+            return true;
+        } catch (Exception e) {
+            logger.error("Prometheus connection check failed for cluster {}: {}", cluster, e.getMessage());
+            return false;
+        }
     }
 
     @Override
-    public Mono<String> getVersion(String cluster) throws PrometheusException {
-        return getWebClient(cluster).get()
-                .uri("/api/v1/status/buildinfo")
-                .retrieve()
-                .bodyToMono(String.class)
-                .timeout(Duration.ofMillis(config.getTimeout()))
-                .onErrorMap(throwable -> {
-                    logger.error("Failed to get Prometheus version for cluster {}: {}", cluster, throwable.getMessage());
-                    return new PrometheusException("Failed to get Prometheus version", "VERSION_ERROR", null, throwable);
-                });
+    public String getVersion(String cluster) throws PrometheusException {
+        String url = String.format("%s/api/v1/status/buildinfo", config.getPrometheusBaseUrl(cluster));
+        try {
+            return restTemplate.getForObject(url, String.class);
+        } catch (Exception e) {
+            logger.error("Failed to get Prometheus version for cluster {}: {}", cluster, e.getMessage());
+            throw new PrometheusException("Failed to get Prometheus version", "VERSION_ERROR", null, e);
+        }
     }
 
     /**
-     * 执行查询请求
+     * 执行同步查询请求
      */
-    private Mono<PrometheusQueryResponse> executeQuery(String cluster, String url, String queryType, String query) {
-        return getWebClient(cluster).get()
-                .uri(url)
-                .retrieve()
-                .bodyToMono(PrometheusQueryResponse.class)
-                .timeout(Duration.ofMillis(config.getTimeout()))
-                .doOnSuccess(response -> logger.debug("Prometheus {} query successful for cluster {}: {}", queryType, cluster, query))
-                .onErrorResume(WebClientResponseException.class, e -> {
-                    logger.error("Prometheus HTTP error for {} query in cluster {}: {} - {}", queryType, cluster, e.getStatusCode(), e.getResponseBodyAsString());
-                    return Mono.error(new PrometheusException(
-                            "Prometheus HTTP error: " + e.getStatusCode(),
-                            "HTTP_ERROR",
-                            query,
-                            e));
-                })
-                .onErrorResume(throwable -> {
-                    if (throwable instanceof PrometheusException) {
-                        return Mono.error(throwable);
+    private <T> T executeQuery(String url, Class<T> responseType) throws PrometheusException {
+        try {
+            return restTemplate.getForObject(url, responseType);
+        } catch (Exception e) {
+            logger.error("Prometheus query failed: {}", e.getMessage());
+            throw new PrometheusException("Query execution failed: " + e.getMessage(), "HTTP_ERROR", url, e);
+        }
+    }
+
+    /**
+     * 并发批量查询工具（示例，可在Service层调用）
+     */
+    public <T> List<T> parallelQuery(List<String> urls, Class<T> responseType) {
+        Semaphore semaphore = new Semaphore(config.getMaxConcurrency());
+        List<CompletableFuture<T>> futures = urls.stream()
+                .map(query -> CompletableFuture.supplyAsync(() -> {
+                    try {
+                        try {
+                            semaphore.acquire();
+                        } catch (InterruptedException ie) {
+                            Thread.currentThread().interrupt();
+                            throw new RuntimeException("Semaphore acquire interrupted", ie);
+                        }
+                        return executeQuery(query, responseType);
+                    } finally {
+                        semaphore.release();
                     }
-                    // This will now catch WebClient's decoding errors
-                    logger.error("Prometheus {} query failed for cluster {}: {} - {}", queryType, cluster, query, throwable.getMessage());
-                    return Mono.error(new PrometheusException(
-                            "Query execution failed: " + throwable.getMessage(),
-                            "PARSE_ERROR", // More specific error type
-                            query,
-                            throwable));
-                });
+                }, executor))
+                .toList();
+        CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
+        return futures.stream().map(f -> {
+            try {
+                return f.get();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        }).toList();
+    }
+
+    private <T> T executeQueryWithRetry(String url, Class<T> responseType, int maxRetries, long retryDelayMillis) throws PrometheusException {
+        int attempt = 0;
+        boolean enableRetry = config.isEnableRetry();
+        int max = enableRetry ? maxRetries : 0;
+        while (true) {
+            try {
+                return restTemplate.getForObject(url, responseType);
+            } catch (Exception e) {
+                attempt++;
+                if (attempt > max) {
+                    logger.error("Prometheus query failed after {} attempts: {}", attempt, e.getMessage());
+                    throw new PrometheusException("Query execution failed after retries: " + e.getMessage(), "HTTP_ERROR", url, e);
+                }
+                logger.warn("Prometheus query failed (attempt {}/{}): {}. Retrying after {}ms...", attempt, max, e.getMessage(), retryDelayMillis);
+                try {
+                    Thread.sleep(retryDelayMillis);
+                } catch (InterruptedException ie) {
+                    Thread.currentThread().interrupt();
+                    throw new PrometheusException("Retry interrupted", "RETRY_INTERRUPTED", url, ie);
+                }
+            }
+        }
     }
 } 

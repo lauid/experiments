@@ -55,12 +55,6 @@
 			<version>0.16.0</version>
 		</dependency>
 		
-		<!-- HTTP客户端 -->
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-webflux</artifactId>
-		</dependency>
-		
 		<!-- JSON处理 -->
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
@@ -73,18 +67,32 @@
 			<scope>test</scope>
 		</dependency>
 		
-		<!-- Reactor测试依赖 -->
-		<dependency>
-			<groupId>io.projectreactor</groupId>
-			<artifactId>reactor-test</artifactId>
-			<scope>test</scope>
-		</dependency>
-		
 		<!-- Lombok for reducing boilerplate code -->
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
 			<optional>true</optional>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-engine</artifactId>
+			<version>5.10.2</version>
+			<scope>test</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-api</artifactId>
+			<version>5.10.2</version>
+			<scope>test</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.junit.platform</groupId>
+			<artifactId>junit-platform-commons</artifactId>
+			<version>1.10.2</version>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 
@@ -102,7 +110,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.22.2</version>
+				<version>3.1.2</version>
 				<configuration>
 					<useSystemClassLoader>false</useSystemClassLoader>
 					<useFile>false</useFile>
