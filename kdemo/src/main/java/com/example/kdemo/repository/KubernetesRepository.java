@@ -7,6 +7,7 @@ import io.kubernetes.client.openapi.models.V1CustomResourceDefinition;
 import io.kubernetes.client.openapi.models.V1CustomResourceDefinitionList;
 import io.kubernetes.client.openapi.models.V1NamespaceList;
 import io.kubernetes.client.openapi.models.V1PodList;
+import com.example.kdemo.dto.ResourceQuery;
 
 import java.util.List;
 
@@ -42,4 +43,7 @@ public interface KubernetesRepository {
     
     // 连接检查
     boolean isConnected(String cluster);
+
+    // 新增：支持复杂查询参数的 Pod 查询
+    List<io.kubernetes.client.openapi.models.V1Pod> getPods(String cluster, ResourceQuery query);
 } 

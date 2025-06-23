@@ -10,6 +10,7 @@ import com.example.kdemo.model.Microservice;
 import com.example.kdemo.model.MicroserviceList;
 import com.example.kdemo.model.GPU;
 import com.example.kdemo.model.GPUList;
+import com.example.kdemo.dto.ResourceQuery;
 import io.kubernetes.client.openapi.ApiClient;
 import io.kubernetes.client.openapi.ApiException;
 import io.kubernetes.client.openapi.apis.ApiextensionsV1Api;
@@ -23,10 +24,17 @@ import io.kubernetes.client.util.generic.options.CreateOptions;
 import io.kubernetes.client.util.generic.options.UpdateOptions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import com.example.kdemo.config.KubernetesConfig;
+import com.example.kdemo.config.K8sClusterConfig;
+import io.kubernetes.client.util.ClientBuilder;
+import java.io.ByteArrayInputStream;
+import java.nio.charset.StandardCharsets;
 
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
+import io.kubernetes.client.openapi.models.V1Pod;
 
 @Repository
 public class KubernetesRepositoryImpl implements KubernetesRepository {
@@ -37,11 +45,13 @@ public class KubernetesRepositoryImpl implements KubernetesRepository {
     private final Map<String, GenericKubernetesApi<Microservice, MicroserviceList>> microserviceApis;
     private final Map<String, GenericKubernetesApi<GPU, GPUList>> gpuApis;
     private final ApiClient defaultApiClient;
+    private final KubernetesConfig k8sConfig;
     private static final String DEFAULT_CLUSTER = "cluster-local";
 
     @Autowired
-    public KubernetesRepositoryImpl(ApiClient apiClient) {
+    public KubernetesRepositoryImpl(ApiClient apiClient, KubernetesConfig k8sConfig) {
         this.defaultApiClient = apiClient;
+        this.k8sConfig = k8sConfig;
         this.apiClients = new ConcurrentHashMap<>();
         this.crdApiClients = new ConcurrentHashMap<>();
         this.applicationApis = new ConcurrentHashMap<>();
@@ -53,10 +63,24 @@ public class KubernetesRepositoryImpl implements KubernetesRepository {
     }
 
     private void initializeCluster(String clusterName) {
-        CoreV1Api api = new CoreV1Api(defaultApiClient);
-        ApiextensionsV1Api crdApi = new ApiextensionsV1Api(defaultApiClient);
-        
+        ApiClient client;
+        if (k8sConfig.getClustersConfig().containsKey(clusterName)) {
+            K8sClusterConfig conf = k8sConfig.getClustersConfig().get(clusterName);
+            try {
+                client = ClientBuilder.standard()
+                        .setBasePath(conf.getApiServer())
+                        .setCertificateAuthority(conf.getCaCert().getBytes(StandardCharsets.UTF_8))
+                        .build();
+                client.setApiKey("Bearer " + conf.getToken());
+            } catch (Exception e) {
+                throw new RuntimeException("Failed to build ApiClient for cluster " + clusterName, e);
+            }
+        } else {
+            client = defaultApiClient;
+        }
+        CoreV1Api api = new CoreV1Api(client);
         apiClients.put(clusterName, api);
+        ApiextensionsV1Api crdApi = new ApiextensionsV1Api(client);
         crdApiClients.put(clusterName, crdApi);
         
         applicationApis.put(clusterName, new GenericKubernetesApi<>(
@@ -65,7 +89,7 @@ public class KubernetesRepositoryImpl implements KubernetesRepository {
                 "example.com",
                 "v1",
                 "applications",
-                defaultApiClient
+                client
         ));
         
         microserviceApis.put(clusterName, new GenericKubernetesApi<>(
@@ -74,7 +98,7 @@ public class KubernetesRepositoryImpl implements KubernetesRepository {
                 "example.com",
                 "v1",
                 "microservices",
-                defaultApiClient
+                client
         ));
         
         gpuApis.put(clusterName, new GenericKubernetesApi<>(
@@ -83,7 +107,7 @@ public class KubernetesRepositoryImpl implements KubernetesRepository {
                 "example.com",
                 "v1",
                 "gpus",
-                defaultApiClient
+                client
         ));
     }
 
@@ -433,6 +457,24 @@ public class KubernetesRepositoryImpl implements KubernetesRepository {
         } catch (Exception e) {
             throw new KubernetesException("Failed to delete GPU: " + name, 
                                         getClusterName(cluster), "deleteGPU", e);
+        }
+    }
+
+    @Override
+    public List<V1Pod> getPods(String cluster, ResourceQuery query) {
+        String ns = query.getNamespace() != null ? query.getNamespace() : "default";
+        String fieldSelector = query.getFieldSelector();
+        String labelSelector = query.getLabelSelector();
+        Integer limit = query.getLimit();
+        try {
+            var req = getApi(cluster).listNamespacedPod(ns);
+            if (fieldSelector != null && !fieldSelector.isEmpty()) req = req.fieldSelector(fieldSelector);
+            if (labelSelector != null && !labelSelector.isEmpty()) req = req.labelSelector(labelSelector);
+            if (limit != null) req = req.limit(limit);
+            V1PodList podList = req.execute();
+            return podList.getItems();
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to list pods: " + e.getMessage(), e);
         }
     }
 } 

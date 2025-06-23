@@ -321,4 +321,12 @@ public class KubernetesService {
             return OperationResult.failure(clusterName, name, "Failed to delete GPU", e.getMessage());
         }
     }
+
+    // 优化后的 Pod 查询方法
+    List<String> getPods(String cluster, ResourceQuery query) {
+        String clusterName = getClusterName(cluster);
+        return repository.getPods(clusterName, query).stream()
+                .map(pod -> pod.getMetadata().getName())
+                .collect(Collectors.toList());
+    }
 } 
