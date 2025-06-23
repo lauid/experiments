@@ -8,6 +8,10 @@ import com.example.kdemo.repository.KubernetesRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import com.example.kdemo.service.ClusterService;
+import io.kubernetes.client.openapi.ApiClient;
+import com.example.kdemo.config.KubernetesConfig;
+import com.example.kdemo.repository.KubernetesRepositoryImpl;
 
 import java.util.List;
 import java.util.Map;
@@ -16,13 +20,15 @@ import java.util.stream.Collectors;
 @Service
 public class KubernetesService {
 
-    private final KubernetesRepository repository;
+    private final ClusterService clusterService;
+    private final KubernetesConfig k8sConfig;
     private final ObjectMapper objectMapper;
     private static final String DEFAULT_CLUSTER = "cluster-local";
 
     @Autowired
-    public KubernetesService(KubernetesRepository repository, ObjectMapper objectMapper) {
-        this.repository = repository;
+    public KubernetesService(ClusterService clusterService, KubernetesConfig k8sConfig, ObjectMapper objectMapper) {
+        this.clusterService = clusterService;
+        this.k8sConfig = k8sConfig;
         this.objectMapper = objectMapper;
     }
 
@@ -35,7 +41,9 @@ public class KubernetesService {
      */
     public ClusterInfo checkConnection(String cluster) {
         String clusterName = getClusterName(cluster);
-        boolean connected = repository.isConnected(clusterName);
+        ApiClient client = clusterService.getApiClient(clusterName);
+        KubernetesRepository repo = new KubernetesRepositoryImpl(client, k8sConfig);
+        boolean connected = repo.isConnected();
         return new ClusterInfo(connected, clusterName);
     }
 
@@ -44,7 +52,9 @@ public class KubernetesService {
      */
     public NamespaceInfo getNamespaces(String cluster) {
         String clusterName = getClusterName(cluster);
-        List<String> namespaces = repository.getNamespaces(clusterName).getItems().stream()
+        ApiClient client = clusterService.getApiClient(clusterName);
+        KubernetesRepository repo = new KubernetesRepositoryImpl(client, k8sConfig);
+        List<String> namespaces = repo.getNamespaces().getItems().stream()
                 .map(namespace -> namespace.getMetadata().getName())
                 .collect(Collectors.toList());
         return new NamespaceInfo(clusterName, namespaces);
@@ -55,7 +65,9 @@ public class KubernetesService {
      */
     public PodInfo getPodsInNamespace(String cluster, String namespace) {
         String clusterName = getClusterName(cluster);
-        List<String> pods = repository.getPodsInNamespace(clusterName, namespace).getItems().stream()
+        ApiClient client = clusterService.getApiClient(clusterName);
+        KubernetesRepository repo = new KubernetesRepositoryImpl(client, k8sConfig);
+        List<String> pods = repo.getPodsInNamespace().getItems().stream()
                 .map(pod -> pod.getMetadata().getName())
                 .collect(Collectors.toList());
         return new PodInfo(clusterName, namespace, pods);
@@ -67,15 +79,14 @@ public class KubernetesService {
     public ClusterOverview getClusterOverview(String cluster) {
         String clusterName = getClusterName(cluster);
         NamespaceInfo namespaceInfo = getNamespaces(clusterName);
-        
+        ApiClient client = clusterService.getApiClient(clusterName);
+        KubernetesRepository repo = new KubernetesRepositoryImpl(client, k8sConfig);
         Map<String, Integer> podsPerNamespace = namespaceInfo.getNamespaces().stream()
                 .collect(Collectors.toMap(
                         ns -> ns,
-                        ns -> repository.getPodsInNamespace(clusterName, ns).getItems().size()
+                        ns -> repo.getPodsInNamespace().getItems().size()
                 ));
-        
         int totalPods = podsPerNamespace.values().stream().mapToInt(Integer::intValue).sum();
-        
         return new ClusterOverview(
                 clusterName,
                 namespaceInfo.getCount(),
@@ -90,7 +101,9 @@ public class KubernetesService {
      */
     public CrdInfo getCustomResourceDefinitions(String cluster) {
         String clusterName = getClusterName(cluster);
-        List<String> crds = repository.getCustomResourceDefinitions(clusterName).getItems().stream()
+        ApiClient client = clusterService.getApiClient(clusterName);
+        KubernetesRepository repo = new KubernetesRepositoryImpl(client, k8sConfig);
+        List<String> crds = repo.getCustomResourceDefinitions().getItems().stream()
                 .map(crd -> crd.getMetadata().getName())
                 .collect(Collectors.toList());
         return new CrdInfo(clusterName, crds);
@@ -101,7 +114,9 @@ public class KubernetesService {
      */
     public Map<String, Object> getCustomResourceDefinition(String cluster, String name) {
         String clusterName = getClusterName(cluster);
-        var crd = repository.getCustomResourceDefinition(clusterName, name);
+        ApiClient client = clusterService.getApiClient(clusterName);
+        KubernetesRepository repo = new KubernetesRepositoryImpl(client, k8sConfig);
+        var crd = repo.getCustomResourceDefinition(name);
         return Map.of(
                 "name", crd.getMetadata().getName(),
                 "group", crd.getSpec().getGroup(),
@@ -118,8 +133,10 @@ public class KubernetesService {
      */
     public OperationResult createCustomResourceDefinition(String cluster, String crdYaml) {
         String clusterName = getClusterName(cluster);
+        ApiClient client = clusterService.getApiClient(clusterName);
+        KubernetesRepository repo = new KubernetesRepositoryImpl(client, k8sConfig);
         try {
-            var createdCrd = repository.createCustomResourceDefinition(clusterName, crdYaml);
+            var createdCrd = repo.createCustomResourceDefinition(crdYaml);
             return OperationResult.success(clusterName, createdCrd.getMetadata().getName(), "CRD created successfully");
         } catch (Exception e) {
             return OperationResult.failure(clusterName, "CRD", "Failed to create CRD", e.getMessage());
@@ -133,7 +150,9 @@ public class KubernetesService {
      */
     public ResourceResponse<Application> getApplications(String cluster, String namespace) {
         String clusterName = getClusterName(cluster);
-        List<Application> applications = repository.getApplications(clusterName, namespace);
+        ApiClient client = clusterService.getApiClient(clusterName);
+        KubernetesRepository repo = new KubernetesRepositoryImpl(client, k8sConfig);
+        List<Application> applications = repo.getApplications();
         return new ResourceResponse<>(clusterName, namespace, applications);
     }
 
@@ -142,7 +161,9 @@ public class KubernetesService {
      */
     public Application getApplication(String cluster, String namespace, String name) {
         String clusterName = getClusterName(cluster);
-        return repository.getApplication(clusterName, namespace, name);
+        ApiClient client = clusterService.getApiClient(clusterName);
+        KubernetesRepository repo = new KubernetesRepositoryImpl(client, k8sConfig);
+        return repo.getApplication(name);
     }
 
     /**
@@ -150,9 +171,11 @@ public class KubernetesService {
      */
     public OperationResult createApplication(String cluster, String namespace, String resourceYaml) {
         String clusterName = getClusterName(cluster);
+        ApiClient client = clusterService.getApiClient(clusterName);
+        KubernetesRepository repo = new KubernetesRepositoryImpl(client, k8sConfig);
         try {
             Application application = objectMapper.readValue(resourceYaml, Application.class);
-            Application created = repository.createApplication(clusterName, namespace, application);
+            Application created = repo.createApplication(application);
             return OperationResult.success(clusterName, created.getMetadata().getName(), "Application created successfully");
         } catch (Exception e) {
             return OperationResult.failure(clusterName, "Application", "Failed to create application", e.getMessage());
@@ -164,9 +187,11 @@ public class KubernetesService {
      */
     public OperationResult updateApplication(String cluster, String namespace, String name, String resourceYaml) {
         String clusterName = getClusterName(cluster);
+        ApiClient client = clusterService.getApiClient(clusterName);
+        KubernetesRepository repo = new KubernetesRepositoryImpl(client, k8sConfig);
         try {
             Application application = objectMapper.readValue(resourceYaml, Application.class);
-            Application updated = repository.updateApplication(clusterName, namespace, name, application);
+            Application updated = repo.updateApplication(name, application);
             return OperationResult.success(clusterName, updated.getMetadata().getName(), "Application updated successfully");
         } catch (Exception e) {
             return OperationResult.failure(clusterName, name, "Failed to update application", e.getMessage());
@@ -178,8 +203,10 @@ public class KubernetesService {
      */
     public OperationResult deleteApplication(String cluster, String namespace, String name) {
         String clusterName = getClusterName(cluster);
+        ApiClient client = clusterService.getApiClient(clusterName);
+        KubernetesRepository repo = new KubernetesRepositoryImpl(client, k8sConfig);
         try {
-            repository.deleteApplication(clusterName, namespace, name);
+            repo.deleteApplication(name);
             return OperationResult.success(clusterName, name, "Application deleted successfully");
         } catch (Exception e) {
             return OperationResult.failure(clusterName, name, "Failed to delete application", e.getMessage());
@@ -193,7 +220,9 @@ public class KubernetesService {
      */
     public ResourceResponse<Microservice> getMicroservices(String cluster, String namespace) {
         String clusterName = getClusterName(cluster);
-        List<Microservice> microservices = repository.getMicroservices(clusterName, namespace);
+        ApiClient client = clusterService.getApiClient(clusterName);
+        KubernetesRepository repo = new KubernetesRepositoryImpl(client, k8sConfig);
+        List<Microservice> microservices = repo.getMicroservices();
         return new ResourceResponse<>(clusterName, namespace, microservices);
     }
 
@@ -202,7 +231,9 @@ public class KubernetesService {
      */
     public Microservice getMicroservice(String cluster, String namespace, String name) {
         String clusterName = getClusterName(cluster);
-        return repository.getMicroservice(clusterName, namespace, name);
+        ApiClient client = clusterService.getApiClient(clusterName);
+        KubernetesRepository repo = new KubernetesRepositoryImpl(client, k8sConfig);
+        return repo.getMicroservice(name);
     }
 
     /**
@@ -210,9 +241,11 @@ public class KubernetesService {
      */
     public OperationResult createMicroservice(String cluster, String namespace, String resourceYaml) {
         String clusterName = getClusterName(cluster);
+        ApiClient client = clusterService.getApiClient(clusterName);
+        KubernetesRepository repo = new KubernetesRepositoryImpl(client, k8sConfig);
         try {
             Microservice microservice = objectMapper.readValue(resourceYaml, Microservice.class);
-            Microservice created = repository.createMicroservice(clusterName, namespace, microservice);
+            Microservice created = repo.createMicroservice(microservice);
             return OperationResult.success(clusterName, created.getMetadata().getName(), "Microservice created successfully");
         } catch (Exception e) {
             return OperationResult.failure(clusterName, "Microservice", "Failed to create microservice", e.getMessage());
@@ -224,9 +257,11 @@ public class KubernetesService {
      */
     public OperationResult updateMicroservice(String cluster, String namespace, String name, String resourceYaml) {
         String clusterName = getClusterName(cluster);
+        ApiClient client = clusterService.getApiClient(clusterName);
+        KubernetesRepository repo = new KubernetesRepositoryImpl(client, k8sConfig);
         try {
             Microservice microservice = objectMapper.readValue(resourceYaml, Microservice.class);
-            Microservice updated = repository.updateMicroservice(clusterName, namespace, name, microservice);
+            Microservice updated = repo.updateMicroservice(name, microservice);
             return OperationResult.success(clusterName, updated.getMetadata().getName(), "Microservice updated successfully");
         } catch (Exception e) {
             return OperationResult.failure(clusterName, name, "Failed to update microservice", e.getMessage());
@@ -238,8 +273,10 @@ public class KubernetesService {
      */
     public OperationResult deleteMicroservice(String cluster, String namespace, String name) {
         String clusterName = getClusterName(cluster);
+        ApiClient client = clusterService.getApiClient(clusterName);
+        KubernetesRepository repo = new KubernetesRepositoryImpl(client, k8sConfig);
         try {
-            repository.deleteMicroservice(clusterName, namespace, name);
+            repo.deleteMicroservice(name);
             return OperationResult.success(clusterName, name, "Microservice deleted successfully");
         } catch (Exception e) {
             return OperationResult.failure(clusterName, name, "Failed to delete microservice", e.getMessage());
@@ -253,7 +290,9 @@ public class KubernetesService {
      */
     public ResourceResponse<GPU> getGPUs(String cluster, String namespace) {
         String clusterName = getClusterName(cluster);
-        List<GPU> gpus = repository.getGPUs(clusterName, namespace);
+        ApiClient client = clusterService.getApiClient(clusterName);
+        KubernetesRepository repo = new KubernetesRepositoryImpl(client, k8sConfig);
+        List<GPU> gpus = repo.getGPUs();
         return new ResourceResponse<>(clusterName, namespace, gpus);
     }
 
@@ -262,7 +301,9 @@ public class KubernetesService {
      */
     public GPU getGPU(String cluster, String namespace, String name) {
         String clusterName = getClusterName(cluster);
-        return repository.getGPU(clusterName, namespace, name);
+        ApiClient client = clusterService.getApiClient(clusterName);
+        KubernetesRepository repo = new KubernetesRepositoryImpl(client, k8sConfig);
+        return repo.getGPU(name);
     }
 
     /**
@@ -270,9 +311,11 @@ public class KubernetesService {
      */
     public OperationResult createGPU(String cluster, String namespace, String resourceYaml) {
         String clusterName = getClusterName(cluster);
+        ApiClient client = clusterService.getApiClient(clusterName);
+        KubernetesRepository repo = new KubernetesRepositoryImpl(client, k8sConfig);
         try {
             GPU gpu = objectMapper.readValue(resourceYaml, GPU.class);
-            GPU created = repository.createGPU(clusterName, namespace, gpu);
+            GPU created = repo.createGPU(gpu);
             return OperationResult.success(clusterName, created.getMetadata().getName(), "GPU created successfully");
         } catch (Exception e) {
             return OperationResult.failure(clusterName, "GPU", "Failed to create GPU", e.getMessage());
@@ -284,22 +327,18 @@ public class KubernetesService {
      */
     public OperationResult updateGPU(String cluster, String namespace, String name, String resourceYaml) {
         String clusterName = getClusterName(cluster);
+        ApiClient client = clusterService.getApiClient(clusterName);
+        KubernetesRepository repo = new KubernetesRepositoryImpl(client, k8sConfig);
         try {
-            // 先检查资源是否存在
-            repository.getGPU(clusterName, namespace, name);
-            
-            // 解析JSON
+            repo.getGPU(name);
             GPU gpu = objectMapper.readValue(resourceYaml, GPU.class);
             if (gpu == null) {
                 return OperationResult.failure(clusterName, name, "Failed to update GPU", "Parsed GPU object is null");
             }
-            
-            // 确保metadata不为null
             if (gpu.getMetadata() == null) {
                 return OperationResult.failure(clusterName, name, "Failed to update GPU", "GPU metadata is null");
             }
-            
-            GPU updated = repository.updateGPU(clusterName, namespace, name, gpu);
+            GPU updated = repo.updateGPU(name, gpu);
             if (updated == null) {
                 return OperationResult.failure(clusterName, name, "Failed to update GPU", "Update operation returned null");
             }
@@ -314,8 +353,10 @@ public class KubernetesService {
      */
     public OperationResult deleteGPU(String cluster, String namespace, String name) {
         String clusterName = getClusterName(cluster);
+        ApiClient client = clusterService.getApiClient(clusterName);
+        KubernetesRepository repo = new KubernetesRepositoryImpl(client, k8sConfig);
         try {
-            repository.deleteGPU(clusterName, namespace, name);
+            repo.deleteGPU(name);
             return OperationResult.success(clusterName, name, "GPU deleted successfully");
         } catch (Exception e) {
             return OperationResult.failure(clusterName, name, "Failed to delete GPU", e.getMessage());
@@ -325,7 +366,9 @@ public class KubernetesService {
     // 优化后的 Pod 查询方法
     List<String> getPods(String cluster, ResourceQuery query) {
         String clusterName = getClusterName(cluster);
-        return repository.getPods(clusterName, query).stream()
+        ApiClient client = clusterService.getApiClient(clusterName);
+        KubernetesRepository repo = new KubernetesRepositoryImpl(client, k8sConfig);
+        return repo.getPods(query).stream()
                 .map(pod -> pod.getMetadata().getName())
                 .collect(Collectors.toList());
     }

@@ -56,4 +56,8 @@ public class PrometheusQueryResponse {
         @JsonProperty("values")
         private List<List<Object>> values;
     }
+
+    public void setStatus(String status) { this.status = status; }
+    public void setError(String error) { this.error = error; }
+    public void setErrorType(String errorType) { this.errorType = errorType; }
 } 

@@ -11,6 +11,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import com.example.kdemo.config.K8sClusterConfig;
 import java.util.HashMap;
 import java.util.Map;
+import com.example.kdemo.service.ClusterService;
+import jakarta.annotation.PostConstruct;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
 
@@ -24,6 +27,16 @@ public class KubernetesConfig {
     public Map<String, K8sClusterConfig> getClustersConfig() { return clustersConfig; }
     public void setClustersConfig(Map<String, K8sClusterConfig> clustersConfig) { this.clustersConfig = clustersConfig; }
     
+    @Autowired
+    private ClusterService clusterService;
+
+    @PostConstruct
+    public void initClusters() {
+        for (Map.Entry<String, K8sClusterConfig> entry : clustersConfig.entrySet()) {
+            clusterService.registerCluster(entry.getKey(), entry.getValue());
+        }
+    }
+
     @Bean
     public ApiClient kubernetesApiClient() {
         try {
@@ -44,20 +57,4 @@ public class KubernetesConfig {
         mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
         return mapper;
     }
-}
-
-public class K8sClusterConfig {
-    private String name;
-    private String apiServer;
-    private String token;
-    private String caCert;
-    // getter/setter
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
-    public String getApiServer() { return apiServer; }
-    public void setApiServer(String apiServer) { this.apiServer = apiServer; }
-    public String getToken() { return token; }
-    public void setToken(String token) { this.token = token; }
-    public String getCaCert() { return caCert; }
-    public void setCaCert(String caCert) { this.caCert = caCert; }
 } 

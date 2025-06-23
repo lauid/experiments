@@ -10,6 +10,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
+import static org.mockito.Mockito.*;
+import com.example.kdemo.config.KubernetesConfig;
+import com.example.kdemo.service.ClusterService;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -22,7 +25,9 @@ class KubernetesRepositoryImplTest {
     void setUp() {
         ApiClient client = new ApiClient();
         client.setBasePath("http://localhost:1234");
-        repository = new KubernetesRepositoryImpl(client);
+        KubernetesConfig k8sConfig = mock(KubernetesConfig.class);
+        ClusterService clusterService = mock(ClusterService.class);
+        repository = new KubernetesRepositoryImpl(client, k8sConfig, clusterService);
     }
 
     @Test
