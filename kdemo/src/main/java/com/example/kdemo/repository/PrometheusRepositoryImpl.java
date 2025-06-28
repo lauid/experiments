@@ -52,19 +52,21 @@ public class PrometheusRepositoryImpl implements PrometheusRepository {
     @Override
     public PrometheusQueryResponse queryRange(String cluster, String query, String startTime, String endTime, String step)
             throws PrometheusException {
-        String encodedQuery = URLEncoder.encode(query, StandardCharsets.UTF_8);
         String url = String.format("%s/api/v1/query_range?query=%s&start=%s&end=%s&step=%s",
-                config.getPrometheusBaseUrl(cluster), encodedQuery, startTime, endTime, step);
+                config.getPrometheusBaseUrl(cluster), query, startTime, endTime, step);
         return executeQueryWithRetry(url, PrometheusQueryResponse.class, config.getMaxRetries(), config.getRetryDelay());
     }
 
     @Override
     public PrometheusQueryResponse query(String cluster, String query, String time) throws PrometheusException {
-        String encodedQuery = URLEncoder.encode(query, StandardCharsets.UTF_8);
-        String url = String.format("%s/api/v1/query?query=%s", config.getPrometheusBaseUrl(cluster), encodedQuery);
+        String baseUrl = config.getPrometheusBaseUrl(cluster);
+        String url = String.format("%s/api/v1/query?query=%s", baseUrl, query);
         if (time != null && !time.isEmpty()) {
             url += "&time=" + time;
         }
+        logger.info("Prometheus query URL: {}", url);
+        logger.info("Base URL for cluster {}: {}", cluster, baseUrl);
+        logger.info("Original query: {}", query);
         return executeQueryWithRetry(url, PrometheusQueryResponse.class, config.getMaxRetries(), config.getRetryDelay());
     }
 
@@ -138,6 +140,7 @@ public class PrometheusRepositoryImpl implements PrometheusRepository {
         int attempt = 0;
         boolean enableRetry = config.isEnableRetry();
         int max = enableRetry ? maxRetries : 0;
+        logger.info("Executing query with URL: {}", url);
         while (true) {
             try {
                 return restTemplate.getForObject(url, responseType);

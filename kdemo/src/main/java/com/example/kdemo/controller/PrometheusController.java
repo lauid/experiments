@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,10 +25,12 @@ import java.util.Map;
 public class PrometheusController {
     
     private final PrometheusService prometheusService;
+    private final RestTemplate restTemplate;
     
     @Autowired
-    public PrometheusController(PrometheusService prometheusService) {
+    public PrometheusController(PrometheusService prometheusService, RestTemplate restTemplate) {
         this.prometheusService = prometheusService;
+        this.restTemplate = restTemplate;
     }
     
     /**
@@ -297,6 +300,21 @@ public class PrometheusController {
             response.put("error", e.getMessage());
             response.put("cluster", cluster);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+    
+    /**
+     * 测试Prometheus连接
+     */
+    @GetMapping("/prometheus/test-connection")
+    public ResponseEntity<String> testConnection(@RequestParam(defaultValue = "cluster-local") String cluster) {
+        try {
+            String url = String.format("http://localhost:9090/api/v1/query?query=up");
+            String result = restTemplate.getForObject(url, String.class);
+            return ResponseEntity.ok("Connection successful: " + result);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Connection failed: " + e.getMessage());
         }
     }
     

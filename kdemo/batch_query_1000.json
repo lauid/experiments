@@ -1,0 +1,5004 @@
+{
+  "queries": [
+    {
+      "name": "metric_0",
+      "description": "Query for go_gc_cycles_automatic_gc_cycles_total",
+      "query": "go_gc_cycles_automatic_gc_cycles_total"
+    },
+    {
+      "name": "metric_1",
+      "description": "Query for go_gc_cycles_forced_gc_cycles_total",
+      "query": "go_gc_cycles_forced_gc_cycles_total"
+    },
+    {
+      "name": "metric_2",
+      "description": "Query for go_gc_cycles_total_gc_cycles_total",
+      "query": "go_gc_cycles_total_gc_cycles_total"
+    },
+    {
+      "name": "metric_3",
+      "description": "Query for go_gc_duration_seconds",
+      "query": "go_gc_duration_seconds"
+    },
+    {
+      "name": "metric_4",
+      "description": "Query for go_gc_duration_seconds_count",
+      "query": "go_gc_duration_seconds_count"
+    },
+    {
+      "name": "metric_5",
+      "description": "Query for go_gc_duration_seconds_sum",
+      "query": "go_gc_duration_seconds_sum"
+    },
+    {
+      "name": "metric_6",
+      "description": "Query for go_gc_gogc_percent",
+      "query": "go_gc_gogc_percent"
+    },
+    {
+      "name": "metric_7",
+      "description": "Query for go_gc_gomemlimit_bytes",
+      "query": "go_gc_gomemlimit_bytes"
+    },
+    {
+      "name": "metric_8",
+      "description": "Query for go_gc_heap_allocs_by_size_bytes_bucket",
+      "query": "go_gc_heap_allocs_by_size_bytes_bucket"
+    },
+    {
+      "name": "metric_9",
+      "description": "Query for go_gc_heap_allocs_by_size_bytes_count",
+      "query": "go_gc_heap_allocs_by_size_bytes_count"
+    },
+    {
+      "name": "metric_10",
+      "description": "Query for go_gc_heap_allocs_by_size_bytes_sum",
+      "query": "go_gc_heap_allocs_by_size_bytes_sum"
+    },
+    {
+      "name": "metric_11",
+      "description": "Query for go_gc_heap_allocs_bytes_total",
+      "query": "go_gc_heap_allocs_bytes_total"
+    },
+    {
+      "name": "metric_12",
+      "description": "Query for go_gc_heap_allocs_objects_total",
+      "query": "go_gc_heap_allocs_objects_total"
+    },
+    {
+      "name": "metric_13",
+      "description": "Query for go_gc_heap_frees_by_size_bytes_bucket",
+      "query": "go_gc_heap_frees_by_size_bytes_bucket"
+    },
+    {
+      "name": "metric_14",
+      "description": "Query for go_gc_heap_frees_by_size_bytes_count",
+      "query": "go_gc_heap_frees_by_size_bytes_count"
+    },
+    {
+      "name": "metric_15",
+      "description": "Query for go_gc_heap_frees_by_size_bytes_sum",
+      "query": "go_gc_heap_frees_by_size_bytes_sum"
+    },
+    {
+      "name": "metric_16",
+      "description": "Query for go_gc_heap_frees_bytes_total",
+      "query": "go_gc_heap_frees_bytes_total"
+    },
+    {
+      "name": "metric_17",
+      "description": "Query for go_gc_heap_frees_objects_total",
+      "query": "go_gc_heap_frees_objects_total"
+    },
+    {
+      "name": "metric_18",
+      "description": "Query for go_gc_heap_goal_bytes",
+      "query": "go_gc_heap_goal_bytes"
+    },
+    {
+      "name": "metric_19",
+      "description": "Query for go_gc_heap_live_bytes",
+      "query": "go_gc_heap_live_bytes"
+    },
+    {
+      "name": "metric_20",
+      "description": "Query for go_gc_heap_objects_objects",
+      "query": "go_gc_heap_objects_objects"
+    },
+    {
+      "name": "metric_21",
+      "description": "Query for go_gc_heap_tiny_allocs_objects_total",
+      "query": "go_gc_heap_tiny_allocs_objects_total"
+    },
+    {
+      "name": "metric_22",
+      "description": "Query for go_gc_limiter_last_enabled_gc_cycle",
+      "query": "go_gc_limiter_last_enabled_gc_cycle"
+    },
+    {
+      "name": "metric_23",
+      "description": "Query for go_gc_pauses_seconds_bucket",
+      "query": "go_gc_pauses_seconds_bucket"
+    },
+    {
+      "name": "metric_24",
+      "description": "Query for go_gc_pauses_seconds_count",
+      "query": "go_gc_pauses_seconds_count"
+    },
+    {
+      "name": "metric_25",
+      "description": "Query for go_gc_pauses_seconds_sum",
+      "query": "go_gc_pauses_seconds_sum"
+    },
+    {
+      "name": "metric_26",
+      "description": "Query for go_gc_scan_globals_bytes",
+      "query": "go_gc_scan_globals_bytes"
+    },
+    {
+      "name": "metric_27",
+      "description": "Query for go_gc_scan_heap_bytes",
+      "query": "go_gc_scan_heap_bytes"
+    },
+    {
+      "name": "metric_28",
+      "description": "Query for go_gc_scan_stack_bytes",
+      "query": "go_gc_scan_stack_bytes"
+    },
+    {
+      "name": "metric_29",
+      "description": "Query for go_gc_scan_total_bytes",
+      "query": "go_gc_scan_total_bytes"
+    },
+    {
+      "name": "metric_30",
+      "description": "Query for go_gc_stack_starting_size_bytes",
+      "query": "go_gc_stack_starting_size_bytes"
+    },
+    {
+      "name": "metric_31",
+      "description": "Query for go_goroutines",
+      "query": "go_goroutines"
+    },
+    {
+      "name": "metric_32",
+      "description": "Query for go_info",
+      "query": "go_info"
+    },
+    {
+      "name": "metric_33",
+      "description": "Query for go_memstats_alloc_bytes",
+      "query": "go_memstats_alloc_bytes"
+    },
+    {
+      "name": "metric_34",
+      "description": "Query for go_memstats_alloc_bytes_total",
+      "query": "go_memstats_alloc_bytes_total"
+    },
+    {
+      "name": "metric_35",
+      "description": "Query for go_memstats_buck_hash_sys_bytes",
+      "query": "go_memstats_buck_hash_sys_bytes"
+    },
+    {
+      "name": "metric_36",
+      "description": "Query for go_memstats_frees_total",
+      "query": "go_memstats_frees_total"
+    },
+    {
+      "name": "metric_37",
+      "description": "Query for go_memstats_gc_sys_bytes",
+      "query": "go_memstats_gc_sys_bytes"
+    },
+    {
+      "name": "metric_38",
+      "description": "Query for go_memstats_heap_alloc_bytes",
+      "query": "go_memstats_heap_alloc_bytes"
+    },
+    {
+      "name": "metric_39",
+      "description": "Query for go_memstats_heap_idle_bytes",
+      "query": "go_memstats_heap_idle_bytes"
+    },
+    {
+      "name": "metric_40",
+      "description": "Query for go_memstats_heap_inuse_bytes",
+      "query": "go_memstats_heap_inuse_bytes"
+    },
+    {
+      "name": "metric_41",
+      "description": "Query for go_memstats_heap_objects",
+      "query": "go_memstats_heap_objects"
+    },
+    {
+      "name": "metric_42",
+      "description": "Query for go_memstats_heap_released_bytes",
+      "query": "go_memstats_heap_released_bytes"
+    },
+    {
+      "name": "metric_43",
+      "description": "Query for go_memstats_heap_sys_bytes",
+      "query": "go_memstats_heap_sys_bytes"
+    },
+    {
+      "name": "metric_44",
+      "description": "Query for go_memstats_last_gc_time_seconds",
+      "query": "go_memstats_last_gc_time_seconds"
+    },
+    {
+      "name": "metric_45",
+      "description": "Query for go_memstats_mallocs_total",
+      "query": "go_memstats_mallocs_total"
+    },
+    {
+      "name": "metric_46",
+      "description": "Query for go_memstats_mcache_inuse_bytes",
+      "query": "go_memstats_mcache_inuse_bytes"
+    },
+    {
+      "name": "metric_47",
+      "description": "Query for go_memstats_mcache_sys_bytes",
+      "query": "go_memstats_mcache_sys_bytes"
+    },
+    {
+      "name": "metric_48",
+      "description": "Query for go_memstats_mspan_inuse_bytes",
+      "query": "go_memstats_mspan_inuse_bytes"
+    },
+    {
+      "name": "metric_49",
+      "description": "Query for go_memstats_mspan_sys_bytes",
+      "query": "go_memstats_mspan_sys_bytes"
+    },
+    {
+      "name": "metric_50",
+      "description": "Query for go_memstats_next_gc_bytes",
+      "query": "go_memstats_next_gc_bytes"
+    },
+    {
+      "name": "metric_51",
+      "description": "Query for go_memstats_other_sys_bytes",
+      "query": "go_memstats_other_sys_bytes"
+    },
+    {
+      "name": "metric_52",
+      "description": "Query for go_memstats_stack_inuse_bytes",
+      "query": "go_memstats_stack_inuse_bytes"
+    },
+    {
+      "name": "metric_53",
+      "description": "Query for go_memstats_stack_sys_bytes",
+      "query": "go_memstats_stack_sys_bytes"
+    },
+    {
+      "name": "metric_54",
+      "description": "Query for go_memstats_sys_bytes",
+      "query": "go_memstats_sys_bytes"
+    },
+    {
+      "name": "metric_55",
+      "description": "Query for go_sched_gomaxprocs_threads",
+      "query": "go_sched_gomaxprocs_threads"
+    },
+    {
+      "name": "metric_56",
+      "description": "Query for go_sched_goroutines_goroutines",
+      "query": "go_sched_goroutines_goroutines"
+    },
+    {
+      "name": "metric_57",
+      "description": "Query for go_sched_latencies_seconds_bucket",
+      "query": "go_sched_latencies_seconds_bucket"
+    },
+    {
+      "name": "metric_58",
+      "description": "Query for go_sched_latencies_seconds_count",
+      "query": "go_sched_latencies_seconds_count"
+    },
+    {
+      "name": "metric_59",
+      "description": "Query for go_sched_latencies_seconds_sum",
+      "query": "go_sched_latencies_seconds_sum"
+    },
+    {
+      "name": "metric_60",
+      "description": "Query for go_sched_pauses_stopping_gc_seconds_bucket",
+      "query": "go_sched_pauses_stopping_gc_seconds_bucket"
+    },
+    {
+      "name": "metric_61",
+      "description": "Query for go_sched_pauses_stopping_gc_seconds_count",
+      "query": "go_sched_pauses_stopping_gc_seconds_count"
+    },
+    {
+      "name": "metric_62",
+      "description": "Query for go_sched_pauses_stopping_gc_seconds_sum",
+      "query": "go_sched_pauses_stopping_gc_seconds_sum"
+    },
+    {
+      "name": "metric_63",
+      "description": "Query for go_sched_pauses_stopping_other_seconds_bucket",
+      "query": "go_sched_pauses_stopping_other_seconds_bucket"
+    },
+    {
+      "name": "metric_64",
+      "description": "Query for go_sched_pauses_stopping_other_seconds_count",
+      "query": "go_sched_pauses_stopping_other_seconds_count"
+    },
+    {
+      "name": "metric_65",
+      "description": "Query for go_sched_pauses_stopping_other_seconds_sum",
+      "query": "go_sched_pauses_stopping_other_seconds_sum"
+    },
+    {
+      "name": "metric_66",
+      "description": "Query for go_sched_pauses_total_gc_seconds_bucket",
+      "query": "go_sched_pauses_total_gc_seconds_bucket"
+    },
+    {
+      "name": "metric_67",
+      "description": "Query for go_sched_pauses_total_gc_seconds_count",
+      "query": "go_sched_pauses_total_gc_seconds_count"
+    },
+    {
+      "name": "metric_68",
+      "description": "Query for go_sched_pauses_total_gc_seconds_sum",
+      "query": "go_sched_pauses_total_gc_seconds_sum"
+    },
+    {
+      "name": "metric_69",
+      "description": "Query for go_sched_pauses_total_other_seconds_bucket",
+      "query": "go_sched_pauses_total_other_seconds_bucket"
+    },
+    {
+      "name": "metric_70",
+      "description": "Query for go_sched_pauses_total_other_seconds_count",
+      "query": "go_sched_pauses_total_other_seconds_count"
+    },
+    {
+      "name": "metric_71",
+      "description": "Query for go_sched_pauses_total_other_seconds_sum",
+      "query": "go_sched_pauses_total_other_seconds_sum"
+    },
+    {
+      "name": "metric_72",
+      "description": "Query for go_sync_mutex_wait_total_seconds_total",
+      "query": "go_sync_mutex_wait_total_seconds_total"
+    },
+    {
+      "name": "metric_73",
+      "description": "Query for go_threads",
+      "query": "go_threads"
+    },
+    {
+      "name": "metric_74",
+      "description": "Query for net_conntrack_dialer_conn_attempted_total",
+      "query": "net_conntrack_dialer_conn_attempted_total"
+    },
+    {
+      "name": "metric_75",
+      "description": "Query for net_conntrack_dialer_conn_closed_total",
+      "query": "net_conntrack_dialer_conn_closed_total"
+    },
+    {
+      "name": "metric_76",
+      "description": "Query for net_conntrack_dialer_conn_established_total",
+      "query": "net_conntrack_dialer_conn_established_total"
+    },
+    {
+      "name": "metric_77",
+      "description": "Query for net_conntrack_dialer_conn_failed_total",
+      "query": "net_conntrack_dialer_conn_failed_total"
+    },
+    {
+      "name": "metric_78",
+      "description": "Query for net_conntrack_listener_conn_accepted_total",
+      "query": "net_conntrack_listener_conn_accepted_total"
+    },
+    {
+      "name": "metric_79",
+      "description": "Query for net_conntrack_listener_conn_closed_total",
+      "query": "net_conntrack_listener_conn_closed_total"
+    },
+    {
+      "name": "metric_80",
+      "description": "Query for process_cpu_seconds_total",
+      "query": "process_cpu_seconds_total"
+    },
+    {
+      "name": "metric_81",
+      "description": "Query for process_max_fds",
+      "query": "process_max_fds"
+    },
+    {
+      "name": "metric_82",
+      "description": "Query for process_network_receive_bytes_total",
+      "query": "process_network_receive_bytes_total"
+    },
+    {
+      "name": "metric_83",
+      "description": "Query for process_network_transmit_bytes_total",
+      "query": "process_network_transmit_bytes_total"
+    },
+    {
+      "name": "metric_84",
+      "description": "Query for process_open_fds",
+      "query": "process_open_fds"
+    },
+    {
+      "name": "metric_85",
+      "description": "Query for process_resident_memory_bytes",
+      "query": "process_resident_memory_bytes"
+    },
+    {
+      "name": "metric_86",
+      "description": "Query for process_start_time_seconds",
+      "query": "process_start_time_seconds"
+    },
+    {
+      "name": "metric_87",
+      "description": "Query for process_virtual_memory_bytes",
+      "query": "process_virtual_memory_bytes"
+    },
+    {
+      "name": "metric_88",
+      "description": "Query for process_virtual_memory_max_bytes",
+      "query": "process_virtual_memory_max_bytes"
+    },
+    {
+      "name": "metric_89",
+      "description": "Query for prometheus_api_notification_active_subscribers",
+      "query": "prometheus_api_notification_active_subscribers"
+    },
+    {
+      "name": "metric_90",
+      "description": "Query for prometheus_api_notification_updates_dropped_total",
+      "query": "prometheus_api_notification_updates_dropped_total"
+    },
+    {
+      "name": "metric_91",
+      "description": "Query for prometheus_api_notification_updates_sent_total",
+      "query": "prometheus_api_notification_updates_sent_total"
+    },
+    {
+      "name": "metric_92",
+      "description": "Query for prometheus_build_info",
+      "query": "prometheus_build_info"
+    },
+    {
+      "name": "metric_93",
+      "description": "Query for prometheus_config_last_reload_success_timestamp_seconds",
+      "query": "prometheus_config_last_reload_success_timestamp_seconds"
+    },
+    {
+      "name": "metric_94",
+      "description": "Query for prometheus_config_last_reload_successful",
+      "query": "prometheus_config_last_reload_successful"
+    },
+    {
+      "name": "metric_95",
+      "description": "Query for prometheus_engine_queries",
+      "query": "prometheus_engine_queries"
+    },
+    {
+      "name": "metric_96",
+      "description": "Query for prometheus_engine_queries_concurrent_max",
+      "query": "prometheus_engine_queries_concurrent_max"
+    },
+    {
+      "name": "metric_97",
+      "description": "Query for prometheus_engine_query_duration_seconds",
+      "query": "prometheus_engine_query_duration_seconds"
+    },
+    {
+      "name": "metric_98",
+      "description": "Query for prometheus_engine_query_duration_seconds_count",
+      "query": "prometheus_engine_query_duration_seconds_count"
+    },
+    {
+      "name": "metric_99",
+      "description": "Query for prometheus_engine_query_duration_seconds_sum",
+      "query": "prometheus_engine_query_duration_seconds_sum"
+    },
+    {
+      "name": "metric_100",
+      "description": "Query for prometheus_engine_query_log_enabled",
+      "query": "prometheus_engine_query_log_enabled"
+    },
+    {
+      "name": "metric_101",
+      "description": "Query for prometheus_engine_query_log_failures_total",
+      "query": "prometheus_engine_query_log_failures_total"
+    },
+    {
+      "name": "metric_102",
+      "description": "Query for prometheus_engine_query_samples_total",
+      "query": "prometheus_engine_query_samples_total"
+    },
+    {
+      "name": "metric_103",
+      "description": "Query for prometheus_http_request_duration_seconds_bucket",
+      "query": "prometheus_http_request_duration_seconds_bucket"
+    },
+    {
+      "name": "metric_104",
+      "description": "Query for prometheus_http_request_duration_seconds_count",
+      "query": "prometheus_http_request_duration_seconds_count"
+    },
+    {
+      "name": "metric_105",
+      "description": "Query for prometheus_http_request_duration_seconds_sum",
+      "query": "prometheus_http_request_duration_seconds_sum"
+    },
+    {
+      "name": "metric_106",
+      "description": "Query for prometheus_http_requests_total",
+      "query": "prometheus_http_requests_total"
+    },
+    {
+      "name": "metric_107",
+      "description": "Query for prometheus_http_response_size_bytes_bucket",
+      "query": "prometheus_http_response_size_bytes_bucket"
+    },
+    {
+      "name": "metric_108",
+      "description": "Query for prometheus_http_response_size_bytes_count",
+      "query": "prometheus_http_response_size_bytes_count"
+    },
+    {
+      "name": "metric_109",
+      "description": "Query for prometheus_http_response_size_bytes_sum",
+      "query": "prometheus_http_response_size_bytes_sum"
+    },
+    {
+      "name": "metric_110",
+      "description": "Query for prometheus_notifications_alertmanagers_discovered",
+      "query": "prometheus_notifications_alertmanagers_discovered"
+    },
+    {
+      "name": "metric_111",
+      "description": "Query for prometheus_notifications_dropped_total",
+      "query": "prometheus_notifications_dropped_total"
+    },
+    {
+      "name": "metric_112",
+      "description": "Query for prometheus_notifications_queue_capacity",
+      "query": "prometheus_notifications_queue_capacity"
+    },
+    {
+      "name": "metric_113",
+      "description": "Query for prometheus_notifications_queue_length",
+      "query": "prometheus_notifications_queue_length"
+    },
+    {
+      "name": "metric_114",
+      "description": "Query for prometheus_ready",
+      "query": "prometheus_ready"
+    },
+    {
+      "name": "metric_115",
+      "description": "Query for prometheus_remote_read_handler_queries",
+      "query": "prometheus_remote_read_handler_queries"
+    },
+    {
+      "name": "metric_116",
+      "description": "Query for prometheus_remote_storage_exemplars_in_total",
+      "query": "prometheus_remote_storage_exemplars_in_total"
+    },
+    {
+      "name": "metric_117",
+      "description": "Query for prometheus_remote_storage_highest_timestamp_in_seconds",
+      "query": "prometheus_remote_storage_highest_timestamp_in_seconds"
+    },
+    {
+      "name": "metric_118",
+      "description": "Query for prometheus_remote_storage_histograms_in_total",
+      "query": "prometheus_remote_storage_histograms_in_total"
+    },
+    {
+      "name": "metric_119",
+      "description": "Query for prometheus_remote_storage_samples_in_total",
+      "query": "prometheus_remote_storage_samples_in_total"
+    },
+    {
+      "name": "metric_120",
+      "description": "Query for prometheus_remote_storage_string_interner_zero_reference_releases_total",
+      "query": "prometheus_remote_storage_string_interner_zero_reference_releases_total"
+    },
+    {
+      "name": "metric_121",
+      "description": "Query for prometheus_rule_evaluation_duration_seconds",
+      "query": "prometheus_rule_evaluation_duration_seconds"
+    },
+    {
+      "name": "metric_122",
+      "description": "Query for prometheus_rule_evaluation_duration_seconds_count",
+      "query": "prometheus_rule_evaluation_duration_seconds_count"
+    },
+    {
+      "name": "metric_123",
+      "description": "Query for prometheus_rule_evaluation_duration_seconds_sum",
+      "query": "prometheus_rule_evaluation_duration_seconds_sum"
+    },
+    {
+      "name": "metric_124",
+      "description": "Query for prometheus_rule_group_duration_seconds",
+      "query": "prometheus_rule_group_duration_seconds"
+    },
+    {
+      "name": "metric_125",
+      "description": "Query for prometheus_rule_group_duration_seconds_count",
+      "query": "prometheus_rule_group_duration_seconds_count"
+    },
+    {
+      "name": "metric_126",
+      "description": "Query for prometheus_rule_group_duration_seconds_sum",
+      "query": "prometheus_rule_group_duration_seconds_sum"
+    },
+    {
+      "name": "metric_127",
+      "description": "Query for prometheus_sd_azure_cache_hit_total",
+      "query": "prometheus_sd_azure_cache_hit_total"
+    },
+    {
+      "name": "metric_128",
+      "description": "Query for prometheus_sd_azure_failures_total",
+      "query": "prometheus_sd_azure_failures_total"
+    },
+    {
+      "name": "metric_129",
+      "description": "Query for prometheus_sd_consul_rpc_duration_seconds",
+      "query": "prometheus_sd_consul_rpc_duration_seconds"
+    },
+    {
+      "name": "metric_130",
+      "description": "Query for prometheus_sd_consul_rpc_duration_seconds_count",
+      "query": "prometheus_sd_consul_rpc_duration_seconds_count"
+    },
+    {
+      "name": "metric_131",
+      "description": "Query for prometheus_sd_consul_rpc_duration_seconds_sum",
+      "query": "prometheus_sd_consul_rpc_duration_seconds_sum"
+    },
+    {
+      "name": "metric_132",
+      "description": "Query for prometheus_sd_consul_rpc_failures_total",
+      "query": "prometheus_sd_consul_rpc_failures_total"
+    },
+    {
+      "name": "metric_133",
+      "description": "Query for prometheus_sd_discovered_targets",
+      "query": "prometheus_sd_discovered_targets"
+    },
+    {
+      "name": "metric_134",
+      "description": "Query for prometheus_sd_dns_lookup_failures_total",
+      "query": "prometheus_sd_dns_lookup_failures_total"
+    },
+    {
+      "name": "metric_135",
+      "description": "Query for prometheus_sd_dns_lookups_total",
+      "query": "prometheus_sd_dns_lookups_total"
+    },
+    {
+      "name": "metric_136",
+      "description": "Query for prometheus_sd_failed_configs",
+      "query": "prometheus_sd_failed_configs"
+    },
+    {
+      "name": "metric_137",
+      "description": "Query for prometheus_sd_file_read_errors_total",
+      "query": "prometheus_sd_file_read_errors_total"
+    },
+    {
+      "name": "metric_138",
+      "description": "Query for prometheus_sd_file_scan_duration_seconds",
+      "query": "prometheus_sd_file_scan_duration_seconds"
+    },
+    {
+      "name": "metric_139",
+      "description": "Query for prometheus_sd_file_scan_duration_seconds_count",
+      "query": "prometheus_sd_file_scan_duration_seconds_count"
+    },
+    {
+      "name": "metric_140",
+      "description": "Query for prometheus_sd_file_scan_duration_seconds_sum",
+      "query": "prometheus_sd_file_scan_duration_seconds_sum"
+    },
+    {
+      "name": "metric_141",
+      "description": "Query for prometheus_sd_file_watcher_errors_total",
+      "query": "prometheus_sd_file_watcher_errors_total"
+    },
+    {
+      "name": "metric_142",
+      "description": "Query for prometheus_sd_http_failures_total",
+      "query": "prometheus_sd_http_failures_total"
+    },
+    {
+      "name": "metric_143",
+      "description": "Query for prometheus_sd_kubernetes_events_total",
+      "query": "prometheus_sd_kubernetes_events_total"
+    },
+    {
+      "name": "metric_144",
+      "description": "Query for prometheus_sd_kubernetes_failures_total",
+      "query": "prometheus_sd_kubernetes_failures_total"
+    },
+    {
+      "name": "metric_145",
+      "description": "Query for prometheus_sd_kuma_fetch_duration_seconds",
+      "query": "prometheus_sd_kuma_fetch_duration_seconds"
+    },
+    {
+      "name": "metric_146",
+      "description": "Query for prometheus_sd_kuma_fetch_duration_seconds_count",
+      "query": "prometheus_sd_kuma_fetch_duration_seconds_count"
+    },
+    {
+      "name": "metric_147",
+      "description": "Query for prometheus_sd_kuma_fetch_duration_seconds_sum",
+      "query": "prometheus_sd_kuma_fetch_duration_seconds_sum"
+    },
+    {
+      "name": "metric_148",
+      "description": "Query for prometheus_sd_kuma_fetch_failures_total",
+      "query": "prometheus_sd_kuma_fetch_failures_total"
+    },
+    {
+      "name": "metric_149",
+      "description": "Query for prometheus_sd_kuma_fetch_skipped_updates_total",
+      "query": "prometheus_sd_kuma_fetch_skipped_updates_total"
+    },
+    {
+      "name": "metric_150",
+      "description": "Query for prometheus_sd_linode_failures_total",
+      "query": "prometheus_sd_linode_failures_total"
+    },
+    {
+      "name": "metric_151",
+      "description": "Query for prometheus_sd_nomad_failures_total",
+      "query": "prometheus_sd_nomad_failures_total"
+    },
+    {
+      "name": "metric_152",
+      "description": "Query for prometheus_sd_received_updates_total",
+      "query": "prometheus_sd_received_updates_total"
+    },
+    {
+      "name": "metric_153",
+      "description": "Query for prometheus_sd_updates_delayed_total",
+      "query": "prometheus_sd_updates_delayed_total"
+    },
+    {
+      "name": "metric_154",
+      "description": "Query for prometheus_sd_updates_total",
+      "query": "prometheus_sd_updates_total"
+    },
+    {
+      "name": "metric_155",
+      "description": "Query for prometheus_target_interval_length_seconds",
+      "query": "prometheus_target_interval_length_seconds"
+    },
+    {
+      "name": "metric_156",
+      "description": "Query for prometheus_target_interval_length_seconds_count",
+      "query": "prometheus_target_interval_length_seconds_count"
+    },
+    {
+      "name": "metric_157",
+      "description": "Query for prometheus_target_interval_length_seconds_sum",
+      "query": "prometheus_target_interval_length_seconds_sum"
+    },
+    {
+      "name": "metric_158",
+      "description": "Query for prometheus_target_metadata_cache_bytes",
+      "query": "prometheus_target_metadata_cache_bytes"
+    },
+    {
+      "name": "metric_159",
+      "description": "Query for prometheus_target_metadata_cache_entries",
+      "query": "prometheus_target_metadata_cache_entries"
+    },
+    {
+      "name": "metric_160",
+      "description": "Query for prometheus_target_scrape_pool_exceeded_label_limits_total",
+      "query": "prometheus_target_scrape_pool_exceeded_label_limits_total"
+    },
+    {
+      "name": "metric_161",
+      "description": "Query for prometheus_target_scrape_pool_exceeded_target_limit_total",
+      "query": "prometheus_target_scrape_pool_exceeded_target_limit_total"
+    },
+    {
+      "name": "metric_162",
+      "description": "Query for prometheus_target_scrape_pool_reloads_failed_total",
+      "query": "prometheus_target_scrape_pool_reloads_failed_total"
+    },
+    {
+      "name": "metric_163",
+      "description": "Query for prometheus_target_scrape_pool_reloads_total",
+      "query": "prometheus_target_scrape_pool_reloads_total"
+    },
+    {
+      "name": "metric_164",
+      "description": "Query for prometheus_target_scrape_pool_symboltable_items",
+      "query": "prometheus_target_scrape_pool_symboltable_items"
+    },
+    {
+      "name": "metric_165",
+      "description": "Query for prometheus_target_scrape_pool_sync_total",
+      "query": "prometheus_target_scrape_pool_sync_total"
+    },
+    {
+      "name": "metric_166",
+      "description": "Query for prometheus_target_scrape_pool_target_limit",
+      "query": "prometheus_target_scrape_pool_target_limit"
+    },
+    {
+      "name": "metric_167",
+      "description": "Query for prometheus_target_scrape_pool_targets",
+      "query": "prometheus_target_scrape_pool_targets"
+    },
+    {
+      "name": "metric_168",
+      "description": "Query for prometheus_target_scrape_pools_failed_total",
+      "query": "prometheus_target_scrape_pools_failed_total"
+    },
+    {
+      "name": "metric_169",
+      "description": "Query for prometheus_target_scrape_pools_total",
+      "query": "prometheus_target_scrape_pools_total"
+    },
+    {
+      "name": "metric_170",
+      "description": "Query for prometheus_target_scrapes_cache_flush_forced_total",
+      "query": "prometheus_target_scrapes_cache_flush_forced_total"
+    },
+    {
+      "name": "metric_171",
+      "description": "Query for prometheus_target_scrapes_exceeded_body_size_limit_total",
+      "query": "prometheus_target_scrapes_exceeded_body_size_limit_total"
+    },
+    {
+      "name": "metric_172",
+      "description": "Query for prometheus_target_scrapes_exceeded_native_histogram_bucket_limit_total",
+      "query": "prometheus_target_scrapes_exceeded_native_histogram_bucket_limit_total"
+    },
+    {
+      "name": "metric_173",
+      "description": "Query for prometheus_target_scrapes_exceeded_sample_limit_total",
+      "query": "prometheus_target_scrapes_exceeded_sample_limit_total"
+    },
+    {
+      "name": "metric_174",
+      "description": "Query for prometheus_target_scrapes_exemplar_out_of_order_total",
+      "query": "prometheus_target_scrapes_exemplar_out_of_order_total"
+    },
+    {
+      "name": "metric_175",
+      "description": "Query for prometheus_target_scrapes_sample_duplicate_timestamp_total",
+      "query": "prometheus_target_scrapes_sample_duplicate_timestamp_total"
+    },
+    {
+      "name": "metric_176",
+      "description": "Query for prometheus_target_scrapes_sample_out_of_bounds_total",
+      "query": "prometheus_target_scrapes_sample_out_of_bounds_total"
+    },
+    {
+      "name": "metric_177",
+      "description": "Query for prometheus_target_scrapes_sample_out_of_order_total",
+      "query": "prometheus_target_scrapes_sample_out_of_order_total"
+    },
+    {
+      "name": "metric_178",
+      "description": "Query for prometheus_target_sync_failed_total",
+      "query": "prometheus_target_sync_failed_total"
+    },
+    {
+      "name": "metric_179",
+      "description": "Query for prometheus_target_sync_length_seconds",
+      "query": "prometheus_target_sync_length_seconds"
+    },
+    {
+      "name": "metric_180",
+      "description": "Query for prometheus_target_sync_length_seconds_count",
+      "query": "prometheus_target_sync_length_seconds_count"
+    },
+    {
+      "name": "metric_181",
+      "description": "Query for prometheus_target_sync_length_seconds_sum",
+      "query": "prometheus_target_sync_length_seconds_sum"
+    },
+    {
+      "name": "metric_182",
+      "description": "Query for prometheus_template_text_expansion_failures_total",
+      "query": "prometheus_template_text_expansion_failures_total"
+    },
+    {
+      "name": "metric_183",
+      "description": "Query for prometheus_template_text_expansions_total",
+      "query": "prometheus_template_text_expansions_total"
+    },
+    {
+      "name": "metric_184",
+      "description": "Query for prometheus_treecache_watcher_goroutines",
+      "query": "prometheus_treecache_watcher_goroutines"
+    },
+    {
+      "name": "metric_185",
+      "description": "Query for prometheus_treecache_zookeeper_failures_total",
+      "query": "prometheus_treecache_zookeeper_failures_total"
+    },
+    {
+      "name": "metric_186",
+      "description": "Query for prometheus_tsdb_blocks_loaded",
+      "query": "prometheus_tsdb_blocks_loaded"
+    },
+    {
+      "name": "metric_187",
+      "description": "Query for prometheus_tsdb_checkpoint_creations_failed_total",
+      "query": "prometheus_tsdb_checkpoint_creations_failed_total"
+    },
+    {
+      "name": "metric_188",
+      "description": "Query for prometheus_tsdb_checkpoint_creations_total",
+      "query": "prometheus_tsdb_checkpoint_creations_total"
+    },
+    {
+      "name": "metric_189",
+      "description": "Query for prometheus_tsdb_checkpoint_deletions_failed_total",
+      "query": "prometheus_tsdb_checkpoint_deletions_failed_total"
+    },
+    {
+      "name": "metric_190",
+      "description": "Query for prometheus_tsdb_checkpoint_deletions_total",
+      "query": "prometheus_tsdb_checkpoint_deletions_total"
+    },
+    {
+      "name": "metric_191",
+      "description": "Query for prometheus_tsdb_clean_start",
+      "query": "prometheus_tsdb_clean_start"
+    },
+    {
+      "name": "metric_192",
+      "description": "Query for prometheus_tsdb_compaction_chunk_range_seconds_bucket",
+      "query": "prometheus_tsdb_compaction_chunk_range_seconds_bucket"
+    },
+    {
+      "name": "metric_193",
+      "description": "Query for prometheus_tsdb_compaction_chunk_range_seconds_count",
+      "query": "prometheus_tsdb_compaction_chunk_range_seconds_count"
+    },
+    {
+      "name": "metric_194",
+      "description": "Query for prometheus_tsdb_compaction_chunk_range_seconds_sum",
+      "query": "prometheus_tsdb_compaction_chunk_range_seconds_sum"
+    },
+    {
+      "name": "metric_195",
+      "description": "Query for prometheus_tsdb_compaction_chunk_samples_bucket",
+      "query": "prometheus_tsdb_compaction_chunk_samples_bucket"
+    },
+    {
+      "name": "metric_196",
+      "description": "Query for prometheus_tsdb_compaction_chunk_samples_count",
+      "query": "prometheus_tsdb_compaction_chunk_samples_count"
+    },
+    {
+      "name": "metric_197",
+      "description": "Query for prometheus_tsdb_compaction_chunk_samples_sum",
+      "query": "prometheus_tsdb_compaction_chunk_samples_sum"
+    },
+    {
+      "name": "metric_198",
+      "description": "Query for prometheus_tsdb_compaction_chunk_size_bytes_bucket",
+      "query": "prometheus_tsdb_compaction_chunk_size_bytes_bucket"
+    },
+    {
+      "name": "metric_199",
+      "description": "Query for prometheus_tsdb_compaction_chunk_size_bytes_count",
+      "query": "prometheus_tsdb_compaction_chunk_size_bytes_count"
+    },
+    {
+      "name": "metric_200",
+      "description": "Query for prometheus_tsdb_compaction_chunk_size_bytes_sum",
+      "query": "prometheus_tsdb_compaction_chunk_size_bytes_sum"
+    },
+    {
+      "name": "metric_201",
+      "description": "Query for prometheus_tsdb_compaction_duration_seconds_bucket",
+      "query": "prometheus_tsdb_compaction_duration_seconds_bucket"
+    },
+    {
+      "name": "metric_202",
+      "description": "Query for prometheus_tsdb_compaction_duration_seconds_count",
+      "query": "prometheus_tsdb_compaction_duration_seconds_count"
+    },
+    {
+      "name": "metric_203",
+      "description": "Query for prometheus_tsdb_compaction_duration_seconds_sum",
+      "query": "prometheus_tsdb_compaction_duration_seconds_sum"
+    },
+    {
+      "name": "metric_204",
+      "description": "Query for prometheus_tsdb_compaction_populating_block",
+      "query": "prometheus_tsdb_compaction_populating_block"
+    },
+    {
+      "name": "metric_205",
+      "description": "Query for prometheus_tsdb_compactions_failed_total",
+      "query": "prometheus_tsdb_compactions_failed_total"
+    },
+    {
+      "name": "metric_206",
+      "description": "Query for prometheus_tsdb_compactions_skipped_total",
+      "query": "prometheus_tsdb_compactions_skipped_total"
+    },
+    {
+      "name": "metric_207",
+      "description": "Query for prometheus_tsdb_compactions_total",
+      "query": "prometheus_tsdb_compactions_total"
+    },
+    {
+      "name": "metric_208",
+      "description": "Query for prometheus_tsdb_compactions_triggered_total",
+      "query": "prometheus_tsdb_compactions_triggered_total"
+    },
+    {
+      "name": "metric_209",
+      "description": "Query for prometheus_tsdb_data_replay_duration_seconds",
+      "query": "prometheus_tsdb_data_replay_duration_seconds"
+    },
+    {
+      "name": "metric_210",
+      "description": "Query for prometheus_tsdb_exemplar_exemplars_appended_total",
+      "query": "prometheus_tsdb_exemplar_exemplars_appended_total"
+    },
+    {
+      "name": "metric_211",
+      "description": "Query for prometheus_tsdb_exemplar_exemplars_in_storage",
+      "query": "prometheus_tsdb_exemplar_exemplars_in_storage"
+    },
+    {
+      "name": "metric_212",
+      "description": "Query for prometheus_tsdb_exemplar_last_exemplars_timestamp_seconds",
+      "query": "prometheus_tsdb_exemplar_last_exemplars_timestamp_seconds"
+    },
+    {
+      "name": "metric_213",
+      "description": "Query for prometheus_tsdb_exemplar_max_exemplars",
+      "query": "prometheus_tsdb_exemplar_max_exemplars"
+    },
+    {
+      "name": "metric_214",
+      "description": "Query for prometheus_tsdb_exemplar_out_of_order_exemplars_total",
+      "query": "prometheus_tsdb_exemplar_out_of_order_exemplars_total"
+    },
+    {
+      "name": "metric_215",
+      "description": "Query for prometheus_tsdb_exemplar_series_with_exemplars_in_storage",
+      "query": "prometheus_tsdb_exemplar_series_with_exemplars_in_storage"
+    },
+    {
+      "name": "metric_216",
+      "description": "Query for prometheus_tsdb_head_active_appenders",
+      "query": "prometheus_tsdb_head_active_appenders"
+    },
+    {
+      "name": "metric_217",
+      "description": "Query for prometheus_tsdb_head_chunks",
+      "query": "prometheus_tsdb_head_chunks"
+    },
+    {
+      "name": "metric_218",
+      "description": "Query for prometheus_tsdb_head_chunks_created_total",
+      "query": "prometheus_tsdb_head_chunks_created_total"
+    },
+    {
+      "name": "metric_219",
+      "description": "Query for prometheus_tsdb_head_chunks_removed_total",
+      "query": "prometheus_tsdb_head_chunks_removed_total"
+    },
+    {
+      "name": "metric_220",
+      "description": "Query for prometheus_tsdb_head_chunks_storage_size_bytes",
+      "query": "prometheus_tsdb_head_chunks_storage_size_bytes"
+    },
+    {
+      "name": "metric_221",
+      "description": "Query for prometheus_tsdb_head_gc_duration_seconds_count",
+      "query": "prometheus_tsdb_head_gc_duration_seconds_count"
+    },
+    {
+      "name": "metric_222",
+      "description": "Query for prometheus_tsdb_head_gc_duration_seconds_sum",
+      "query": "prometheus_tsdb_head_gc_duration_seconds_sum"
+    },
+    {
+      "name": "metric_223",
+      "description": "Query for prometheus_tsdb_head_max_time",
+      "query": "prometheus_tsdb_head_max_time"
+    },
+    {
+      "name": "metric_224",
+      "description": "Query for prometheus_tsdb_head_max_time_seconds",
+      "query": "prometheus_tsdb_head_max_time_seconds"
+    },
+    {
+      "name": "metric_225",
+      "description": "Query for prometheus_tsdb_head_min_time",
+      "query": "prometheus_tsdb_head_min_time"
+    },
+    {
+      "name": "metric_226",
+      "description": "Query for prometheus_tsdb_head_min_time_seconds",
+      "query": "prometheus_tsdb_head_min_time_seconds"
+    },
+    {
+      "name": "metric_227",
+      "description": "Query for prometheus_tsdb_head_out_of_order_samples_appended_total",
+      "query": "prometheus_tsdb_head_out_of_order_samples_appended_total"
+    },
+    {
+      "name": "metric_228",
+      "description": "Query for prometheus_tsdb_head_samples_appended_total",
+      "query": "prometheus_tsdb_head_samples_appended_total"
+    },
+    {
+      "name": "metric_229",
+      "description": "Query for prometheus_tsdb_head_series",
+      "query": "prometheus_tsdb_head_series"
+    },
+    {
+      "name": "metric_230",
+      "description": "Query for prometheus_tsdb_head_series_created_total",
+      "query": "prometheus_tsdb_head_series_created_total"
+    },
+    {
+      "name": "metric_231",
+      "description": "Query for prometheus_tsdb_head_series_not_found_total",
+      "query": "prometheus_tsdb_head_series_not_found_total"
+    },
+    {
+      "name": "metric_232",
+      "description": "Query for prometheus_tsdb_head_series_removed_total",
+      "query": "prometheus_tsdb_head_series_removed_total"
+    },
+    {
+      "name": "metric_233",
+      "description": "Query for prometheus_tsdb_head_truncations_failed_total",
+      "query": "prometheus_tsdb_head_truncations_failed_total"
+    },
+    {
+      "name": "metric_234",
+      "description": "Query for prometheus_tsdb_head_truncations_total",
+      "query": "prometheus_tsdb_head_truncations_total"
+    },
+    {
+      "name": "metric_235",
+      "description": "Query for prometheus_tsdb_isolation_high_watermark",
+      "query": "prometheus_tsdb_isolation_high_watermark"
+    },
+    {
+      "name": "metric_236",
+      "description": "Query for prometheus_tsdb_isolation_low_watermark",
+      "query": "prometheus_tsdb_isolation_low_watermark"
+    },
+    {
+      "name": "metric_237",
+      "description": "Query for prometheus_tsdb_lowest_timestamp",
+      "query": "prometheus_tsdb_lowest_timestamp"
+    },
+    {
+      "name": "metric_238",
+      "description": "Query for prometheus_tsdb_lowest_timestamp_seconds",
+      "query": "prometheus_tsdb_lowest_timestamp_seconds"
+    },
+    {
+      "name": "metric_239",
+      "description": "Query for prometheus_tsdb_mmap_chunk_corruptions_total",
+      "query": "prometheus_tsdb_mmap_chunk_corruptions_total"
+    },
+    {
+      "name": "metric_240",
+      "description": "Query for prometheus_tsdb_mmap_chunks_total",
+      "query": "prometheus_tsdb_mmap_chunks_total"
+    },
+    {
+      "name": "metric_241",
+      "description": "Query for prometheus_tsdb_out_of_bound_samples_total",
+      "query": "prometheus_tsdb_out_of_bound_samples_total"
+    },
+    {
+      "name": "metric_242",
+      "description": "Query for prometheus_tsdb_out_of_order_samples_total",
+      "query": "prometheus_tsdb_out_of_order_samples_total"
+    },
+    {
+      "name": "metric_243",
+      "description": "Query for prometheus_tsdb_reloads_failures_total",
+      "query": "prometheus_tsdb_reloads_failures_total"
+    },
+    {
+      "name": "metric_244",
+      "description": "Query for prometheus_tsdb_reloads_total",
+      "query": "prometheus_tsdb_reloads_total"
+    },
+    {
+      "name": "metric_245",
+      "description": "Query for prometheus_tsdb_retention_limit_bytes",
+      "query": "prometheus_tsdb_retention_limit_bytes"
+    },
+    {
+      "name": "metric_246",
+      "description": "Query for prometheus_tsdb_retention_limit_seconds",
+      "query": "prometheus_tsdb_retention_limit_seconds"
+    },
+    {
+      "name": "metric_247",
+      "description": "Query for prometheus_tsdb_size_retentions_total",
+      "query": "prometheus_tsdb_size_retentions_total"
+    },
+    {
+      "name": "metric_248",
+      "description": "Query for prometheus_tsdb_snapshot_replay_error_total",
+      "query": "prometheus_tsdb_snapshot_replay_error_total"
+    },
+    {
+      "name": "metric_249",
+      "description": "Query for prometheus_tsdb_storage_blocks_bytes",
+      "query": "prometheus_tsdb_storage_blocks_bytes"
+    },
+    {
+      "name": "metric_250",
+      "description": "Query for prometheus_tsdb_symbol_table_size_bytes",
+      "query": "prometheus_tsdb_symbol_table_size_bytes"
+    },
+    {
+      "name": "metric_251",
+      "description": "Query for prometheus_tsdb_time_retentions_total",
+      "query": "prometheus_tsdb_time_retentions_total"
+    },
+    {
+      "name": "metric_252",
+      "description": "Query for prometheus_tsdb_tombstone_cleanup_seconds_bucket",
+      "query": "prometheus_tsdb_tombstone_cleanup_seconds_bucket"
+    },
+    {
+      "name": "metric_253",
+      "description": "Query for prometheus_tsdb_tombstone_cleanup_seconds_count",
+      "query": "prometheus_tsdb_tombstone_cleanup_seconds_count"
+    },
+    {
+      "name": "metric_254",
+      "description": "Query for prometheus_tsdb_tombstone_cleanup_seconds_sum",
+      "query": "prometheus_tsdb_tombstone_cleanup_seconds_sum"
+    },
+    {
+      "name": "metric_255",
+      "description": "Query for prometheus_tsdb_too_old_samples_total",
+      "query": "prometheus_tsdb_too_old_samples_total"
+    },
+    {
+      "name": "metric_256",
+      "description": "Query for prometheus_tsdb_vertical_compactions_total",
+      "query": "prometheus_tsdb_vertical_compactions_total"
+    },
+    {
+      "name": "metric_257",
+      "description": "Query for prometheus_tsdb_wal_completed_pages_total",
+      "query": "prometheus_tsdb_wal_completed_pages_total"
+    },
+    {
+      "name": "metric_258",
+      "description": "Query for prometheus_tsdb_wal_corruptions_total",
+      "query": "prometheus_tsdb_wal_corruptions_total"
+    },
+    {
+      "name": "metric_259",
+      "description": "Query for prometheus_tsdb_wal_fsync_duration_seconds",
+      "query": "prometheus_tsdb_wal_fsync_duration_seconds"
+    },
+    {
+      "name": "metric_260",
+      "description": "Query for prometheus_tsdb_wal_fsync_duration_seconds_count",
+      "query": "prometheus_tsdb_wal_fsync_duration_seconds_count"
+    },
+    {
+      "name": "metric_261",
+      "description": "Query for prometheus_tsdb_wal_fsync_duration_seconds_sum",
+      "query": "prometheus_tsdb_wal_fsync_duration_seconds_sum"
+    },
+    {
+      "name": "metric_262",
+      "description": "Query for prometheus_tsdb_wal_page_flushes_total",
+      "query": "prometheus_tsdb_wal_page_flushes_total"
+    },
+    {
+      "name": "metric_263",
+      "description": "Query for prometheus_tsdb_wal_record_bytes_saved_total",
+      "query": "prometheus_tsdb_wal_record_bytes_saved_total"
+    },
+    {
+      "name": "metric_264",
+      "description": "Query for prometheus_tsdb_wal_record_part_writes_total",
+      "query": "prometheus_tsdb_wal_record_part_writes_total"
+    },
+    {
+      "name": "metric_265",
+      "description": "Query for prometheus_tsdb_wal_record_parts_bytes_written_total",
+      "query": "prometheus_tsdb_wal_record_parts_bytes_written_total"
+    },
+    {
+      "name": "metric_266",
+      "description": "Query for prometheus_tsdb_wal_segment_current",
+      "query": "prometheus_tsdb_wal_segment_current"
+    },
+    {
+      "name": "metric_267",
+      "description": "Query for prometheus_tsdb_wal_storage_size_bytes",
+      "query": "prometheus_tsdb_wal_storage_size_bytes"
+    },
+    {
+      "name": "metric_268",
+      "description": "Query for prometheus_tsdb_wal_truncate_duration_seconds_count",
+      "query": "prometheus_tsdb_wal_truncate_duration_seconds_count"
+    },
+    {
+      "name": "metric_269",
+      "description": "Query for prometheus_tsdb_wal_truncate_duration_seconds_sum",
+      "query": "prometheus_tsdb_wal_truncate_duration_seconds_sum"
+    },
+    {
+      "name": "metric_270",
+      "description": "Query for prometheus_tsdb_wal_truncations_failed_total",
+      "query": "prometheus_tsdb_wal_truncations_failed_total"
+    },
+    {
+      "name": "metric_271",
+      "description": "Query for prometheus_tsdb_wal_truncations_total",
+      "query": "prometheus_tsdb_wal_truncations_total"
+    },
+    {
+      "name": "metric_272",
+      "description": "Query for prometheus_tsdb_wal_writes_failed_total",
+      "query": "prometheus_tsdb_wal_writes_failed_total"
+    },
+    {
+      "name": "metric_273",
+      "description": "Query for prometheus_web_federation_errors_total",
+      "query": "prometheus_web_federation_errors_total"
+    },
+    {
+      "name": "metric_274",
+      "description": "Query for prometheus_web_federation_warnings_total",
+      "query": "prometheus_web_federation_warnings_total"
+    },
+    {
+      "name": "metric_275",
+      "description": "Query for promhttp_metric_handler_requests_in_flight",
+      "query": "promhttp_metric_handler_requests_in_flight"
+    },
+    {
+      "name": "metric_276",
+      "description": "Query for promhttp_metric_handler_requests_total",
+      "query": "promhttp_metric_handler_requests_total"
+    },
+    {
+      "name": "metric_277",
+      "description": "Query for scrape_duration_seconds",
+      "query": "scrape_duration_seconds"
+    },
+    {
+      "name": "metric_278",
+      "description": "Query for scrape_samples_post_metric_relabeling",
+      "query": "scrape_samples_post_metric_relabeling"
+    },
+    {
+      "name": "metric_279",
+      "description": "Query for scrape_samples_scraped",
+      "query": "scrape_samples_scraped"
+    },
+    {
+      "name": "metric_280",
+      "description": "Query for scrape_series_added",
+      "query": "scrape_series_added"
+    },
+    {
+      "name": "metric_281",
+      "description": "Query for up",
+      "query": "up"
+    },
+    {
+      "name": "metric_282",
+      "description": "Query for go_gc_cycles_automatic_gc_cycles_total",
+      "query": "go_gc_cycles_automatic_gc_cycles_total"
+    },
+    {
+      "name": "metric_283",
+      "description": "Query for go_gc_cycles_forced_gc_cycles_total",
+      "query": "go_gc_cycles_forced_gc_cycles_total"
+    },
+    {
+      "name": "metric_284",
+      "description": "Query for go_gc_cycles_total_gc_cycles_total",
+      "query": "go_gc_cycles_total_gc_cycles_total"
+    },
+    {
+      "name": "metric_285",
+      "description": "Query for go_gc_duration_seconds",
+      "query": "go_gc_duration_seconds"
+    },
+    {
+      "name": "metric_286",
+      "description": "Query for go_gc_duration_seconds_count",
+      "query": "go_gc_duration_seconds_count"
+    },
+    {
+      "name": "metric_287",
+      "description": "Query for go_gc_duration_seconds_sum",
+      "query": "go_gc_duration_seconds_sum"
+    },
+    {
+      "name": "metric_288",
+      "description": "Query for go_gc_gogc_percent",
+      "query": "go_gc_gogc_percent"
+    },
+    {
+      "name": "metric_289",
+      "description": "Query for go_gc_gomemlimit_bytes",
+      "query": "go_gc_gomemlimit_bytes"
+    },
+    {
+      "name": "metric_290",
+      "description": "Query for go_gc_heap_allocs_by_size_bytes_bucket",
+      "query": "go_gc_heap_allocs_by_size_bytes_bucket"
+    },
+    {
+      "name": "metric_291",
+      "description": "Query for go_gc_heap_allocs_by_size_bytes_count",
+      "query": "go_gc_heap_allocs_by_size_bytes_count"
+    },
+    {
+      "name": "metric_292",
+      "description": "Query for go_gc_heap_allocs_by_size_bytes_sum",
+      "query": "go_gc_heap_allocs_by_size_bytes_sum"
+    },
+    {
+      "name": "metric_293",
+      "description": "Query for go_gc_heap_allocs_bytes_total",
+      "query": "go_gc_heap_allocs_bytes_total"
+    },
+    {
+      "name": "metric_294",
+      "description": "Query for go_gc_heap_allocs_objects_total",
+      "query": "go_gc_heap_allocs_objects_total"
+    },
+    {
+      "name": "metric_295",
+      "description": "Query for go_gc_heap_frees_by_size_bytes_bucket",
+      "query": "go_gc_heap_frees_by_size_bytes_bucket"
+    },
+    {
+      "name": "metric_296",
+      "description": "Query for go_gc_heap_frees_by_size_bytes_count",
+      "query": "go_gc_heap_frees_by_size_bytes_count"
+    },
+    {
+      "name": "metric_297",
+      "description": "Query for go_gc_heap_frees_by_size_bytes_sum",
+      "query": "go_gc_heap_frees_by_size_bytes_sum"
+    },
+    {
+      "name": "metric_298",
+      "description": "Query for go_gc_heap_frees_bytes_total",
+      "query": "go_gc_heap_frees_bytes_total"
+    },
+    {
+      "name": "metric_299",
+      "description": "Query for go_gc_heap_frees_objects_total",
+      "query": "go_gc_heap_frees_objects_total"
+    },
+    {
+      "name": "metric_300",
+      "description": "Query for go_gc_heap_goal_bytes",
+      "query": "go_gc_heap_goal_bytes"
+    },
+    {
+      "name": "metric_301",
+      "description": "Query for go_gc_heap_live_bytes",
+      "query": "go_gc_heap_live_bytes"
+    },
+    {
+      "name": "metric_302",
+      "description": "Query for go_gc_heap_objects_objects",
+      "query": "go_gc_heap_objects_objects"
+    },
+    {
+      "name": "metric_303",
+      "description": "Query for go_gc_heap_tiny_allocs_objects_total",
+      "query": "go_gc_heap_tiny_allocs_objects_total"
+    },
+    {
+      "name": "metric_304",
+      "description": "Query for go_gc_limiter_last_enabled_gc_cycle",
+      "query": "go_gc_limiter_last_enabled_gc_cycle"
+    },
+    {
+      "name": "metric_305",
+      "description": "Query for go_gc_pauses_seconds_bucket",
+      "query": "go_gc_pauses_seconds_bucket"
+    },
+    {
+      "name": "metric_306",
+      "description": "Query for go_gc_pauses_seconds_count",
+      "query": "go_gc_pauses_seconds_count"
+    },
+    {
+      "name": "metric_307",
+      "description": "Query for go_gc_pauses_seconds_sum",
+      "query": "go_gc_pauses_seconds_sum"
+    },
+    {
+      "name": "metric_308",
+      "description": "Query for go_gc_scan_globals_bytes",
+      "query": "go_gc_scan_globals_bytes"
+    },
+    {
+      "name": "metric_309",
+      "description": "Query for go_gc_scan_heap_bytes",
+      "query": "go_gc_scan_heap_bytes"
+    },
+    {
+      "name": "metric_310",
+      "description": "Query for go_gc_scan_stack_bytes",
+      "query": "go_gc_scan_stack_bytes"
+    },
+    {
+      "name": "metric_311",
+      "description": "Query for go_gc_scan_total_bytes",
+      "query": "go_gc_scan_total_bytes"
+    },
+    {
+      "name": "metric_312",
+      "description": "Query for go_gc_stack_starting_size_bytes",
+      "query": "go_gc_stack_starting_size_bytes"
+    },
+    {
+      "name": "metric_313",
+      "description": "Query for go_goroutines",
+      "query": "go_goroutines"
+    },
+    {
+      "name": "metric_314",
+      "description": "Query for go_info",
+      "query": "go_info"
+    },
+    {
+      "name": "metric_315",
+      "description": "Query for go_memstats_alloc_bytes",
+      "query": "go_memstats_alloc_bytes"
+    },
+    {
+      "name": "metric_316",
+      "description": "Query for go_memstats_alloc_bytes_total",
+      "query": "go_memstats_alloc_bytes_total"
+    },
+    {
+      "name": "metric_317",
+      "description": "Query for go_memstats_buck_hash_sys_bytes",
+      "query": "go_memstats_buck_hash_sys_bytes"
+    },
+    {
+      "name": "metric_318",
+      "description": "Query for go_memstats_frees_total",
+      "query": "go_memstats_frees_total"
+    },
+    {
+      "name": "metric_319",
+      "description": "Query for go_memstats_gc_sys_bytes",
+      "query": "go_memstats_gc_sys_bytes"
+    },
+    {
+      "name": "metric_320",
+      "description": "Query for go_memstats_heap_alloc_bytes",
+      "query": "go_memstats_heap_alloc_bytes"
+    },
+    {
+      "name": "metric_321",
+      "description": "Query for go_memstats_heap_idle_bytes",
+      "query": "go_memstats_heap_idle_bytes"
+    },
+    {
+      "name": "metric_322",
+      "description": "Query for go_memstats_heap_inuse_bytes",
+      "query": "go_memstats_heap_inuse_bytes"
+    },
+    {
+      "name": "metric_323",
+      "description": "Query for go_memstats_heap_objects",
+      "query": "go_memstats_heap_objects"
+    },
+    {
+      "name": "metric_324",
+      "description": "Query for go_memstats_heap_released_bytes",
+      "query": "go_memstats_heap_released_bytes"
+    },
+    {
+      "name": "metric_325",
+      "description": "Query for go_memstats_heap_sys_bytes",
+      "query": "go_memstats_heap_sys_bytes"
+    },
+    {
+      "name": "metric_326",
+      "description": "Query for go_memstats_last_gc_time_seconds",
+      "query": "go_memstats_last_gc_time_seconds"
+    },
+    {
+      "name": "metric_327",
+      "description": "Query for go_memstats_mallocs_total",
+      "query": "go_memstats_mallocs_total"
+    },
+    {
+      "name": "metric_328",
+      "description": "Query for go_memstats_mcache_inuse_bytes",
+      "query": "go_memstats_mcache_inuse_bytes"
+    },
+    {
+      "name": "metric_329",
+      "description": "Query for go_memstats_mcache_sys_bytes",
+      "query": "go_memstats_mcache_sys_bytes"
+    },
+    {
+      "name": "metric_330",
+      "description": "Query for go_memstats_mspan_inuse_bytes",
+      "query": "go_memstats_mspan_inuse_bytes"
+    },
+    {
+      "name": "metric_331",
+      "description": "Query for go_memstats_mspan_sys_bytes",
+      "query": "go_memstats_mspan_sys_bytes"
+    },
+    {
+      "name": "metric_332",
+      "description": "Query for go_memstats_next_gc_bytes",
+      "query": "go_memstats_next_gc_bytes"
+    },
+    {
+      "name": "metric_333",
+      "description": "Query for go_memstats_other_sys_bytes",
+      "query": "go_memstats_other_sys_bytes"
+    },
+    {
+      "name": "metric_334",
+      "description": "Query for go_memstats_stack_inuse_bytes",
+      "query": "go_memstats_stack_inuse_bytes"
+    },
+    {
+      "name": "metric_335",
+      "description": "Query for go_memstats_stack_sys_bytes",
+      "query": "go_memstats_stack_sys_bytes"
+    },
+    {
+      "name": "metric_336",
+      "description": "Query for go_memstats_sys_bytes",
+      "query": "go_memstats_sys_bytes"
+    },
+    {
+      "name": "metric_337",
+      "description": "Query for go_sched_gomaxprocs_threads",
+      "query": "go_sched_gomaxprocs_threads"
+    },
+    {
+      "name": "metric_338",
+      "description": "Query for go_sched_goroutines_goroutines",
+      "query": "go_sched_goroutines_goroutines"
+    },
+    {
+      "name": "metric_339",
+      "description": "Query for go_sched_latencies_seconds_bucket",
+      "query": "go_sched_latencies_seconds_bucket"
+    },
+    {
+      "name": "metric_340",
+      "description": "Query for go_sched_latencies_seconds_count",
+      "query": "go_sched_latencies_seconds_count"
+    },
+    {
+      "name": "metric_341",
+      "description": "Query for go_sched_latencies_seconds_sum",
+      "query": "go_sched_latencies_seconds_sum"
+    },
+    {
+      "name": "metric_342",
+      "description": "Query for go_sched_pauses_stopping_gc_seconds_bucket",
+      "query": "go_sched_pauses_stopping_gc_seconds_bucket"
+    },
+    {
+      "name": "metric_343",
+      "description": "Query for go_sched_pauses_stopping_gc_seconds_count",
+      "query": "go_sched_pauses_stopping_gc_seconds_count"
+    },
+    {
+      "name": "metric_344",
+      "description": "Query for go_sched_pauses_stopping_gc_seconds_sum",
+      "query": "go_sched_pauses_stopping_gc_seconds_sum"
+    },
+    {
+      "name": "metric_345",
+      "description": "Query for go_sched_pauses_stopping_other_seconds_bucket",
+      "query": "go_sched_pauses_stopping_other_seconds_bucket"
+    },
+    {
+      "name": "metric_346",
+      "description": "Query for go_sched_pauses_stopping_other_seconds_count",
+      "query": "go_sched_pauses_stopping_other_seconds_count"
+    },
+    {
+      "name": "metric_347",
+      "description": "Query for go_sched_pauses_stopping_other_seconds_sum",
+      "query": "go_sched_pauses_stopping_other_seconds_sum"
+    },
+    {
+      "name": "metric_348",
+      "description": "Query for go_sched_pauses_total_gc_seconds_bucket",
+      "query": "go_sched_pauses_total_gc_seconds_bucket"
+    },
+    {
+      "name": "metric_349",
+      "description": "Query for go_sched_pauses_total_gc_seconds_count",
+      "query": "go_sched_pauses_total_gc_seconds_count"
+    },
+    {
+      "name": "metric_350",
+      "description": "Query for go_sched_pauses_total_gc_seconds_sum",
+      "query": "go_sched_pauses_total_gc_seconds_sum"
+    },
+    {
+      "name": "metric_351",
+      "description": "Query for go_sched_pauses_total_other_seconds_bucket",
+      "query": "go_sched_pauses_total_other_seconds_bucket"
+    },
+    {
+      "name": "metric_352",
+      "description": "Query for go_sched_pauses_total_other_seconds_count",
+      "query": "go_sched_pauses_total_other_seconds_count"
+    },
+    {
+      "name": "metric_353",
+      "description": "Query for go_sched_pauses_total_other_seconds_sum",
+      "query": "go_sched_pauses_total_other_seconds_sum"
+    },
+    {
+      "name": "metric_354",
+      "description": "Query for go_sync_mutex_wait_total_seconds_total",
+      "query": "go_sync_mutex_wait_total_seconds_total"
+    },
+    {
+      "name": "metric_355",
+      "description": "Query for go_threads",
+      "query": "go_threads"
+    },
+    {
+      "name": "metric_356",
+      "description": "Query for net_conntrack_dialer_conn_attempted_total",
+      "query": "net_conntrack_dialer_conn_attempted_total"
+    },
+    {
+      "name": "metric_357",
+      "description": "Query for net_conntrack_dialer_conn_closed_total",
+      "query": "net_conntrack_dialer_conn_closed_total"
+    },
+    {
+      "name": "metric_358",
+      "description": "Query for net_conntrack_dialer_conn_established_total",
+      "query": "net_conntrack_dialer_conn_established_total"
+    },
+    {
+      "name": "metric_359",
+      "description": "Query for net_conntrack_dialer_conn_failed_total",
+      "query": "net_conntrack_dialer_conn_failed_total"
+    },
+    {
+      "name": "metric_360",
+      "description": "Query for net_conntrack_listener_conn_accepted_total",
+      "query": "net_conntrack_listener_conn_accepted_total"
+    },
+    {
+      "name": "metric_361",
+      "description": "Query for net_conntrack_listener_conn_closed_total",
+      "query": "net_conntrack_listener_conn_closed_total"
+    },
+    {
+      "name": "metric_362",
+      "description": "Query for process_cpu_seconds_total",
+      "query": "process_cpu_seconds_total"
+    },
+    {
+      "name": "metric_363",
+      "description": "Query for process_max_fds",
+      "query": "process_max_fds"
+    },
+    {
+      "name": "metric_364",
+      "description": "Query for process_network_receive_bytes_total",
+      "query": "process_network_receive_bytes_total"
+    },
+    {
+      "name": "metric_365",
+      "description": "Query for process_network_transmit_bytes_total",
+      "query": "process_network_transmit_bytes_total"
+    },
+    {
+      "name": "metric_366",
+      "description": "Query for process_open_fds",
+      "query": "process_open_fds"
+    },
+    {
+      "name": "metric_367",
+      "description": "Query for process_resident_memory_bytes",
+      "query": "process_resident_memory_bytes"
+    },
+    {
+      "name": "metric_368",
+      "description": "Query for process_start_time_seconds",
+      "query": "process_start_time_seconds"
+    },
+    {
+      "name": "metric_369",
+      "description": "Query for process_virtual_memory_bytes",
+      "query": "process_virtual_memory_bytes"
+    },
+    {
+      "name": "metric_370",
+      "description": "Query for process_virtual_memory_max_bytes",
+      "query": "process_virtual_memory_max_bytes"
+    },
+    {
+      "name": "metric_371",
+      "description": "Query for prometheus_api_notification_active_subscribers",
+      "query": "prometheus_api_notification_active_subscribers"
+    },
+    {
+      "name": "metric_372",
+      "description": "Query for prometheus_api_notification_updates_dropped_total",
+      "query": "prometheus_api_notification_updates_dropped_total"
+    },
+    {
+      "name": "metric_373",
+      "description": "Query for prometheus_api_notification_updates_sent_total",
+      "query": "prometheus_api_notification_updates_sent_total"
+    },
+    {
+      "name": "metric_374",
+      "description": "Query for prometheus_build_info",
+      "query": "prometheus_build_info"
+    },
+    {
+      "name": "metric_375",
+      "description": "Query for prometheus_config_last_reload_success_timestamp_seconds",
+      "query": "prometheus_config_last_reload_success_timestamp_seconds"
+    },
+    {
+      "name": "metric_376",
+      "description": "Query for prometheus_config_last_reload_successful",
+      "query": "prometheus_config_last_reload_successful"
+    },
+    {
+      "name": "metric_377",
+      "description": "Query for prometheus_engine_queries",
+      "query": "prometheus_engine_queries"
+    },
+    {
+      "name": "metric_378",
+      "description": "Query for prometheus_engine_queries_concurrent_max",
+      "query": "prometheus_engine_queries_concurrent_max"
+    },
+    {
+      "name": "metric_379",
+      "description": "Query for prometheus_engine_query_duration_seconds",
+      "query": "prometheus_engine_query_duration_seconds"
+    },
+    {
+      "name": "metric_380",
+      "description": "Query for prometheus_engine_query_duration_seconds_count",
+      "query": "prometheus_engine_query_duration_seconds_count"
+    },
+    {
+      "name": "metric_381",
+      "description": "Query for prometheus_engine_query_duration_seconds_sum",
+      "query": "prometheus_engine_query_duration_seconds_sum"
+    },
+    {
+      "name": "metric_382",
+      "description": "Query for prometheus_engine_query_log_enabled",
+      "query": "prometheus_engine_query_log_enabled"
+    },
+    {
+      "name": "metric_383",
+      "description": "Query for prometheus_engine_query_log_failures_total",
+      "query": "prometheus_engine_query_log_failures_total"
+    },
+    {
+      "name": "metric_384",
+      "description": "Query for prometheus_engine_query_samples_total",
+      "query": "prometheus_engine_query_samples_total"
+    },
+    {
+      "name": "metric_385",
+      "description": "Query for prometheus_http_request_duration_seconds_bucket",
+      "query": "prometheus_http_request_duration_seconds_bucket"
+    },
+    {
+      "name": "metric_386",
+      "description": "Query for prometheus_http_request_duration_seconds_count",
+      "query": "prometheus_http_request_duration_seconds_count"
+    },
+    {
+      "name": "metric_387",
+      "description": "Query for prometheus_http_request_duration_seconds_sum",
+      "query": "prometheus_http_request_duration_seconds_sum"
+    },
+    {
+      "name": "metric_388",
+      "description": "Query for prometheus_http_requests_total",
+      "query": "prometheus_http_requests_total"
+    },
+    {
+      "name": "metric_389",
+      "description": "Query for prometheus_http_response_size_bytes_bucket",
+      "query": "prometheus_http_response_size_bytes_bucket"
+    },
+    {
+      "name": "metric_390",
+      "description": "Query for prometheus_http_response_size_bytes_count",
+      "query": "prometheus_http_response_size_bytes_count"
+    },
+    {
+      "name": "metric_391",
+      "description": "Query for prometheus_http_response_size_bytes_sum",
+      "query": "prometheus_http_response_size_bytes_sum"
+    },
+    {
+      "name": "metric_392",
+      "description": "Query for prometheus_notifications_alertmanagers_discovered",
+      "query": "prometheus_notifications_alertmanagers_discovered"
+    },
+    {
+      "name": "metric_393",
+      "description": "Query for prometheus_notifications_dropped_total",
+      "query": "prometheus_notifications_dropped_total"
+    },
+    {
+      "name": "metric_394",
+      "description": "Query for prometheus_notifications_queue_capacity",
+      "query": "prometheus_notifications_queue_capacity"
+    },
+    {
+      "name": "metric_395",
+      "description": "Query for prometheus_notifications_queue_length",
+      "query": "prometheus_notifications_queue_length"
+    },
+    {
+      "name": "metric_396",
+      "description": "Query for prometheus_ready",
+      "query": "prometheus_ready"
+    },
+    {
+      "name": "metric_397",
+      "description": "Query for prometheus_remote_read_handler_queries",
+      "query": "prometheus_remote_read_handler_queries"
+    },
+    {
+      "name": "metric_398",
+      "description": "Query for prometheus_remote_storage_exemplars_in_total",
+      "query": "prometheus_remote_storage_exemplars_in_total"
+    },
+    {
+      "name": "metric_399",
+      "description": "Query for prometheus_remote_storage_highest_timestamp_in_seconds",
+      "query": "prometheus_remote_storage_highest_timestamp_in_seconds"
+    },
+    {
+      "name": "metric_400",
+      "description": "Query for prometheus_remote_storage_histograms_in_total",
+      "query": "prometheus_remote_storage_histograms_in_total"
+    },
+    {
+      "name": "metric_401",
+      "description": "Query for prometheus_remote_storage_samples_in_total",
+      "query": "prometheus_remote_storage_samples_in_total"
+    },
+    {
+      "name": "metric_402",
+      "description": "Query for prometheus_remote_storage_string_interner_zero_reference_releases_total",
+      "query": "prometheus_remote_storage_string_interner_zero_reference_releases_total"
+    },
+    {
+      "name": "metric_403",
+      "description": "Query for prometheus_rule_evaluation_duration_seconds",
+      "query": "prometheus_rule_evaluation_duration_seconds"
+    },
+    {
+      "name": "metric_404",
+      "description": "Query for prometheus_rule_evaluation_duration_seconds_count",
+      "query": "prometheus_rule_evaluation_duration_seconds_count"
+    },
+    {
+      "name": "metric_405",
+      "description": "Query for prometheus_rule_evaluation_duration_seconds_sum",
+      "query": "prometheus_rule_evaluation_duration_seconds_sum"
+    },
+    {
+      "name": "metric_406",
+      "description": "Query for prometheus_rule_group_duration_seconds",
+      "query": "prometheus_rule_group_duration_seconds"
+    },
+    {
+      "name": "metric_407",
+      "description": "Query for prometheus_rule_group_duration_seconds_count",
+      "query": "prometheus_rule_group_duration_seconds_count"
+    },
+    {
+      "name": "metric_408",
+      "description": "Query for prometheus_rule_group_duration_seconds_sum",
+      "query": "prometheus_rule_group_duration_seconds_sum"
+    },
+    {
+      "name": "metric_409",
+      "description": "Query for prometheus_sd_azure_cache_hit_total",
+      "query": "prometheus_sd_azure_cache_hit_total"
+    },
+    {
+      "name": "metric_410",
+      "description": "Query for prometheus_sd_azure_failures_total",
+      "query": "prometheus_sd_azure_failures_total"
+    },
+    {
+      "name": "metric_411",
+      "description": "Query for prometheus_sd_consul_rpc_duration_seconds",
+      "query": "prometheus_sd_consul_rpc_duration_seconds"
+    },
+    {
+      "name": "metric_412",
+      "description": "Query for prometheus_sd_consul_rpc_duration_seconds_count",
+      "query": "prometheus_sd_consul_rpc_duration_seconds_count"
+    },
+    {
+      "name": "metric_413",
+      "description": "Query for prometheus_sd_consul_rpc_duration_seconds_sum",
+      "query": "prometheus_sd_consul_rpc_duration_seconds_sum"
+    },
+    {
+      "name": "metric_414",
+      "description": "Query for prometheus_sd_consul_rpc_failures_total",
+      "query": "prometheus_sd_consul_rpc_failures_total"
+    },
+    {
+      "name": "metric_415",
+      "description": "Query for prometheus_sd_discovered_targets",
+      "query": "prometheus_sd_discovered_targets"
+    },
+    {
+      "name": "metric_416",
+      "description": "Query for prometheus_sd_dns_lookup_failures_total",
+      "query": "prometheus_sd_dns_lookup_failures_total"
+    },
+    {
+      "name": "metric_417",
+      "description": "Query for prometheus_sd_dns_lookups_total",
+      "query": "prometheus_sd_dns_lookups_total"
+    },
+    {
+      "name": "metric_418",
+      "description": "Query for prometheus_sd_failed_configs",
+      "query": "prometheus_sd_failed_configs"
+    },
+    {
+      "name": "metric_419",
+      "description": "Query for prometheus_sd_file_read_errors_total",
+      "query": "prometheus_sd_file_read_errors_total"
+    },
+    {
+      "name": "metric_420",
+      "description": "Query for prometheus_sd_file_scan_duration_seconds",
+      "query": "prometheus_sd_file_scan_duration_seconds"
+    },
+    {
+      "name": "metric_421",
+      "description": "Query for prometheus_sd_file_scan_duration_seconds_count",
+      "query": "prometheus_sd_file_scan_duration_seconds_count"
+    },
+    {
+      "name": "metric_422",
+      "description": "Query for prometheus_sd_file_scan_duration_seconds_sum",
+      "query": "prometheus_sd_file_scan_duration_seconds_sum"
+    },
+    {
+      "name": "metric_423",
+      "description": "Query for prometheus_sd_file_watcher_errors_total",
+      "query": "prometheus_sd_file_watcher_errors_total"
+    },
+    {
+      "name": "metric_424",
+      "description": "Query for prometheus_sd_http_failures_total",
+      "query": "prometheus_sd_http_failures_total"
+    },
+    {
+      "name": "metric_425",
+      "description": "Query for prometheus_sd_kubernetes_events_total",
+      "query": "prometheus_sd_kubernetes_events_total"
+    },
+    {
+      "name": "metric_426",
+      "description": "Query for prometheus_sd_kubernetes_failures_total",
+      "query": "prometheus_sd_kubernetes_failures_total"
+    },
+    {
+      "name": "metric_427",
+      "description": "Query for prometheus_sd_kuma_fetch_duration_seconds",
+      "query": "prometheus_sd_kuma_fetch_duration_seconds"
+    },
+    {
+      "name": "metric_428",
+      "description": "Query for prometheus_sd_kuma_fetch_duration_seconds_count",
+      "query": "prometheus_sd_kuma_fetch_duration_seconds_count"
+    },
+    {
+      "name": "metric_429",
+      "description": "Query for prometheus_sd_kuma_fetch_duration_seconds_sum",
+      "query": "prometheus_sd_kuma_fetch_duration_seconds_sum"
+    },
+    {
+      "name": "metric_430",
+      "description": "Query for prometheus_sd_kuma_fetch_failures_total",
+      "query": "prometheus_sd_kuma_fetch_failures_total"
+    },
+    {
+      "name": "metric_431",
+      "description": "Query for prometheus_sd_kuma_fetch_skipped_updates_total",
+      "query": "prometheus_sd_kuma_fetch_skipped_updates_total"
+    },
+    {
+      "name": "metric_432",
+      "description": "Query for prometheus_sd_linode_failures_total",
+      "query": "prometheus_sd_linode_failures_total"
+    },
+    {
+      "name": "metric_433",
+      "description": "Query for prometheus_sd_nomad_failures_total",
+      "query": "prometheus_sd_nomad_failures_total"
+    },
+    {
+      "name": "metric_434",
+      "description": "Query for prometheus_sd_received_updates_total",
+      "query": "prometheus_sd_received_updates_total"
+    },
+    {
+      "name": "metric_435",
+      "description": "Query for prometheus_sd_updates_delayed_total",
+      "query": "prometheus_sd_updates_delayed_total"
+    },
+    {
+      "name": "metric_436",
+      "description": "Query for prometheus_sd_updates_total",
+      "query": "prometheus_sd_updates_total"
+    },
+    {
+      "name": "metric_437",
+      "description": "Query for prometheus_target_interval_length_seconds",
+      "query": "prometheus_target_interval_length_seconds"
+    },
+    {
+      "name": "metric_438",
+      "description": "Query for prometheus_target_interval_length_seconds_count",
+      "query": "prometheus_target_interval_length_seconds_count"
+    },
+    {
+      "name": "metric_439",
+      "description": "Query for prometheus_target_interval_length_seconds_sum",
+      "query": "prometheus_target_interval_length_seconds_sum"
+    },
+    {
+      "name": "metric_440",
+      "description": "Query for prometheus_target_metadata_cache_bytes",
+      "query": "prometheus_target_metadata_cache_bytes"
+    },
+    {
+      "name": "metric_441",
+      "description": "Query for prometheus_target_metadata_cache_entries",
+      "query": "prometheus_target_metadata_cache_entries"
+    },
+    {
+      "name": "metric_442",
+      "description": "Query for prometheus_target_scrape_pool_exceeded_label_limits_total",
+      "query": "prometheus_target_scrape_pool_exceeded_label_limits_total"
+    },
+    {
+      "name": "metric_443",
+      "description": "Query for prometheus_target_scrape_pool_exceeded_target_limit_total",
+      "query": "prometheus_target_scrape_pool_exceeded_target_limit_total"
+    },
+    {
+      "name": "metric_444",
+      "description": "Query for prometheus_target_scrape_pool_reloads_failed_total",
+      "query": "prometheus_target_scrape_pool_reloads_failed_total"
+    },
+    {
+      "name": "metric_445",
+      "description": "Query for prometheus_target_scrape_pool_reloads_total",
+      "query": "prometheus_target_scrape_pool_reloads_total"
+    },
+    {
+      "name": "metric_446",
+      "description": "Query for prometheus_target_scrape_pool_symboltable_items",
+      "query": "prometheus_target_scrape_pool_symboltable_items"
+    },
+    {
+      "name": "metric_447",
+      "description": "Query for prometheus_target_scrape_pool_sync_total",
+      "query": "prometheus_target_scrape_pool_sync_total"
+    },
+    {
+      "name": "metric_448",
+      "description": "Query for prometheus_target_scrape_pool_target_limit",
+      "query": "prometheus_target_scrape_pool_target_limit"
+    },
+    {
+      "name": "metric_449",
+      "description": "Query for prometheus_target_scrape_pool_targets",
+      "query": "prometheus_target_scrape_pool_targets"
+    },
+    {
+      "name": "metric_450",
+      "description": "Query for prometheus_target_scrape_pools_failed_total",
+      "query": "prometheus_target_scrape_pools_failed_total"
+    },
+    {
+      "name": "metric_451",
+      "description": "Query for prometheus_target_scrape_pools_total",
+      "query": "prometheus_target_scrape_pools_total"
+    },
+    {
+      "name": "metric_452",
+      "description": "Query for prometheus_target_scrapes_cache_flush_forced_total",
+      "query": "prometheus_target_scrapes_cache_flush_forced_total"
+    },
+    {
+      "name": "metric_453",
+      "description": "Query for prometheus_target_scrapes_exceeded_body_size_limit_total",
+      "query": "prometheus_target_scrapes_exceeded_body_size_limit_total"
+    },
+    {
+      "name": "metric_454",
+      "description": "Query for prometheus_target_scrapes_exceeded_native_histogram_bucket_limit_total",
+      "query": "prometheus_target_scrapes_exceeded_native_histogram_bucket_limit_total"
+    },
+    {
+      "name": "metric_455",
+      "description": "Query for prometheus_target_scrapes_exceeded_sample_limit_total",
+      "query": "prometheus_target_scrapes_exceeded_sample_limit_total"
+    },
+    {
+      "name": "metric_456",
+      "description": "Query for prometheus_target_scrapes_exemplar_out_of_order_total",
+      "query": "prometheus_target_scrapes_exemplar_out_of_order_total"
+    },
+    {
+      "name": "metric_457",
+      "description": "Query for prometheus_target_scrapes_sample_duplicate_timestamp_total",
+      "query": "prometheus_target_scrapes_sample_duplicate_timestamp_total"
+    },
+    {
+      "name": "metric_458",
+      "description": "Query for prometheus_target_scrapes_sample_out_of_bounds_total",
+      "query": "prometheus_target_scrapes_sample_out_of_bounds_total"
+    },
+    {
+      "name": "metric_459",
+      "description": "Query for prometheus_target_scrapes_sample_out_of_order_total",
+      "query": "prometheus_target_scrapes_sample_out_of_order_total"
+    },
+    {
+      "name": "metric_460",
+      "description": "Query for prometheus_target_sync_failed_total",
+      "query": "prometheus_target_sync_failed_total"
+    },
+    {
+      "name": "metric_461",
+      "description": "Query for prometheus_target_sync_length_seconds",
+      "query": "prometheus_target_sync_length_seconds"
+    },
+    {
+      "name": "metric_462",
+      "description": "Query for prometheus_target_sync_length_seconds_count",
+      "query": "prometheus_target_sync_length_seconds_count"
+    },
+    {
+      "name": "metric_463",
+      "description": "Query for prometheus_target_sync_length_seconds_sum",
+      "query": "prometheus_target_sync_length_seconds_sum"
+    },
+    {
+      "name": "metric_464",
+      "description": "Query for prometheus_template_text_expansion_failures_total",
+      "query": "prometheus_template_text_expansion_failures_total"
+    },
+    {
+      "name": "metric_465",
+      "description": "Query for prometheus_template_text_expansions_total",
+      "query": "prometheus_template_text_expansions_total"
+    },
+    {
+      "name": "metric_466",
+      "description": "Query for prometheus_treecache_watcher_goroutines",
+      "query": "prometheus_treecache_watcher_goroutines"
+    },
+    {
+      "name": "metric_467",
+      "description": "Query for prometheus_treecache_zookeeper_failures_total",
+      "query": "prometheus_treecache_zookeeper_failures_total"
+    },
+    {
+      "name": "metric_468",
+      "description": "Query for prometheus_tsdb_blocks_loaded",
+      "query": "prometheus_tsdb_blocks_loaded"
+    },
+    {
+      "name": "metric_469",
+      "description": "Query for prometheus_tsdb_checkpoint_creations_failed_total",
+      "query": "prometheus_tsdb_checkpoint_creations_failed_total"
+    },
+    {
+      "name": "metric_470",
+      "description": "Query for prometheus_tsdb_checkpoint_creations_total",
+      "query": "prometheus_tsdb_checkpoint_creations_total"
+    },
+    {
+      "name": "metric_471",
+      "description": "Query for prometheus_tsdb_checkpoint_deletions_failed_total",
+      "query": "prometheus_tsdb_checkpoint_deletions_failed_total"
+    },
+    {
+      "name": "metric_472",
+      "description": "Query for prometheus_tsdb_checkpoint_deletions_total",
+      "query": "prometheus_tsdb_checkpoint_deletions_total"
+    },
+    {
+      "name": "metric_473",
+      "description": "Query for prometheus_tsdb_clean_start",
+      "query": "prometheus_tsdb_clean_start"
+    },
+    {
+      "name": "metric_474",
+      "description": "Query for prometheus_tsdb_compaction_chunk_range_seconds_bucket",
+      "query": "prometheus_tsdb_compaction_chunk_range_seconds_bucket"
+    },
+    {
+      "name": "metric_475",
+      "description": "Query for prometheus_tsdb_compaction_chunk_range_seconds_count",
+      "query": "prometheus_tsdb_compaction_chunk_range_seconds_count"
+    },
+    {
+      "name": "metric_476",
+      "description": "Query for prometheus_tsdb_compaction_chunk_range_seconds_sum",
+      "query": "prometheus_tsdb_compaction_chunk_range_seconds_sum"
+    },
+    {
+      "name": "metric_477",
+      "description": "Query for prometheus_tsdb_compaction_chunk_samples_bucket",
+      "query": "prometheus_tsdb_compaction_chunk_samples_bucket"
+    },
+    {
+      "name": "metric_478",
+      "description": "Query for prometheus_tsdb_compaction_chunk_samples_count",
+      "query": "prometheus_tsdb_compaction_chunk_samples_count"
+    },
+    {
+      "name": "metric_479",
+      "description": "Query for prometheus_tsdb_compaction_chunk_samples_sum",
+      "query": "prometheus_tsdb_compaction_chunk_samples_sum"
+    },
+    {
+      "name": "metric_480",
+      "description": "Query for prometheus_tsdb_compaction_chunk_size_bytes_bucket",
+      "query": "prometheus_tsdb_compaction_chunk_size_bytes_bucket"
+    },
+    {
+      "name": "metric_481",
+      "description": "Query for prometheus_tsdb_compaction_chunk_size_bytes_count",
+      "query": "prometheus_tsdb_compaction_chunk_size_bytes_count"
+    },
+    {
+      "name": "metric_482",
+      "description": "Query for prometheus_tsdb_compaction_chunk_size_bytes_sum",
+      "query": "prometheus_tsdb_compaction_chunk_size_bytes_sum"
+    },
+    {
+      "name": "metric_483",
+      "description": "Query for prometheus_tsdb_compaction_duration_seconds_bucket",
+      "query": "prometheus_tsdb_compaction_duration_seconds_bucket"
+    },
+    {
+      "name": "metric_484",
+      "description": "Query for prometheus_tsdb_compaction_duration_seconds_count",
+      "query": "prometheus_tsdb_compaction_duration_seconds_count"
+    },
+    {
+      "name": "metric_485",
+      "description": "Query for prometheus_tsdb_compaction_duration_seconds_sum",
+      "query": "prometheus_tsdb_compaction_duration_seconds_sum"
+    },
+    {
+      "name": "metric_486",
+      "description": "Query for prometheus_tsdb_compaction_populating_block",
+      "query": "prometheus_tsdb_compaction_populating_block"
+    },
+    {
+      "name": "metric_487",
+      "description": "Query for prometheus_tsdb_compactions_failed_total",
+      "query": "prometheus_tsdb_compactions_failed_total"
+    },
+    {
+      "name": "metric_488",
+      "description": "Query for prometheus_tsdb_compactions_skipped_total",
+      "query": "prometheus_tsdb_compactions_skipped_total"
+    },
+    {
+      "name": "metric_489",
+      "description": "Query for prometheus_tsdb_compactions_total",
+      "query": "prometheus_tsdb_compactions_total"
+    },
+    {
+      "name": "metric_490",
+      "description": "Query for prometheus_tsdb_compactions_triggered_total",
+      "query": "prometheus_tsdb_compactions_triggered_total"
+    },
+    {
+      "name": "metric_491",
+      "description": "Query for prometheus_tsdb_data_replay_duration_seconds",
+      "query": "prometheus_tsdb_data_replay_duration_seconds"
+    },
+    {
+      "name": "metric_492",
+      "description": "Query for prometheus_tsdb_exemplar_exemplars_appended_total",
+      "query": "prometheus_tsdb_exemplar_exemplars_appended_total"
+    },
+    {
+      "name": "metric_493",
+      "description": "Query for prometheus_tsdb_exemplar_exemplars_in_storage",
+      "query": "prometheus_tsdb_exemplar_exemplars_in_storage"
+    },
+    {
+      "name": "metric_494",
+      "description": "Query for prometheus_tsdb_exemplar_last_exemplars_timestamp_seconds",
+      "query": "prometheus_tsdb_exemplar_last_exemplars_timestamp_seconds"
+    },
+    {
+      "name": "metric_495",
+      "description": "Query for prometheus_tsdb_exemplar_max_exemplars",
+      "query": "prometheus_tsdb_exemplar_max_exemplars"
+    },
+    {
+      "name": "metric_496",
+      "description": "Query for prometheus_tsdb_exemplar_out_of_order_exemplars_total",
+      "query": "prometheus_tsdb_exemplar_out_of_order_exemplars_total"
+    },
+    {
+      "name": "metric_497",
+      "description": "Query for prometheus_tsdb_exemplar_series_with_exemplars_in_storage",
+      "query": "prometheus_tsdb_exemplar_series_with_exemplars_in_storage"
+    },
+    {
+      "name": "metric_498",
+      "description": "Query for prometheus_tsdb_head_active_appenders",
+      "query": "prometheus_tsdb_head_active_appenders"
+    },
+    {
+      "name": "metric_499",
+      "description": "Query for prometheus_tsdb_head_chunks",
+      "query": "prometheus_tsdb_head_chunks"
+    },
+    {
+      "name": "metric_500",
+      "description": "Query for prometheus_tsdb_head_chunks_created_total",
+      "query": "prometheus_tsdb_head_chunks_created_total"
+    },
+    {
+      "name": "metric_501",
+      "description": "Query for prometheus_tsdb_head_chunks_removed_total",
+      "query": "prometheus_tsdb_head_chunks_removed_total"
+    },
+    {
+      "name": "metric_502",
+      "description": "Query for prometheus_tsdb_head_chunks_storage_size_bytes",
+      "query": "prometheus_tsdb_head_chunks_storage_size_bytes"
+    },
+    {
+      "name": "metric_503",
+      "description": "Query for prometheus_tsdb_head_gc_duration_seconds_count",
+      "query": "prometheus_tsdb_head_gc_duration_seconds_count"
+    },
+    {
+      "name": "metric_504",
+      "description": "Query for prometheus_tsdb_head_gc_duration_seconds_sum",
+      "query": "prometheus_tsdb_head_gc_duration_seconds_sum"
+    },
+    {
+      "name": "metric_505",
+      "description": "Query for prometheus_tsdb_head_max_time",
+      "query": "prometheus_tsdb_head_max_time"
+    },
+    {
+      "name": "metric_506",
+      "description": "Query for prometheus_tsdb_head_max_time_seconds",
+      "query": "prometheus_tsdb_head_max_time_seconds"
+    },
+    {
+      "name": "metric_507",
+      "description": "Query for prometheus_tsdb_head_min_time",
+      "query": "prometheus_tsdb_head_min_time"
+    },
+    {
+      "name": "metric_508",
+      "description": "Query for prometheus_tsdb_head_min_time_seconds",
+      "query": "prometheus_tsdb_head_min_time_seconds"
+    },
+    {
+      "name": "metric_509",
+      "description": "Query for prometheus_tsdb_head_out_of_order_samples_appended_total",
+      "query": "prometheus_tsdb_head_out_of_order_samples_appended_total"
+    },
+    {
+      "name": "metric_510",
+      "description": "Query for prometheus_tsdb_head_samples_appended_total",
+      "query": "prometheus_tsdb_head_samples_appended_total"
+    },
+    {
+      "name": "metric_511",
+      "description": "Query for prometheus_tsdb_head_series",
+      "query": "prometheus_tsdb_head_series"
+    },
+    {
+      "name": "metric_512",
+      "description": "Query for prometheus_tsdb_head_series_created_total",
+      "query": "prometheus_tsdb_head_series_created_total"
+    },
+    {
+      "name": "metric_513",
+      "description": "Query for prometheus_tsdb_head_series_not_found_total",
+      "query": "prometheus_tsdb_head_series_not_found_total"
+    },
+    {
+      "name": "metric_514",
+      "description": "Query for prometheus_tsdb_head_series_removed_total",
+      "query": "prometheus_tsdb_head_series_removed_total"
+    },
+    {
+      "name": "metric_515",
+      "description": "Query for prometheus_tsdb_head_truncations_failed_total",
+      "query": "prometheus_tsdb_head_truncations_failed_total"
+    },
+    {
+      "name": "metric_516",
+      "description": "Query for prometheus_tsdb_head_truncations_total",
+      "query": "prometheus_tsdb_head_truncations_total"
+    },
+    {
+      "name": "metric_517",
+      "description": "Query for prometheus_tsdb_isolation_high_watermark",
+      "query": "prometheus_tsdb_isolation_high_watermark"
+    },
+    {
+      "name": "metric_518",
+      "description": "Query for prometheus_tsdb_isolation_low_watermark",
+      "query": "prometheus_tsdb_isolation_low_watermark"
+    },
+    {
+      "name": "metric_519",
+      "description": "Query for prometheus_tsdb_lowest_timestamp",
+      "query": "prometheus_tsdb_lowest_timestamp"
+    },
+    {
+      "name": "metric_520",
+      "description": "Query for prometheus_tsdb_lowest_timestamp_seconds",
+      "query": "prometheus_tsdb_lowest_timestamp_seconds"
+    },
+    {
+      "name": "metric_521",
+      "description": "Query for prometheus_tsdb_mmap_chunk_corruptions_total",
+      "query": "prometheus_tsdb_mmap_chunk_corruptions_total"
+    },
+    {
+      "name": "metric_522",
+      "description": "Query for prometheus_tsdb_mmap_chunks_total",
+      "query": "prometheus_tsdb_mmap_chunks_total"
+    },
+    {
+      "name": "metric_523",
+      "description": "Query for prometheus_tsdb_out_of_bound_samples_total",
+      "query": "prometheus_tsdb_out_of_bound_samples_total"
+    },
+    {
+      "name": "metric_524",
+      "description": "Query for prometheus_tsdb_out_of_order_samples_total",
+      "query": "prometheus_tsdb_out_of_order_samples_total"
+    },
+    {
+      "name": "metric_525",
+      "description": "Query for prometheus_tsdb_reloads_failures_total",
+      "query": "prometheus_tsdb_reloads_failures_total"
+    },
+    {
+      "name": "metric_526",
+      "description": "Query for prometheus_tsdb_reloads_total",
+      "query": "prometheus_tsdb_reloads_total"
+    },
+    {
+      "name": "metric_527",
+      "description": "Query for prometheus_tsdb_retention_limit_bytes",
+      "query": "prometheus_tsdb_retention_limit_bytes"
+    },
+    {
+      "name": "metric_528",
+      "description": "Query for prometheus_tsdb_retention_limit_seconds",
+      "query": "prometheus_tsdb_retention_limit_seconds"
+    },
+    {
+      "name": "metric_529",
+      "description": "Query for prometheus_tsdb_size_retentions_total",
+      "query": "prometheus_tsdb_size_retentions_total"
+    },
+    {
+      "name": "metric_530",
+      "description": "Query for prometheus_tsdb_snapshot_replay_error_total",
+      "query": "prometheus_tsdb_snapshot_replay_error_total"
+    },
+    {
+      "name": "metric_531",
+      "description": "Query for prometheus_tsdb_storage_blocks_bytes",
+      "query": "prometheus_tsdb_storage_blocks_bytes"
+    },
+    {
+      "name": "metric_532",
+      "description": "Query for prometheus_tsdb_symbol_table_size_bytes",
+      "query": "prometheus_tsdb_symbol_table_size_bytes"
+    },
+    {
+      "name": "metric_533",
+      "description": "Query for prometheus_tsdb_time_retentions_total",
+      "query": "prometheus_tsdb_time_retentions_total"
+    },
+    {
+      "name": "metric_534",
+      "description": "Query for prometheus_tsdb_tombstone_cleanup_seconds_bucket",
+      "query": "prometheus_tsdb_tombstone_cleanup_seconds_bucket"
+    },
+    {
+      "name": "metric_535",
+      "description": "Query for prometheus_tsdb_tombstone_cleanup_seconds_count",
+      "query": "prometheus_tsdb_tombstone_cleanup_seconds_count"
+    },
+    {
+      "name": "metric_536",
+      "description": "Query for prometheus_tsdb_tombstone_cleanup_seconds_sum",
+      "query": "prometheus_tsdb_tombstone_cleanup_seconds_sum"
+    },
+    {
+      "name": "metric_537",
+      "description": "Query for prometheus_tsdb_too_old_samples_total",
+      "query": "prometheus_tsdb_too_old_samples_total"
+    },
+    {
+      "name": "metric_538",
+      "description": "Query for prometheus_tsdb_vertical_compactions_total",
+      "query": "prometheus_tsdb_vertical_compactions_total"
+    },
+    {
+      "name": "metric_539",
+      "description": "Query for prometheus_tsdb_wal_completed_pages_total",
+      "query": "prometheus_tsdb_wal_completed_pages_total"
+    },
+    {
+      "name": "metric_540",
+      "description": "Query for prometheus_tsdb_wal_corruptions_total",
+      "query": "prometheus_tsdb_wal_corruptions_total"
+    },
+    {
+      "name": "metric_541",
+      "description": "Query for prometheus_tsdb_wal_fsync_duration_seconds",
+      "query": "prometheus_tsdb_wal_fsync_duration_seconds"
+    },
+    {
+      "name": "metric_542",
+      "description": "Query for prometheus_tsdb_wal_fsync_duration_seconds_count",
+      "query": "prometheus_tsdb_wal_fsync_duration_seconds_count"
+    },
+    {
+      "name": "metric_543",
+      "description": "Query for prometheus_tsdb_wal_fsync_duration_seconds_sum",
+      "query": "prometheus_tsdb_wal_fsync_duration_seconds_sum"
+    },
+    {
+      "name": "metric_544",
+      "description": "Query for prometheus_tsdb_wal_page_flushes_total",
+      "query": "prometheus_tsdb_wal_page_flushes_total"
+    },
+    {
+      "name": "metric_545",
+      "description": "Query for prometheus_tsdb_wal_record_bytes_saved_total",
+      "query": "prometheus_tsdb_wal_record_bytes_saved_total"
+    },
+    {
+      "name": "metric_546",
+      "description": "Query for prometheus_tsdb_wal_record_part_writes_total",
+      "query": "prometheus_tsdb_wal_record_part_writes_total"
+    },
+    {
+      "name": "metric_547",
+      "description": "Query for prometheus_tsdb_wal_record_parts_bytes_written_total",
+      "query": "prometheus_tsdb_wal_record_parts_bytes_written_total"
+    },
+    {
+      "name": "metric_548",
+      "description": "Query for prometheus_tsdb_wal_segment_current",
+      "query": "prometheus_tsdb_wal_segment_current"
+    },
+    {
+      "name": "metric_549",
+      "description": "Query for prometheus_tsdb_wal_storage_size_bytes",
+      "query": "prometheus_tsdb_wal_storage_size_bytes"
+    },
+    {
+      "name": "metric_550",
+      "description": "Query for prometheus_tsdb_wal_truncate_duration_seconds_count",
+      "query": "prometheus_tsdb_wal_truncate_duration_seconds_count"
+    },
+    {
+      "name": "metric_551",
+      "description": "Query for prometheus_tsdb_wal_truncate_duration_seconds_sum",
+      "query": "prometheus_tsdb_wal_truncate_duration_seconds_sum"
+    },
+    {
+      "name": "metric_552",
+      "description": "Query for prometheus_tsdb_wal_truncations_failed_total",
+      "query": "prometheus_tsdb_wal_truncations_failed_total"
+    },
+    {
+      "name": "metric_553",
+      "description": "Query for prometheus_tsdb_wal_truncations_total",
+      "query": "prometheus_tsdb_wal_truncations_total"
+    },
+    {
+      "name": "metric_554",
+      "description": "Query for prometheus_tsdb_wal_writes_failed_total",
+      "query": "prometheus_tsdb_wal_writes_failed_total"
+    },
+    {
+      "name": "metric_555",
+      "description": "Query for prometheus_web_federation_errors_total",
+      "query": "prometheus_web_federation_errors_total"
+    },
+    {
+      "name": "metric_556",
+      "description": "Query for prometheus_web_federation_warnings_total",
+      "query": "prometheus_web_federation_warnings_total"
+    },
+    {
+      "name": "metric_557",
+      "description": "Query for promhttp_metric_handler_requests_in_flight",
+      "query": "promhttp_metric_handler_requests_in_flight"
+    },
+    {
+      "name": "metric_558",
+      "description": "Query for promhttp_metric_handler_requests_total",
+      "query": "promhttp_metric_handler_requests_total"
+    },
+    {
+      "name": "metric_559",
+      "description": "Query for scrape_duration_seconds",
+      "query": "scrape_duration_seconds"
+    },
+    {
+      "name": "metric_560",
+      "description": "Query for scrape_samples_post_metric_relabeling",
+      "query": "scrape_samples_post_metric_relabeling"
+    },
+    {
+      "name": "metric_561",
+      "description": "Query for scrape_samples_scraped",
+      "query": "scrape_samples_scraped"
+    },
+    {
+      "name": "metric_562",
+      "description": "Query for scrape_series_added",
+      "query": "scrape_series_added"
+    },
+    {
+      "name": "metric_563",
+      "description": "Query for up",
+      "query": "up"
+    },
+    {
+      "name": "metric_564",
+      "description": "Query for go_gc_cycles_automatic_gc_cycles_total",
+      "query": "go_gc_cycles_automatic_gc_cycles_total"
+    },
+    {
+      "name": "metric_565",
+      "description": "Query for go_gc_cycles_forced_gc_cycles_total",
+      "query": "go_gc_cycles_forced_gc_cycles_total"
+    },
+    {
+      "name": "metric_566",
+      "description": "Query for go_gc_cycles_total_gc_cycles_total",
+      "query": "go_gc_cycles_total_gc_cycles_total"
+    },
+    {
+      "name": "metric_567",
+      "description": "Query for go_gc_duration_seconds",
+      "query": "go_gc_duration_seconds"
+    },
+    {
+      "name": "metric_568",
+      "description": "Query for go_gc_duration_seconds_count",
+      "query": "go_gc_duration_seconds_count"
+    },
+    {
+      "name": "metric_569",
+      "description": "Query for go_gc_duration_seconds_sum",
+      "query": "go_gc_duration_seconds_sum"
+    },
+    {
+      "name": "metric_570",
+      "description": "Query for go_gc_gogc_percent",
+      "query": "go_gc_gogc_percent"
+    },
+    {
+      "name": "metric_571",
+      "description": "Query for go_gc_gomemlimit_bytes",
+      "query": "go_gc_gomemlimit_bytes"
+    },
+    {
+      "name": "metric_572",
+      "description": "Query for go_gc_heap_allocs_by_size_bytes_bucket",
+      "query": "go_gc_heap_allocs_by_size_bytes_bucket"
+    },
+    {
+      "name": "metric_573",
+      "description": "Query for go_gc_heap_allocs_by_size_bytes_count",
+      "query": "go_gc_heap_allocs_by_size_bytes_count"
+    },
+    {
+      "name": "metric_574",
+      "description": "Query for go_gc_heap_allocs_by_size_bytes_sum",
+      "query": "go_gc_heap_allocs_by_size_bytes_sum"
+    },
+    {
+      "name": "metric_575",
+      "description": "Query for go_gc_heap_allocs_bytes_total",
+      "query": "go_gc_heap_allocs_bytes_total"
+    },
+    {
+      "name": "metric_576",
+      "description": "Query for go_gc_heap_allocs_objects_total",
+      "query": "go_gc_heap_allocs_objects_total"
+    },
+    {
+      "name": "metric_577",
+      "description": "Query for go_gc_heap_frees_by_size_bytes_bucket",
+      "query": "go_gc_heap_frees_by_size_bytes_bucket"
+    },
+    {
+      "name": "metric_578",
+      "description": "Query for go_gc_heap_frees_by_size_bytes_count",
+      "query": "go_gc_heap_frees_by_size_bytes_count"
+    },
+    {
+      "name": "metric_579",
+      "description": "Query for go_gc_heap_frees_by_size_bytes_sum",
+      "query": "go_gc_heap_frees_by_size_bytes_sum"
+    },
+    {
+      "name": "metric_580",
+      "description": "Query for go_gc_heap_frees_bytes_total",
+      "query": "go_gc_heap_frees_bytes_total"
+    },
+    {
+      "name": "metric_581",
+      "description": "Query for go_gc_heap_frees_objects_total",
+      "query": "go_gc_heap_frees_objects_total"
+    },
+    {
+      "name": "metric_582",
+      "description": "Query for go_gc_heap_goal_bytes",
+      "query": "go_gc_heap_goal_bytes"
+    },
+    {
+      "name": "metric_583",
+      "description": "Query for go_gc_heap_live_bytes",
+      "query": "go_gc_heap_live_bytes"
+    },
+    {
+      "name": "metric_584",
+      "description": "Query for go_gc_heap_objects_objects",
+      "query": "go_gc_heap_objects_objects"
+    },
+    {
+      "name": "metric_585",
+      "description": "Query for go_gc_heap_tiny_allocs_objects_total",
+      "query": "go_gc_heap_tiny_allocs_objects_total"
+    },
+    {
+      "name": "metric_586",
+      "description": "Query for go_gc_limiter_last_enabled_gc_cycle",
+      "query": "go_gc_limiter_last_enabled_gc_cycle"
+    },
+    {
+      "name": "metric_587",
+      "description": "Query for go_gc_pauses_seconds_bucket",
+      "query": "go_gc_pauses_seconds_bucket"
+    },
+    {
+      "name": "metric_588",
+      "description": "Query for go_gc_pauses_seconds_count",
+      "query": "go_gc_pauses_seconds_count"
+    },
+    {
+      "name": "metric_589",
+      "description": "Query for go_gc_pauses_seconds_sum",
+      "query": "go_gc_pauses_seconds_sum"
+    },
+    {
+      "name": "metric_590",
+      "description": "Query for go_gc_scan_globals_bytes",
+      "query": "go_gc_scan_globals_bytes"
+    },
+    {
+      "name": "metric_591",
+      "description": "Query for go_gc_scan_heap_bytes",
+      "query": "go_gc_scan_heap_bytes"
+    },
+    {
+      "name": "metric_592",
+      "description": "Query for go_gc_scan_stack_bytes",
+      "query": "go_gc_scan_stack_bytes"
+    },
+    {
+      "name": "metric_593",
+      "description": "Query for go_gc_scan_total_bytes",
+      "query": "go_gc_scan_total_bytes"
+    },
+    {
+      "name": "metric_594",
+      "description": "Query for go_gc_stack_starting_size_bytes",
+      "query": "go_gc_stack_starting_size_bytes"
+    },
+    {
+      "name": "metric_595",
+      "description": "Query for go_goroutines",
+      "query": "go_goroutines"
+    },
+    {
+      "name": "metric_596",
+      "description": "Query for go_info",
+      "query": "go_info"
+    },
+    {
+      "name": "metric_597",
+      "description": "Query for go_memstats_alloc_bytes",
+      "query": "go_memstats_alloc_bytes"
+    },
+    {
+      "name": "metric_598",
+      "description": "Query for go_memstats_alloc_bytes_total",
+      "query": "go_memstats_alloc_bytes_total"
+    },
+    {
+      "name": "metric_599",
+      "description": "Query for go_memstats_buck_hash_sys_bytes",
+      "query": "go_memstats_buck_hash_sys_bytes"
+    },
+    {
+      "name": "metric_600",
+      "description": "Query for go_memstats_frees_total",
+      "query": "go_memstats_frees_total"
+    },
+    {
+      "name": "metric_601",
+      "description": "Query for go_memstats_gc_sys_bytes",
+      "query": "go_memstats_gc_sys_bytes"
+    },
+    {
+      "name": "metric_602",
+      "description": "Query for go_memstats_heap_alloc_bytes",
+      "query": "go_memstats_heap_alloc_bytes"
+    },
+    {
+      "name": "metric_603",
+      "description": "Query for go_memstats_heap_idle_bytes",
+      "query": "go_memstats_heap_idle_bytes"
+    },
+    {
+      "name": "metric_604",
+      "description": "Query for go_memstats_heap_inuse_bytes",
+      "query": "go_memstats_heap_inuse_bytes"
+    },
+    {
+      "name": "metric_605",
+      "description": "Query for go_memstats_heap_objects",
+      "query": "go_memstats_heap_objects"
+    },
+    {
+      "name": "metric_606",
+      "description": "Query for go_memstats_heap_released_bytes",
+      "query": "go_memstats_heap_released_bytes"
+    },
+    {
+      "name": "metric_607",
+      "description": "Query for go_memstats_heap_sys_bytes",
+      "query": "go_memstats_heap_sys_bytes"
+    },
+    {
+      "name": "metric_608",
+      "description": "Query for go_memstats_last_gc_time_seconds",
+      "query": "go_memstats_last_gc_time_seconds"
+    },
+    {
+      "name": "metric_609",
+      "description": "Query for go_memstats_mallocs_total",
+      "query": "go_memstats_mallocs_total"
+    },
+    {
+      "name": "metric_610",
+      "description": "Query for go_memstats_mcache_inuse_bytes",
+      "query": "go_memstats_mcache_inuse_bytes"
+    },
+    {
+      "name": "metric_611",
+      "description": "Query for go_memstats_mcache_sys_bytes",
+      "query": "go_memstats_mcache_sys_bytes"
+    },
+    {
+      "name": "metric_612",
+      "description": "Query for go_memstats_mspan_inuse_bytes",
+      "query": "go_memstats_mspan_inuse_bytes"
+    },
+    {
+      "name": "metric_613",
+      "description": "Query for go_memstats_mspan_sys_bytes",
+      "query": "go_memstats_mspan_sys_bytes"
+    },
+    {
+      "name": "metric_614",
+      "description": "Query for go_memstats_next_gc_bytes",
+      "query": "go_memstats_next_gc_bytes"
+    },
+    {
+      "name": "metric_615",
+      "description": "Query for go_memstats_other_sys_bytes",
+      "query": "go_memstats_other_sys_bytes"
+    },
+    {
+      "name": "metric_616",
+      "description": "Query for go_memstats_stack_inuse_bytes",
+      "query": "go_memstats_stack_inuse_bytes"
+    },
+    {
+      "name": "metric_617",
+      "description": "Query for go_memstats_stack_sys_bytes",
+      "query": "go_memstats_stack_sys_bytes"
+    },
+    {
+      "name": "metric_618",
+      "description": "Query for go_memstats_sys_bytes",
+      "query": "go_memstats_sys_bytes"
+    },
+    {
+      "name": "metric_619",
+      "description": "Query for go_sched_gomaxprocs_threads",
+      "query": "go_sched_gomaxprocs_threads"
+    },
+    {
+      "name": "metric_620",
+      "description": "Query for go_sched_goroutines_goroutines",
+      "query": "go_sched_goroutines_goroutines"
+    },
+    {
+      "name": "metric_621",
+      "description": "Query for go_sched_latencies_seconds_bucket",
+      "query": "go_sched_latencies_seconds_bucket"
+    },
+    {
+      "name": "metric_622",
+      "description": "Query for go_sched_latencies_seconds_count",
+      "query": "go_sched_latencies_seconds_count"
+    },
+    {
+      "name": "metric_623",
+      "description": "Query for go_sched_latencies_seconds_sum",
+      "query": "go_sched_latencies_seconds_sum"
+    },
+    {
+      "name": "metric_624",
+      "description": "Query for go_sched_pauses_stopping_gc_seconds_bucket",
+      "query": "go_sched_pauses_stopping_gc_seconds_bucket"
+    },
+    {
+      "name": "metric_625",
+      "description": "Query for go_sched_pauses_stopping_gc_seconds_count",
+      "query": "go_sched_pauses_stopping_gc_seconds_count"
+    },
+    {
+      "name": "metric_626",
+      "description": "Query for go_sched_pauses_stopping_gc_seconds_sum",
+      "query": "go_sched_pauses_stopping_gc_seconds_sum"
+    },
+    {
+      "name": "metric_627",
+      "description": "Query for go_sched_pauses_stopping_other_seconds_bucket",
+      "query": "go_sched_pauses_stopping_other_seconds_bucket"
+    },
+    {
+      "name": "metric_628",
+      "description": "Query for go_sched_pauses_stopping_other_seconds_count",
+      "query": "go_sched_pauses_stopping_other_seconds_count"
+    },
+    {
+      "name": "metric_629",
+      "description": "Query for go_sched_pauses_stopping_other_seconds_sum",
+      "query": "go_sched_pauses_stopping_other_seconds_sum"
+    },
+    {
+      "name": "metric_630",
+      "description": "Query for go_sched_pauses_total_gc_seconds_bucket",
+      "query": "go_sched_pauses_total_gc_seconds_bucket"
+    },
+    {
+      "name": "metric_631",
+      "description": "Query for go_sched_pauses_total_gc_seconds_count",
+      "query": "go_sched_pauses_total_gc_seconds_count"
+    },
+    {
+      "name": "metric_632",
+      "description": "Query for go_sched_pauses_total_gc_seconds_sum",
+      "query": "go_sched_pauses_total_gc_seconds_sum"
+    },
+    {
+      "name": "metric_633",
+      "description": "Query for go_sched_pauses_total_other_seconds_bucket",
+      "query": "go_sched_pauses_total_other_seconds_bucket"
+    },
+    {
+      "name": "metric_634",
+      "description": "Query for go_sched_pauses_total_other_seconds_count",
+      "query": "go_sched_pauses_total_other_seconds_count"
+    },
+    {
+      "name": "metric_635",
+      "description": "Query for go_sched_pauses_total_other_seconds_sum",
+      "query": "go_sched_pauses_total_other_seconds_sum"
+    },
+    {
+      "name": "metric_636",
+      "description": "Query for go_sync_mutex_wait_total_seconds_total",
+      "query": "go_sync_mutex_wait_total_seconds_total"
+    },
+    {
+      "name": "metric_637",
+      "description": "Query for go_threads",
+      "query": "go_threads"
+    },
+    {
+      "name": "metric_638",
+      "description": "Query for net_conntrack_dialer_conn_attempted_total",
+      "query": "net_conntrack_dialer_conn_attempted_total"
+    },
+    {
+      "name": "metric_639",
+      "description": "Query for net_conntrack_dialer_conn_closed_total",
+      "query": "net_conntrack_dialer_conn_closed_total"
+    },
+    {
+      "name": "metric_640",
+      "description": "Query for net_conntrack_dialer_conn_established_total",
+      "query": "net_conntrack_dialer_conn_established_total"
+    },
+    {
+      "name": "metric_641",
+      "description": "Query for net_conntrack_dialer_conn_failed_total",
+      "query": "net_conntrack_dialer_conn_failed_total"
+    },
+    {
+      "name": "metric_642",
+      "description": "Query for net_conntrack_listener_conn_accepted_total",
+      "query": "net_conntrack_listener_conn_accepted_total"
+    },
+    {
+      "name": "metric_643",
+      "description": "Query for net_conntrack_listener_conn_closed_total",
+      "query": "net_conntrack_listener_conn_closed_total"
+    },
+    {
+      "name": "metric_644",
+      "description": "Query for process_cpu_seconds_total",
+      "query": "process_cpu_seconds_total"
+    },
+    {
+      "name": "metric_645",
+      "description": "Query for process_max_fds",
+      "query": "process_max_fds"
+    },
+    {
+      "name": "metric_646",
+      "description": "Query for process_network_receive_bytes_total",
+      "query": "process_network_receive_bytes_total"
+    },
+    {
+      "name": "metric_647",
+      "description": "Query for process_network_transmit_bytes_total",
+      "query": "process_network_transmit_bytes_total"
+    },
+    {
+      "name": "metric_648",
+      "description": "Query for process_open_fds",
+      "query": "process_open_fds"
+    },
+    {
+      "name": "metric_649",
+      "description": "Query for process_resident_memory_bytes",
+      "query": "process_resident_memory_bytes"
+    },
+    {
+      "name": "metric_650",
+      "description": "Query for process_start_time_seconds",
+      "query": "process_start_time_seconds"
+    },
+    {
+      "name": "metric_651",
+      "description": "Query for process_virtual_memory_bytes",
+      "query": "process_virtual_memory_bytes"
+    },
+    {
+      "name": "metric_652",
+      "description": "Query for process_virtual_memory_max_bytes",
+      "query": "process_virtual_memory_max_bytes"
+    },
+    {
+      "name": "metric_653",
+      "description": "Query for prometheus_api_notification_active_subscribers",
+      "query": "prometheus_api_notification_active_subscribers"
+    },
+    {
+      "name": "metric_654",
+      "description": "Query for prometheus_api_notification_updates_dropped_total",
+      "query": "prometheus_api_notification_updates_dropped_total"
+    },
+    {
+      "name": "metric_655",
+      "description": "Query for prometheus_api_notification_updates_sent_total",
+      "query": "prometheus_api_notification_updates_sent_total"
+    },
+    {
+      "name": "metric_656",
+      "description": "Query for prometheus_build_info",
+      "query": "prometheus_build_info"
+    },
+    {
+      "name": "metric_657",
+      "description": "Query for prometheus_config_last_reload_success_timestamp_seconds",
+      "query": "prometheus_config_last_reload_success_timestamp_seconds"
+    },
+    {
+      "name": "metric_658",
+      "description": "Query for prometheus_config_last_reload_successful",
+      "query": "prometheus_config_last_reload_successful"
+    },
+    {
+      "name": "metric_659",
+      "description": "Query for prometheus_engine_queries",
+      "query": "prometheus_engine_queries"
+    },
+    {
+      "name": "metric_660",
+      "description": "Query for prometheus_engine_queries_concurrent_max",
+      "query": "prometheus_engine_queries_concurrent_max"
+    },
+    {
+      "name": "metric_661",
+      "description": "Query for prometheus_engine_query_duration_seconds",
+      "query": "prometheus_engine_query_duration_seconds"
+    },
+    {
+      "name": "metric_662",
+      "description": "Query for prometheus_engine_query_duration_seconds_count",
+      "query": "prometheus_engine_query_duration_seconds_count"
+    },
+    {
+      "name": "metric_663",
+      "description": "Query for prometheus_engine_query_duration_seconds_sum",
+      "query": "prometheus_engine_query_duration_seconds_sum"
+    },
+    {
+      "name": "metric_664",
+      "description": "Query for prometheus_engine_query_log_enabled",
+      "query": "prometheus_engine_query_log_enabled"
+    },
+    {
+      "name": "metric_665",
+      "description": "Query for prometheus_engine_query_log_failures_total",
+      "query": "prometheus_engine_query_log_failures_total"
+    },
+    {
+      "name": "metric_666",
+      "description": "Query for prometheus_engine_query_samples_total",
+      "query": "prometheus_engine_query_samples_total"
+    },
+    {
+      "name": "metric_667",
+      "description": "Query for prometheus_http_request_duration_seconds_bucket",
+      "query": "prometheus_http_request_duration_seconds_bucket"
+    },
+    {
+      "name": "metric_668",
+      "description": "Query for prometheus_http_request_duration_seconds_count",
+      "query": "prometheus_http_request_duration_seconds_count"
+    },
+    {
+      "name": "metric_669",
+      "description": "Query for prometheus_http_request_duration_seconds_sum",
+      "query": "prometheus_http_request_duration_seconds_sum"
+    },
+    {
+      "name": "metric_670",
+      "description": "Query for prometheus_http_requests_total",
+      "query": "prometheus_http_requests_total"
+    },
+    {
+      "name": "metric_671",
+      "description": "Query for prometheus_http_response_size_bytes_bucket",
+      "query": "prometheus_http_response_size_bytes_bucket"
+    },
+    {
+      "name": "metric_672",
+      "description": "Query for prometheus_http_response_size_bytes_count",
+      "query": "prometheus_http_response_size_bytes_count"
+    },
+    {
+      "name": "metric_673",
+      "description": "Query for prometheus_http_response_size_bytes_sum",
+      "query": "prometheus_http_response_size_bytes_sum"
+    },
+    {
+      "name": "metric_674",
+      "description": "Query for prometheus_notifications_alertmanagers_discovered",
+      "query": "prometheus_notifications_alertmanagers_discovered"
+    },
+    {
+      "name": "metric_675",
+      "description": "Query for prometheus_notifications_dropped_total",
+      "query": "prometheus_notifications_dropped_total"
+    },
+    {
+      "name": "metric_676",
+      "description": "Query for prometheus_notifications_queue_capacity",
+      "query": "prometheus_notifications_queue_capacity"
+    },
+    {
+      "name": "metric_677",
+      "description": "Query for prometheus_notifications_queue_length",
+      "query": "prometheus_notifications_queue_length"
+    },
+    {
+      "name": "metric_678",
+      "description": "Query for prometheus_ready",
+      "query": "prometheus_ready"
+    },
+    {
+      "name": "metric_679",
+      "description": "Query for prometheus_remote_read_handler_queries",
+      "query": "prometheus_remote_read_handler_queries"
+    },
+    {
+      "name": "metric_680",
+      "description": "Query for prometheus_remote_storage_exemplars_in_total",
+      "query": "prometheus_remote_storage_exemplars_in_total"
+    },
+    {
+      "name": "metric_681",
+      "description": "Query for prometheus_remote_storage_highest_timestamp_in_seconds",
+      "query": "prometheus_remote_storage_highest_timestamp_in_seconds"
+    },
+    {
+      "name": "metric_682",
+      "description": "Query for prometheus_remote_storage_histograms_in_total",
+      "query": "prometheus_remote_storage_histograms_in_total"
+    },
+    {
+      "name": "metric_683",
+      "description": "Query for prometheus_remote_storage_samples_in_total",
+      "query": "prometheus_remote_storage_samples_in_total"
+    },
+    {
+      "name": "metric_684",
+      "description": "Query for prometheus_remote_storage_string_interner_zero_reference_releases_total",
+      "query": "prometheus_remote_storage_string_interner_zero_reference_releases_total"
+    },
+    {
+      "name": "metric_685",
+      "description": "Query for prometheus_rule_evaluation_duration_seconds",
+      "query": "prometheus_rule_evaluation_duration_seconds"
+    },
+    {
+      "name": "metric_686",
+      "description": "Query for prometheus_rule_evaluation_duration_seconds_count",
+      "query": "prometheus_rule_evaluation_duration_seconds_count"
+    },
+    {
+      "name": "metric_687",
+      "description": "Query for prometheus_rule_evaluation_duration_seconds_sum",
+      "query": "prometheus_rule_evaluation_duration_seconds_sum"
+    },
+    {
+      "name": "metric_688",
+      "description": "Query for prometheus_rule_group_duration_seconds",
+      "query": "prometheus_rule_group_duration_seconds"
+    },
+    {
+      "name": "metric_689",
+      "description": "Query for prometheus_rule_group_duration_seconds_count",
+      "query": "prometheus_rule_group_duration_seconds_count"
+    },
+    {
+      "name": "metric_690",
+      "description": "Query for prometheus_rule_group_duration_seconds_sum",
+      "query": "prometheus_rule_group_duration_seconds_sum"
+    },
+    {
+      "name": "metric_691",
+      "description": "Query for prometheus_sd_azure_cache_hit_total",
+      "query": "prometheus_sd_azure_cache_hit_total"
+    },
+    {
+      "name": "metric_692",
+      "description": "Query for prometheus_sd_azure_failures_total",
+      "query": "prometheus_sd_azure_failures_total"
+    },
+    {
+      "name": "metric_693",
+      "description": "Query for prometheus_sd_consul_rpc_duration_seconds",
+      "query": "prometheus_sd_consul_rpc_duration_seconds"
+    },
+    {
+      "name": "metric_694",
+      "description": "Query for prometheus_sd_consul_rpc_duration_seconds_count",
+      "query": "prometheus_sd_consul_rpc_duration_seconds_count"
+    },
+    {
+      "name": "metric_695",
+      "description": "Query for prometheus_sd_consul_rpc_duration_seconds_sum",
+      "query": "prometheus_sd_consul_rpc_duration_seconds_sum"
+    },
+    {
+      "name": "metric_696",
+      "description": "Query for prometheus_sd_consul_rpc_failures_total",
+      "query": "prometheus_sd_consul_rpc_failures_total"
+    },
+    {
+      "name": "metric_697",
+      "description": "Query for prometheus_sd_discovered_targets",
+      "query": "prometheus_sd_discovered_targets"
+    },
+    {
+      "name": "metric_698",
+      "description": "Query for prometheus_sd_dns_lookup_failures_total",
+      "query": "prometheus_sd_dns_lookup_failures_total"
+    },
+    {
+      "name": "metric_699",
+      "description": "Query for prometheus_sd_dns_lookups_total",
+      "query": "prometheus_sd_dns_lookups_total"
+    },
+    {
+      "name": "metric_700",
+      "description": "Query for prometheus_sd_failed_configs",
+      "query": "prometheus_sd_failed_configs"
+    },
+    {
+      "name": "metric_701",
+      "description": "Query for prometheus_sd_file_read_errors_total",
+      "query": "prometheus_sd_file_read_errors_total"
+    },
+    {
+      "name": "metric_702",
+      "description": "Query for prometheus_sd_file_scan_duration_seconds",
+      "query": "prometheus_sd_file_scan_duration_seconds"
+    },
+    {
+      "name": "metric_703",
+      "description": "Query for prometheus_sd_file_scan_duration_seconds_count",
+      "query": "prometheus_sd_file_scan_duration_seconds_count"
+    },
+    {
+      "name": "metric_704",
+      "description": "Query for prometheus_sd_file_scan_duration_seconds_sum",
+      "query": "prometheus_sd_file_scan_duration_seconds_sum"
+    },
+    {
+      "name": "metric_705",
+      "description": "Query for prometheus_sd_file_watcher_errors_total",
+      "query": "prometheus_sd_file_watcher_errors_total"
+    },
+    {
+      "name": "metric_706",
+      "description": "Query for prometheus_sd_http_failures_total",
+      "query": "prometheus_sd_http_failures_total"
+    },
+    {
+      "name": "metric_707",
+      "description": "Query for prometheus_sd_kubernetes_events_total",
+      "query": "prometheus_sd_kubernetes_events_total"
+    },
+    {
+      "name": "metric_708",
+      "description": "Query for prometheus_sd_kubernetes_failures_total",
+      "query": "prometheus_sd_kubernetes_failures_total"
+    },
+    {
+      "name": "metric_709",
+      "description": "Query for prometheus_sd_kuma_fetch_duration_seconds",
+      "query": "prometheus_sd_kuma_fetch_duration_seconds"
+    },
+    {
+      "name": "metric_710",
+      "description": "Query for prometheus_sd_kuma_fetch_duration_seconds_count",
+      "query": "prometheus_sd_kuma_fetch_duration_seconds_count"
+    },
+    {
+      "name": "metric_711",
+      "description": "Query for prometheus_sd_kuma_fetch_duration_seconds_sum",
+      "query": "prometheus_sd_kuma_fetch_duration_seconds_sum"
+    },
+    {
+      "name": "metric_712",
+      "description": "Query for prometheus_sd_kuma_fetch_failures_total",
+      "query": "prometheus_sd_kuma_fetch_failures_total"
+    },
+    {
+      "name": "metric_713",
+      "description": "Query for prometheus_sd_kuma_fetch_skipped_updates_total",
+      "query": "prometheus_sd_kuma_fetch_skipped_updates_total"
+    },
+    {
+      "name": "metric_714",
+      "description": "Query for prometheus_sd_linode_failures_total",
+      "query": "prometheus_sd_linode_failures_total"
+    },
+    {
+      "name": "metric_715",
+      "description": "Query for prometheus_sd_nomad_failures_total",
+      "query": "prometheus_sd_nomad_failures_total"
+    },
+    {
+      "name": "metric_716",
+      "description": "Query for prometheus_sd_received_updates_total",
+      "query": "prometheus_sd_received_updates_total"
+    },
+    {
+      "name": "metric_717",
+      "description": "Query for prometheus_sd_updates_delayed_total",
+      "query": "prometheus_sd_updates_delayed_total"
+    },
+    {
+      "name": "metric_718",
+      "description": "Query for prometheus_sd_updates_total",
+      "query": "prometheus_sd_updates_total"
+    },
+    {
+      "name": "metric_719",
+      "description": "Query for prometheus_target_interval_length_seconds",
+      "query": "prometheus_target_interval_length_seconds"
+    },
+    {
+      "name": "metric_720",
+      "description": "Query for prometheus_target_interval_length_seconds_count",
+      "query": "prometheus_target_interval_length_seconds_count"
+    },
+    {
+      "name": "metric_721",
+      "description": "Query for prometheus_target_interval_length_seconds_sum",
+      "query": "prometheus_target_interval_length_seconds_sum"
+    },
+    {
+      "name": "metric_722",
+      "description": "Query for prometheus_target_metadata_cache_bytes",
+      "query": "prometheus_target_metadata_cache_bytes"
+    },
+    {
+      "name": "metric_723",
+      "description": "Query for prometheus_target_metadata_cache_entries",
+      "query": "prometheus_target_metadata_cache_entries"
+    },
+    {
+      "name": "metric_724",
+      "description": "Query for prometheus_target_scrape_pool_exceeded_label_limits_total",
+      "query": "prometheus_target_scrape_pool_exceeded_label_limits_total"
+    },
+    {
+      "name": "metric_725",
+      "description": "Query for prometheus_target_scrape_pool_exceeded_target_limit_total",
+      "query": "prometheus_target_scrape_pool_exceeded_target_limit_total"
+    },
+    {
+      "name": "metric_726",
+      "description": "Query for prometheus_target_scrape_pool_reloads_failed_total",
+      "query": "prometheus_target_scrape_pool_reloads_failed_total"
+    },
+    {
+      "name": "metric_727",
+      "description": "Query for prometheus_target_scrape_pool_reloads_total",
+      "query": "prometheus_target_scrape_pool_reloads_total"
+    },
+    {
+      "name": "metric_728",
+      "description": "Query for prometheus_target_scrape_pool_symboltable_items",
+      "query": "prometheus_target_scrape_pool_symboltable_items"
+    },
+    {
+      "name": "metric_729",
+      "description": "Query for prometheus_target_scrape_pool_sync_total",
+      "query": "prometheus_target_scrape_pool_sync_total"
+    },
+    {
+      "name": "metric_730",
+      "description": "Query for prometheus_target_scrape_pool_target_limit",
+      "query": "prometheus_target_scrape_pool_target_limit"
+    },
+    {
+      "name": "metric_731",
+      "description": "Query for prometheus_target_scrape_pool_targets",
+      "query": "prometheus_target_scrape_pool_targets"
+    },
+    {
+      "name": "metric_732",
+      "description": "Query for prometheus_target_scrape_pools_failed_total",
+      "query": "prometheus_target_scrape_pools_failed_total"
+    },
+    {
+      "name": "metric_733",
+      "description": "Query for prometheus_target_scrape_pools_total",
+      "query": "prometheus_target_scrape_pools_total"
+    },
+    {
+      "name": "metric_734",
+      "description": "Query for prometheus_target_scrapes_cache_flush_forced_total",
+      "query": "prometheus_target_scrapes_cache_flush_forced_total"
+    },
+    {
+      "name": "metric_735",
+      "description": "Query for prometheus_target_scrapes_exceeded_body_size_limit_total",
+      "query": "prometheus_target_scrapes_exceeded_body_size_limit_total"
+    },
+    {
+      "name": "metric_736",
+      "description": "Query for prometheus_target_scrapes_exceeded_native_histogram_bucket_limit_total",
+      "query": "prometheus_target_scrapes_exceeded_native_histogram_bucket_limit_total"
+    },
+    {
+      "name": "metric_737",
+      "description": "Query for prometheus_target_scrapes_exceeded_sample_limit_total",
+      "query": "prometheus_target_scrapes_exceeded_sample_limit_total"
+    },
+    {
+      "name": "metric_738",
+      "description": "Query for prometheus_target_scrapes_exemplar_out_of_order_total",
+      "query": "prometheus_target_scrapes_exemplar_out_of_order_total"
+    },
+    {
+      "name": "metric_739",
+      "description": "Query for prometheus_target_scrapes_sample_duplicate_timestamp_total",
+      "query": "prometheus_target_scrapes_sample_duplicate_timestamp_total"
+    },
+    {
+      "name": "metric_740",
+      "description": "Query for prometheus_target_scrapes_sample_out_of_bounds_total",
+      "query": "prometheus_target_scrapes_sample_out_of_bounds_total"
+    },
+    {
+      "name": "metric_741",
+      "description": "Query for prometheus_target_scrapes_sample_out_of_order_total",
+      "query": "prometheus_target_scrapes_sample_out_of_order_total"
+    },
+    {
+      "name": "metric_742",
+      "description": "Query for prometheus_target_sync_failed_total",
+      "query": "prometheus_target_sync_failed_total"
+    },
+    {
+      "name": "metric_743",
+      "description": "Query for prometheus_target_sync_length_seconds",
+      "query": "prometheus_target_sync_length_seconds"
+    },
+    {
+      "name": "metric_744",
+      "description": "Query for prometheus_target_sync_length_seconds_count",
+      "query": "prometheus_target_sync_length_seconds_count"
+    },
+    {
+      "name": "metric_745",
+      "description": "Query for prometheus_target_sync_length_seconds_sum",
+      "query": "prometheus_target_sync_length_seconds_sum"
+    },
+    {
+      "name": "metric_746",
+      "description": "Query for prometheus_template_text_expansion_failures_total",
+      "query": "prometheus_template_text_expansion_failures_total"
+    },
+    {
+      "name": "metric_747",
+      "description": "Query for prometheus_template_text_expansions_total",
+      "query": "prometheus_template_text_expansions_total"
+    },
+    {
+      "name": "metric_748",
+      "description": "Query for prometheus_treecache_watcher_goroutines",
+      "query": "prometheus_treecache_watcher_goroutines"
+    },
+    {
+      "name": "metric_749",
+      "description": "Query for prometheus_treecache_zookeeper_failures_total",
+      "query": "prometheus_treecache_zookeeper_failures_total"
+    },
+    {
+      "name": "metric_750",
+      "description": "Query for prometheus_tsdb_blocks_loaded",
+      "query": "prometheus_tsdb_blocks_loaded"
+    },
+    {
+      "name": "metric_751",
+      "description": "Query for prometheus_tsdb_checkpoint_creations_failed_total",
+      "query": "prometheus_tsdb_checkpoint_creations_failed_total"
+    },
+    {
+      "name": "metric_752",
+      "description": "Query for prometheus_tsdb_checkpoint_creations_total",
+      "query": "prometheus_tsdb_checkpoint_creations_total"
+    },
+    {
+      "name": "metric_753",
+      "description": "Query for prometheus_tsdb_checkpoint_deletions_failed_total",
+      "query": "prometheus_tsdb_checkpoint_deletions_failed_total"
+    },
+    {
+      "name": "metric_754",
+      "description": "Query for prometheus_tsdb_checkpoint_deletions_total",
+      "query": "prometheus_tsdb_checkpoint_deletions_total"
+    },
+    {
+      "name": "metric_755",
+      "description": "Query for prometheus_tsdb_clean_start",
+      "query": "prometheus_tsdb_clean_start"
+    },
+    {
+      "name": "metric_756",
+      "description": "Query for prometheus_tsdb_compaction_chunk_range_seconds_bucket",
+      "query": "prometheus_tsdb_compaction_chunk_range_seconds_bucket"
+    },
+    {
+      "name": "metric_757",
+      "description": "Query for prometheus_tsdb_compaction_chunk_range_seconds_count",
+      "query": "prometheus_tsdb_compaction_chunk_range_seconds_count"
+    },
+    {
+      "name": "metric_758",
+      "description": "Query for prometheus_tsdb_compaction_chunk_range_seconds_sum",
+      "query": "prometheus_tsdb_compaction_chunk_range_seconds_sum"
+    },
+    {
+      "name": "metric_759",
+      "description": "Query for prometheus_tsdb_compaction_chunk_samples_bucket",
+      "query": "prometheus_tsdb_compaction_chunk_samples_bucket"
+    },
+    {
+      "name": "metric_760",
+      "description": "Query for prometheus_tsdb_compaction_chunk_samples_count",
+      "query": "prometheus_tsdb_compaction_chunk_samples_count"
+    },
+    {
+      "name": "metric_761",
+      "description": "Query for prometheus_tsdb_compaction_chunk_samples_sum",
+      "query": "prometheus_tsdb_compaction_chunk_samples_sum"
+    },
+    {
+      "name": "metric_762",
+      "description": "Query for prometheus_tsdb_compaction_chunk_size_bytes_bucket",
+      "query": "prometheus_tsdb_compaction_chunk_size_bytes_bucket"
+    },
+    {
+      "name": "metric_763",
+      "description": "Query for prometheus_tsdb_compaction_chunk_size_bytes_count",
+      "query": "prometheus_tsdb_compaction_chunk_size_bytes_count"
+    },
+    {
+      "name": "metric_764",
+      "description": "Query for prometheus_tsdb_compaction_chunk_size_bytes_sum",
+      "query": "prometheus_tsdb_compaction_chunk_size_bytes_sum"
+    },
+    {
+      "name": "metric_765",
+      "description": "Query for prometheus_tsdb_compaction_duration_seconds_bucket",
+      "query": "prometheus_tsdb_compaction_duration_seconds_bucket"
+    },
+    {
+      "name": "metric_766",
+      "description": "Query for prometheus_tsdb_compaction_duration_seconds_count",
+      "query": "prometheus_tsdb_compaction_duration_seconds_count"
+    },
+    {
+      "name": "metric_767",
+      "description": "Query for prometheus_tsdb_compaction_duration_seconds_sum",
+      "query": "prometheus_tsdb_compaction_duration_seconds_sum"
+    },
+    {
+      "name": "metric_768",
+      "description": "Query for prometheus_tsdb_compaction_populating_block",
+      "query": "prometheus_tsdb_compaction_populating_block"
+    },
+    {
+      "name": "metric_769",
+      "description": "Query for prometheus_tsdb_compactions_failed_total",
+      "query": "prometheus_tsdb_compactions_failed_total"
+    },
+    {
+      "name": "metric_770",
+      "description": "Query for prometheus_tsdb_compactions_skipped_total",
+      "query": "prometheus_tsdb_compactions_skipped_total"
+    },
+    {
+      "name": "metric_771",
+      "description": "Query for prometheus_tsdb_compactions_total",
+      "query": "prometheus_tsdb_compactions_total"
+    },
+    {
+      "name": "metric_772",
+      "description": "Query for prometheus_tsdb_compactions_triggered_total",
+      "query": "prometheus_tsdb_compactions_triggered_total"
+    },
+    {
+      "name": "metric_773",
+      "description": "Query for prometheus_tsdb_data_replay_duration_seconds",
+      "query": "prometheus_tsdb_data_replay_duration_seconds"
+    },
+    {
+      "name": "metric_774",
+      "description": "Query for prometheus_tsdb_exemplar_exemplars_appended_total",
+      "query": "prometheus_tsdb_exemplar_exemplars_appended_total"
+    },
+    {
+      "name": "metric_775",
+      "description": "Query for prometheus_tsdb_exemplar_exemplars_in_storage",
+      "query": "prometheus_tsdb_exemplar_exemplars_in_storage"
+    },
+    {
+      "name": "metric_776",
+      "description": "Query for prometheus_tsdb_exemplar_last_exemplars_timestamp_seconds",
+      "query": "prometheus_tsdb_exemplar_last_exemplars_timestamp_seconds"
+    },
+    {
+      "name": "metric_777",
+      "description": "Query for prometheus_tsdb_exemplar_max_exemplars",
+      "query": "prometheus_tsdb_exemplar_max_exemplars"
+    },
+    {
+      "name": "metric_778",
+      "description": "Query for prometheus_tsdb_exemplar_out_of_order_exemplars_total",
+      "query": "prometheus_tsdb_exemplar_out_of_order_exemplars_total"
+    },
+    {
+      "name": "metric_779",
+      "description": "Query for prometheus_tsdb_exemplar_series_with_exemplars_in_storage",
+      "query": "prometheus_tsdb_exemplar_series_with_exemplars_in_storage"
+    },
+    {
+      "name": "metric_780",
+      "description": "Query for prometheus_tsdb_head_active_appenders",
+      "query": "prometheus_tsdb_head_active_appenders"
+    },
+    {
+      "name": "metric_781",
+      "description": "Query for prometheus_tsdb_head_chunks",
+      "query": "prometheus_tsdb_head_chunks"
+    },
+    {
+      "name": "metric_782",
+      "description": "Query for prometheus_tsdb_head_chunks_created_total",
+      "query": "prometheus_tsdb_head_chunks_created_total"
+    },
+    {
+      "name": "metric_783",
+      "description": "Query for prometheus_tsdb_head_chunks_removed_total",
+      "query": "prometheus_tsdb_head_chunks_removed_total"
+    },
+    {
+      "name": "metric_784",
+      "description": "Query for prometheus_tsdb_head_chunks_storage_size_bytes",
+      "query": "prometheus_tsdb_head_chunks_storage_size_bytes"
+    },
+    {
+      "name": "metric_785",
+      "description": "Query for prometheus_tsdb_head_gc_duration_seconds_count",
+      "query": "prometheus_tsdb_head_gc_duration_seconds_count"
+    },
+    {
+      "name": "metric_786",
+      "description": "Query for prometheus_tsdb_head_gc_duration_seconds_sum",
+      "query": "prometheus_tsdb_head_gc_duration_seconds_sum"
+    },
+    {
+      "name": "metric_787",
+      "description": "Query for prometheus_tsdb_head_max_time",
+      "query": "prometheus_tsdb_head_max_time"
+    },
+    {
+      "name": "metric_788",
+      "description": "Query for prometheus_tsdb_head_max_time_seconds",
+      "query": "prometheus_tsdb_head_max_time_seconds"
+    },
+    {
+      "name": "metric_789",
+      "description": "Query for prometheus_tsdb_head_min_time",
+      "query": "prometheus_tsdb_head_min_time"
+    },
+    {
+      "name": "metric_790",
+      "description": "Query for prometheus_tsdb_head_min_time_seconds",
+      "query": "prometheus_tsdb_head_min_time_seconds"
+    },
+    {
+      "name": "metric_791",
+      "description": "Query for prometheus_tsdb_head_out_of_order_samples_appended_total",
+      "query": "prometheus_tsdb_head_out_of_order_samples_appended_total"
+    },
+    {
+      "name": "metric_792",
+      "description": "Query for prometheus_tsdb_head_samples_appended_total",
+      "query": "prometheus_tsdb_head_samples_appended_total"
+    },
+    {
+      "name": "metric_793",
+      "description": "Query for prometheus_tsdb_head_series",
+      "query": "prometheus_tsdb_head_series"
+    },
+    {
+      "name": "metric_794",
+      "description": "Query for prometheus_tsdb_head_series_created_total",
+      "query": "prometheus_tsdb_head_series_created_total"
+    },
+    {
+      "name": "metric_795",
+      "description": "Query for prometheus_tsdb_head_series_not_found_total",
+      "query": "prometheus_tsdb_head_series_not_found_total"
+    },
+    {
+      "name": "metric_796",
+      "description": "Query for prometheus_tsdb_head_series_removed_total",
+      "query": "prometheus_tsdb_head_series_removed_total"
+    },
+    {
+      "name": "metric_797",
+      "description": "Query for prometheus_tsdb_head_truncations_failed_total",
+      "query": "prometheus_tsdb_head_truncations_failed_total"
+    },
+    {
+      "name": "metric_798",
+      "description": "Query for prometheus_tsdb_head_truncations_total",
+      "query": "prometheus_tsdb_head_truncations_total"
+    },
+    {
+      "name": "metric_799",
+      "description": "Query for prometheus_tsdb_isolation_high_watermark",
+      "query": "prometheus_tsdb_isolation_high_watermark"
+    },
+    {
+      "name": "metric_800",
+      "description": "Query for prometheus_tsdb_isolation_low_watermark",
+      "query": "prometheus_tsdb_isolation_low_watermark"
+    },
+    {
+      "name": "metric_801",
+      "description": "Query for prometheus_tsdb_lowest_timestamp",
+      "query": "prometheus_tsdb_lowest_timestamp"
+    },
+    {
+      "name": "metric_802",
+      "description": "Query for prometheus_tsdb_lowest_timestamp_seconds",
+      "query": "prometheus_tsdb_lowest_timestamp_seconds"
+    },
+    {
+      "name": "metric_803",
+      "description": "Query for prometheus_tsdb_mmap_chunk_corruptions_total",
+      "query": "prometheus_tsdb_mmap_chunk_corruptions_total"
+    },
+    {
+      "name": "metric_804",
+      "description": "Query for prometheus_tsdb_mmap_chunks_total",
+      "query": "prometheus_tsdb_mmap_chunks_total"
+    },
+    {
+      "name": "metric_805",
+      "description": "Query for prometheus_tsdb_out_of_bound_samples_total",
+      "query": "prometheus_tsdb_out_of_bound_samples_total"
+    },
+    {
+      "name": "metric_806",
+      "description": "Query for prometheus_tsdb_out_of_order_samples_total",
+      "query": "prometheus_tsdb_out_of_order_samples_total"
+    },
+    {
+      "name": "metric_807",
+      "description": "Query for prometheus_tsdb_reloads_failures_total",
+      "query": "prometheus_tsdb_reloads_failures_total"
+    },
+    {
+      "name": "metric_808",
+      "description": "Query for prometheus_tsdb_reloads_total",
+      "query": "prometheus_tsdb_reloads_total"
+    },
+    {
+      "name": "metric_809",
+      "description": "Query for prometheus_tsdb_retention_limit_bytes",
+      "query": "prometheus_tsdb_retention_limit_bytes"
+    },
+    {
+      "name": "metric_810",
+      "description": "Query for prometheus_tsdb_retention_limit_seconds",
+      "query": "prometheus_tsdb_retention_limit_seconds"
+    },
+    {
+      "name": "metric_811",
+      "description": "Query for prometheus_tsdb_size_retentions_total",
+      "query": "prometheus_tsdb_size_retentions_total"
+    },
+    {
+      "name": "metric_812",
+      "description": "Query for prometheus_tsdb_snapshot_replay_error_total",
+      "query": "prometheus_tsdb_snapshot_replay_error_total"
+    },
+    {
+      "name": "metric_813",
+      "description": "Query for prometheus_tsdb_storage_blocks_bytes",
+      "query": "prometheus_tsdb_storage_blocks_bytes"
+    },
+    {
+      "name": "metric_814",
+      "description": "Query for prometheus_tsdb_symbol_table_size_bytes",
+      "query": "prometheus_tsdb_symbol_table_size_bytes"
+    },
+    {
+      "name": "metric_815",
+      "description": "Query for prometheus_tsdb_time_retentions_total",
+      "query": "prometheus_tsdb_time_retentions_total"
+    },
+    {
+      "name": "metric_816",
+      "description": "Query for prometheus_tsdb_tombstone_cleanup_seconds_bucket",
+      "query": "prometheus_tsdb_tombstone_cleanup_seconds_bucket"
+    },
+    {
+      "name": "metric_817",
+      "description": "Query for prometheus_tsdb_tombstone_cleanup_seconds_count",
+      "query": "prometheus_tsdb_tombstone_cleanup_seconds_count"
+    },
+    {
+      "name": "metric_818",
+      "description": "Query for prometheus_tsdb_tombstone_cleanup_seconds_sum",
+      "query": "prometheus_tsdb_tombstone_cleanup_seconds_sum"
+    },
+    {
+      "name": "metric_819",
+      "description": "Query for prometheus_tsdb_too_old_samples_total",
+      "query": "prometheus_tsdb_too_old_samples_total"
+    },
+    {
+      "name": "metric_820",
+      "description": "Query for prometheus_tsdb_vertical_compactions_total",
+      "query": "prometheus_tsdb_vertical_compactions_total"
+    },
+    {
+      "name": "metric_821",
+      "description": "Query for prometheus_tsdb_wal_completed_pages_total",
+      "query": "prometheus_tsdb_wal_completed_pages_total"
+    },
+    {
+      "name": "metric_822",
+      "description": "Query for prometheus_tsdb_wal_corruptions_total",
+      "query": "prometheus_tsdb_wal_corruptions_total"
+    },
+    {
+      "name": "metric_823",
+      "description": "Query for prometheus_tsdb_wal_fsync_duration_seconds",
+      "query": "prometheus_tsdb_wal_fsync_duration_seconds"
+    },
+    {
+      "name": "metric_824",
+      "description": "Query for prometheus_tsdb_wal_fsync_duration_seconds_count",
+      "query": "prometheus_tsdb_wal_fsync_duration_seconds_count"
+    },
+    {
+      "name": "metric_825",
+      "description": "Query for prometheus_tsdb_wal_fsync_duration_seconds_sum",
+      "query": "prometheus_tsdb_wal_fsync_duration_seconds_sum"
+    },
+    {
+      "name": "metric_826",
+      "description": "Query for prometheus_tsdb_wal_page_flushes_total",
+      "query": "prometheus_tsdb_wal_page_flushes_total"
+    },
+    {
+      "name": "metric_827",
+      "description": "Query for prometheus_tsdb_wal_record_bytes_saved_total",
+      "query": "prometheus_tsdb_wal_record_bytes_saved_total"
+    },
+    {
+      "name": "metric_828",
+      "description": "Query for prometheus_tsdb_wal_record_part_writes_total",
+      "query": "prometheus_tsdb_wal_record_part_writes_total"
+    },
+    {
+      "name": "metric_829",
+      "description": "Query for prometheus_tsdb_wal_record_parts_bytes_written_total",
+      "query": "prometheus_tsdb_wal_record_parts_bytes_written_total"
+    },
+    {
+      "name": "metric_830",
+      "description": "Query for prometheus_tsdb_wal_segment_current",
+      "query": "prometheus_tsdb_wal_segment_current"
+    },
+    {
+      "name": "metric_831",
+      "description": "Query for prometheus_tsdb_wal_storage_size_bytes",
+      "query": "prometheus_tsdb_wal_storage_size_bytes"
+    },
+    {
+      "name": "metric_832",
+      "description": "Query for prometheus_tsdb_wal_truncate_duration_seconds_count",
+      "query": "prometheus_tsdb_wal_truncate_duration_seconds_count"
+    },
+    {
+      "name": "metric_833",
+      "description": "Query for prometheus_tsdb_wal_truncate_duration_seconds_sum",
+      "query": "prometheus_tsdb_wal_truncate_duration_seconds_sum"
+    },
+    {
+      "name": "metric_834",
+      "description": "Query for prometheus_tsdb_wal_truncations_failed_total",
+      "query": "prometheus_tsdb_wal_truncations_failed_total"
+    },
+    {
+      "name": "metric_835",
+      "description": "Query for prometheus_tsdb_wal_truncations_total",
+      "query": "prometheus_tsdb_wal_truncations_total"
+    },
+    {
+      "name": "metric_836",
+      "description": "Query for prometheus_tsdb_wal_writes_failed_total",
+      "query": "prometheus_tsdb_wal_writes_failed_total"
+    },
+    {
+      "name": "metric_837",
+      "description": "Query for prometheus_web_federation_errors_total",
+      "query": "prometheus_web_federation_errors_total"
+    },
+    {
+      "name": "metric_838",
+      "description": "Query for prometheus_web_federation_warnings_total",
+      "query": "prometheus_web_federation_warnings_total"
+    },
+    {
+      "name": "metric_839",
+      "description": "Query for promhttp_metric_handler_requests_in_flight",
+      "query": "promhttp_metric_handler_requests_in_flight"
+    },
+    {
+      "name": "metric_840",
+      "description": "Query for promhttp_metric_handler_requests_total",
+      "query": "promhttp_metric_handler_requests_total"
+    },
+    {
+      "name": "metric_841",
+      "description": "Query for scrape_duration_seconds",
+      "query": "scrape_duration_seconds"
+    },
+    {
+      "name": "metric_842",
+      "description": "Query for scrape_samples_post_metric_relabeling",
+      "query": "scrape_samples_post_metric_relabeling"
+    },
+    {
+      "name": "metric_843",
+      "description": "Query for scrape_samples_scraped",
+      "query": "scrape_samples_scraped"
+    },
+    {
+      "name": "metric_844",
+      "description": "Query for scrape_series_added",
+      "query": "scrape_series_added"
+    },
+    {
+      "name": "metric_845",
+      "description": "Query for up",
+      "query": "up"
+    },
+    {
+      "name": "metric_846",
+      "description": "Query for go_gc_cycles_automatic_gc_cycles_total",
+      "query": "go_gc_cycles_automatic_gc_cycles_total"
+    },
+    {
+      "name": "metric_847",
+      "description": "Query for go_gc_cycles_forced_gc_cycles_total",
+      "query": "go_gc_cycles_forced_gc_cycles_total"
+    },
+    {
+      "name": "metric_848",
+      "description": "Query for go_gc_cycles_total_gc_cycles_total",
+      "query": "go_gc_cycles_total_gc_cycles_total"
+    },
+    {
+      "name": "metric_849",
+      "description": "Query for go_gc_duration_seconds",
+      "query": "go_gc_duration_seconds"
+    },
+    {
+      "name": "metric_850",
+      "description": "Query for go_gc_duration_seconds_count",
+      "query": "go_gc_duration_seconds_count"
+    },
+    {
+      "name": "metric_851",
+      "description": "Query for go_gc_duration_seconds_sum",
+      "query": "go_gc_duration_seconds_sum"
+    },
+    {
+      "name": "metric_852",
+      "description": "Query for go_gc_gogc_percent",
+      "query": "go_gc_gogc_percent"
+    },
+    {
+      "name": "metric_853",
+      "description": "Query for go_gc_gomemlimit_bytes",
+      "query": "go_gc_gomemlimit_bytes"
+    },
+    {
+      "name": "metric_854",
+      "description": "Query for go_gc_heap_allocs_by_size_bytes_bucket",
+      "query": "go_gc_heap_allocs_by_size_bytes_bucket"
+    },
+    {
+      "name": "metric_855",
+      "description": "Query for go_gc_heap_allocs_by_size_bytes_count",
+      "query": "go_gc_heap_allocs_by_size_bytes_count"
+    },
+    {
+      "name": "metric_856",
+      "description": "Query for go_gc_heap_allocs_by_size_bytes_sum",
+      "query": "go_gc_heap_allocs_by_size_bytes_sum"
+    },
+    {
+      "name": "metric_857",
+      "description": "Query for go_gc_heap_allocs_bytes_total",
+      "query": "go_gc_heap_allocs_bytes_total"
+    },
+    {
+      "name": "metric_858",
+      "description": "Query for go_gc_heap_allocs_objects_total",
+      "query": "go_gc_heap_allocs_objects_total"
+    },
+    {
+      "name": "metric_859",
+      "description": "Query for go_gc_heap_frees_by_size_bytes_bucket",
+      "query": "go_gc_heap_frees_by_size_bytes_bucket"
+    },
+    {
+      "name": "metric_860",
+      "description": "Query for go_gc_heap_frees_by_size_bytes_count",
+      "query": "go_gc_heap_frees_by_size_bytes_count"
+    },
+    {
+      "name": "metric_861",
+      "description": "Query for go_gc_heap_frees_by_size_bytes_sum",
+      "query": "go_gc_heap_frees_by_size_bytes_sum"
+    },
+    {
+      "name": "metric_862",
+      "description": "Query for go_gc_heap_frees_bytes_total",
+      "query": "go_gc_heap_frees_bytes_total"
+    },
+    {
+      "name": "metric_863",
+      "description": "Query for go_gc_heap_frees_objects_total",
+      "query": "go_gc_heap_frees_objects_total"
+    },
+    {
+      "name": "metric_864",
+      "description": "Query for go_gc_heap_goal_bytes",
+      "query": "go_gc_heap_goal_bytes"
+    },
+    {
+      "name": "metric_865",
+      "description": "Query for go_gc_heap_live_bytes",
+      "query": "go_gc_heap_live_bytes"
+    },
+    {
+      "name": "metric_866",
+      "description": "Query for go_gc_heap_objects_objects",
+      "query": "go_gc_heap_objects_objects"
+    },
+    {
+      "name": "metric_867",
+      "description": "Query for go_gc_heap_tiny_allocs_objects_total",
+      "query": "go_gc_heap_tiny_allocs_objects_total"
+    },
+    {
+      "name": "metric_868",
+      "description": "Query for go_gc_limiter_last_enabled_gc_cycle",
+      "query": "go_gc_limiter_last_enabled_gc_cycle"
+    },
+    {
+      "name": "metric_869",
+      "description": "Query for go_gc_pauses_seconds_bucket",
+      "query": "go_gc_pauses_seconds_bucket"
+    },
+    {
+      "name": "metric_870",
+      "description": "Query for go_gc_pauses_seconds_count",
+      "query": "go_gc_pauses_seconds_count"
+    },
+    {
+      "name": "metric_871",
+      "description": "Query for go_gc_pauses_seconds_sum",
+      "query": "go_gc_pauses_seconds_sum"
+    },
+    {
+      "name": "metric_872",
+      "description": "Query for go_gc_scan_globals_bytes",
+      "query": "go_gc_scan_globals_bytes"
+    },
+    {
+      "name": "metric_873",
+      "description": "Query for go_gc_scan_heap_bytes",
+      "query": "go_gc_scan_heap_bytes"
+    },
+    {
+      "name": "metric_874",
+      "description": "Query for go_gc_scan_stack_bytes",
+      "query": "go_gc_scan_stack_bytes"
+    },
+    {
+      "name": "metric_875",
+      "description": "Query for go_gc_scan_total_bytes",
+      "query": "go_gc_scan_total_bytes"
+    },
+    {
+      "name": "metric_876",
+      "description": "Query for go_gc_stack_starting_size_bytes",
+      "query": "go_gc_stack_starting_size_bytes"
+    },
+    {
+      "name": "metric_877",
+      "description": "Query for go_goroutines",
+      "query": "go_goroutines"
+    },
+    {
+      "name": "metric_878",
+      "description": "Query for go_info",
+      "query": "go_info"
+    },
+    {
+      "name": "metric_879",
+      "description": "Query for go_memstats_alloc_bytes",
+      "query": "go_memstats_alloc_bytes"
+    },
+    {
+      "name": "metric_880",
+      "description": "Query for go_memstats_alloc_bytes_total",
+      "query": "go_memstats_alloc_bytes_total"
+    },
+    {
+      "name": "metric_881",
+      "description": "Query for go_memstats_buck_hash_sys_bytes",
+      "query": "go_memstats_buck_hash_sys_bytes"
+    },
+    {
+      "name": "metric_882",
+      "description": "Query for go_memstats_frees_total",
+      "query": "go_memstats_frees_total"
+    },
+    {
+      "name": "metric_883",
+      "description": "Query for go_memstats_gc_sys_bytes",
+      "query": "go_memstats_gc_sys_bytes"
+    },
+    {
+      "name": "metric_884",
+      "description": "Query for go_memstats_heap_alloc_bytes",
+      "query": "go_memstats_heap_alloc_bytes"
+    },
+    {
+      "name": "metric_885",
+      "description": "Query for go_memstats_heap_idle_bytes",
+      "query": "go_memstats_heap_idle_bytes"
+    },
+    {
+      "name": "metric_886",
+      "description": "Query for go_memstats_heap_inuse_bytes",
+      "query": "go_memstats_heap_inuse_bytes"
+    },
+    {
+      "name": "metric_887",
+      "description": "Query for go_memstats_heap_objects",
+      "query": "go_memstats_heap_objects"
+    },
+    {
+      "name": "metric_888",
+      "description": "Query for go_memstats_heap_released_bytes",
+      "query": "go_memstats_heap_released_bytes"
+    },
+    {
+      "name": "metric_889",
+      "description": "Query for go_memstats_heap_sys_bytes",
+      "query": "go_memstats_heap_sys_bytes"
+    },
+    {
+      "name": "metric_890",
+      "description": "Query for go_memstats_last_gc_time_seconds",
+      "query": "go_memstats_last_gc_time_seconds"
+    },
+    {
+      "name": "metric_891",
+      "description": "Query for go_memstats_mallocs_total",
+      "query": "go_memstats_mallocs_total"
+    },
+    {
+      "name": "metric_892",
+      "description": "Query for go_memstats_mcache_inuse_bytes",
+      "query": "go_memstats_mcache_inuse_bytes"
+    },
+    {
+      "name": "metric_893",
+      "description": "Query for go_memstats_mcache_sys_bytes",
+      "query": "go_memstats_mcache_sys_bytes"
+    },
+    {
+      "name": "metric_894",
+      "description": "Query for go_memstats_mspan_inuse_bytes",
+      "query": "go_memstats_mspan_inuse_bytes"
+    },
+    {
+      "name": "metric_895",
+      "description": "Query for go_memstats_mspan_sys_bytes",
+      "query": "go_memstats_mspan_sys_bytes"
+    },
+    {
+      "name": "metric_896",
+      "description": "Query for go_memstats_next_gc_bytes",
+      "query": "go_memstats_next_gc_bytes"
+    },
+    {
+      "name": "metric_897",
+      "description": "Query for go_memstats_other_sys_bytes",
+      "query": "go_memstats_other_sys_bytes"
+    },
+    {
+      "name": "metric_898",
+      "description": "Query for go_memstats_stack_inuse_bytes",
+      "query": "go_memstats_stack_inuse_bytes"
+    },
+    {
+      "name": "metric_899",
+      "description": "Query for go_memstats_stack_sys_bytes",
+      "query": "go_memstats_stack_sys_bytes"
+    },
+    {
+      "name": "metric_900",
+      "description": "Query for go_memstats_sys_bytes",
+      "query": "go_memstats_sys_bytes"
+    },
+    {
+      "name": "metric_901",
+      "description": "Query for go_sched_gomaxprocs_threads",
+      "query": "go_sched_gomaxprocs_threads"
+    },
+    {
+      "name": "metric_902",
+      "description": "Query for go_sched_goroutines_goroutines",
+      "query": "go_sched_goroutines_goroutines"
+    },
+    {
+      "name": "metric_903",
+      "description": "Query for go_sched_latencies_seconds_bucket",
+      "query": "go_sched_latencies_seconds_bucket"
+    },
+    {
+      "name": "metric_904",
+      "description": "Query for go_sched_latencies_seconds_count",
+      "query": "go_sched_latencies_seconds_count"
+    },
+    {
+      "name": "metric_905",
+      "description": "Query for go_sched_latencies_seconds_sum",
+      "query": "go_sched_latencies_seconds_sum"
+    },
+    {
+      "name": "metric_906",
+      "description": "Query for go_sched_pauses_stopping_gc_seconds_bucket",
+      "query": "go_sched_pauses_stopping_gc_seconds_bucket"
+    },
+    {
+      "name": "metric_907",
+      "description": "Query for go_sched_pauses_stopping_gc_seconds_count",
+      "query": "go_sched_pauses_stopping_gc_seconds_count"
+    },
+    {
+      "name": "metric_908",
+      "description": "Query for go_sched_pauses_stopping_gc_seconds_sum",
+      "query": "go_sched_pauses_stopping_gc_seconds_sum"
+    },
+    {
+      "name": "metric_909",
+      "description": "Query for go_sched_pauses_stopping_other_seconds_bucket",
+      "query": "go_sched_pauses_stopping_other_seconds_bucket"
+    },
+    {
+      "name": "metric_910",
+      "description": "Query for go_sched_pauses_stopping_other_seconds_count",
+      "query": "go_sched_pauses_stopping_other_seconds_count"
+    },
+    {
+      "name": "metric_911",
+      "description": "Query for go_sched_pauses_stopping_other_seconds_sum",
+      "query": "go_sched_pauses_stopping_other_seconds_sum"
+    },
+    {
+      "name": "metric_912",
+      "description": "Query for go_sched_pauses_total_gc_seconds_bucket",
+      "query": "go_sched_pauses_total_gc_seconds_bucket"
+    },
+    {
+      "name": "metric_913",
+      "description": "Query for go_sched_pauses_total_gc_seconds_count",
+      "query": "go_sched_pauses_total_gc_seconds_count"
+    },
+    {
+      "name": "metric_914",
+      "description": "Query for go_sched_pauses_total_gc_seconds_sum",
+      "query": "go_sched_pauses_total_gc_seconds_sum"
+    },
+    {
+      "name": "metric_915",
+      "description": "Query for go_sched_pauses_total_other_seconds_bucket",
+      "query": "go_sched_pauses_total_other_seconds_bucket"
+    },
+    {
+      "name": "metric_916",
+      "description": "Query for go_sched_pauses_total_other_seconds_count",
+      "query": "go_sched_pauses_total_other_seconds_count"
+    },
+    {
+      "name": "metric_917",
+      "description": "Query for go_sched_pauses_total_other_seconds_sum",
+      "query": "go_sched_pauses_total_other_seconds_sum"
+    },
+    {
+      "name": "metric_918",
+      "description": "Query for go_sync_mutex_wait_total_seconds_total",
+      "query": "go_sync_mutex_wait_total_seconds_total"
+    },
+    {
+      "name": "metric_919",
+      "description": "Query for go_threads",
+      "query": "go_threads"
+    },
+    {
+      "name": "metric_920",
+      "description": "Query for net_conntrack_dialer_conn_attempted_total",
+      "query": "net_conntrack_dialer_conn_attempted_total"
+    },
+    {
+      "name": "metric_921",
+      "description": "Query for net_conntrack_dialer_conn_closed_total",
+      "query": "net_conntrack_dialer_conn_closed_total"
+    },
+    {
+      "name": "metric_922",
+      "description": "Query for net_conntrack_dialer_conn_established_total",
+      "query": "net_conntrack_dialer_conn_established_total"
+    },
+    {
+      "name": "metric_923",
+      "description": "Query for net_conntrack_dialer_conn_failed_total",
+      "query": "net_conntrack_dialer_conn_failed_total"
+    },
+    {
+      "name": "metric_924",
+      "description": "Query for net_conntrack_listener_conn_accepted_total",
+      "query": "net_conntrack_listener_conn_accepted_total"
+    },
+    {
+      "name": "metric_925",
+      "description": "Query for net_conntrack_listener_conn_closed_total",
+      "query": "net_conntrack_listener_conn_closed_total"
+    },
+    {
+      "name": "metric_926",
+      "description": "Query for process_cpu_seconds_total",
+      "query": "process_cpu_seconds_total"
+    },
+    {
+      "name": "metric_927",
+      "description": "Query for process_max_fds",
+      "query": "process_max_fds"
+    },
+    {
+      "name": "metric_928",
+      "description": "Query for process_network_receive_bytes_total",
+      "query": "process_network_receive_bytes_total"
+    },
+    {
+      "name": "metric_929",
+      "description": "Query for process_network_transmit_bytes_total",
+      "query": "process_network_transmit_bytes_total"
+    },
+    {
+      "name": "metric_930",
+      "description": "Query for process_open_fds",
+      "query": "process_open_fds"
+    },
+    {
+      "name": "metric_931",
+      "description": "Query for process_resident_memory_bytes",
+      "query": "process_resident_memory_bytes"
+    },
+    {
+      "name": "metric_932",
+      "description": "Query for process_start_time_seconds",
+      "query": "process_start_time_seconds"
+    },
+    {
+      "name": "metric_933",
+      "description": "Query for process_virtual_memory_bytes",
+      "query": "process_virtual_memory_bytes"
+    },
+    {
+      "name": "metric_934",
+      "description": "Query for process_virtual_memory_max_bytes",
+      "query": "process_virtual_memory_max_bytes"
+    },
+    {
+      "name": "metric_935",
+      "description": "Query for prometheus_api_notification_active_subscribers",
+      "query": "prometheus_api_notification_active_subscribers"
+    },
+    {
+      "name": "metric_936",
+      "description": "Query for prometheus_api_notification_updates_dropped_total",
+      "query": "prometheus_api_notification_updates_dropped_total"
+    },
+    {
+      "name": "metric_937",
+      "description": "Query for prometheus_api_notification_updates_sent_total",
+      "query": "prometheus_api_notification_updates_sent_total"
+    },
+    {
+      "name": "metric_938",
+      "description": "Query for prometheus_build_info",
+      "query": "prometheus_build_info"
+    },
+    {
+      "name": "metric_939",
+      "description": "Query for prometheus_config_last_reload_success_timestamp_seconds",
+      "query": "prometheus_config_last_reload_success_timestamp_seconds"
+    },
+    {
+      "name": "metric_940",
+      "description": "Query for prometheus_config_last_reload_successful",
+      "query": "prometheus_config_last_reload_successful"
+    },
+    {
+      "name": "metric_941",
+      "description": "Query for prometheus_engine_queries",
+      "query": "prometheus_engine_queries"
+    },
+    {
+      "name": "metric_942",
+      "description": "Query for prometheus_engine_queries_concurrent_max",
+      "query": "prometheus_engine_queries_concurrent_max"
+    },
+    {
+      "name": "metric_943",
+      "description": "Query for prometheus_engine_query_duration_seconds",
+      "query": "prometheus_engine_query_duration_seconds"
+    },
+    {
+      "name": "metric_944",
+      "description": "Query for prometheus_engine_query_duration_seconds_count",
+      "query": "prometheus_engine_query_duration_seconds_count"
+    },
+    {
+      "name": "metric_945",
+      "description": "Query for prometheus_engine_query_duration_seconds_sum",
+      "query": "prometheus_engine_query_duration_seconds_sum"
+    },
+    {
+      "name": "metric_946",
+      "description": "Query for prometheus_engine_query_log_enabled",
+      "query": "prometheus_engine_query_log_enabled"
+    },
+    {
+      "name": "metric_947",
+      "description": "Query for prometheus_engine_query_log_failures_total",
+      "query": "prometheus_engine_query_log_failures_total"
+    },
+    {
+      "name": "metric_948",
+      "description": "Query for prometheus_engine_query_samples_total",
+      "query": "prometheus_engine_query_samples_total"
+    },
+    {
+      "name": "metric_949",
+      "description": "Query for prometheus_http_request_duration_seconds_bucket",
+      "query": "prometheus_http_request_duration_seconds_bucket"
+    },
+    {
+      "name": "metric_950",
+      "description": "Query for prometheus_http_request_duration_seconds_count",
+      "query": "prometheus_http_request_duration_seconds_count"
+    },
+    {
+      "name": "metric_951",
+      "description": "Query for prometheus_http_request_duration_seconds_sum",
+      "query": "prometheus_http_request_duration_seconds_sum"
+    },
+    {
+      "name": "metric_952",
+      "description": "Query for prometheus_http_requests_total",
+      "query": "prometheus_http_requests_total"
+    },
+    {
+      "name": "metric_953",
+      "description": "Query for prometheus_http_response_size_bytes_bucket",
+      "query": "prometheus_http_response_size_bytes_bucket"
+    },
+    {
+      "name": "metric_954",
+      "description": "Query for prometheus_http_response_size_bytes_count",
+      "query": "prometheus_http_response_size_bytes_count"
+    },
+    {
+      "name": "metric_955",
+      "description": "Query for prometheus_http_response_size_bytes_sum",
+      "query": "prometheus_http_response_size_bytes_sum"
+    },
+    {
+      "name": "metric_956",
+      "description": "Query for prometheus_notifications_alertmanagers_discovered",
+      "query": "prometheus_notifications_alertmanagers_discovered"
+    },
+    {
+      "name": "metric_957",
+      "description": "Query for prometheus_notifications_dropped_total",
+      "query": "prometheus_notifications_dropped_total"
+    },
+    {
+      "name": "metric_958",
+      "description": "Query for prometheus_notifications_queue_capacity",
+      "query": "prometheus_notifications_queue_capacity"
+    },
+    {
+      "name": "metric_959",
+      "description": "Query for prometheus_notifications_queue_length",
+      "query": "prometheus_notifications_queue_length"
+    },
+    {
+      "name": "metric_960",
+      "description": "Query for prometheus_ready",
+      "query": "prometheus_ready"
+    },
+    {
+      "name": "metric_961",
+      "description": "Query for prometheus_remote_read_handler_queries",
+      "query": "prometheus_remote_read_handler_queries"
+    },
+    {
+      "name": "metric_962",
+      "description": "Query for prometheus_remote_storage_exemplars_in_total",
+      "query": "prometheus_remote_storage_exemplars_in_total"
+    },
+    {
+      "name": "metric_963",
+      "description": "Query for prometheus_remote_storage_highest_timestamp_in_seconds",
+      "query": "prometheus_remote_storage_highest_timestamp_in_seconds"
+    },
+    {
+      "name": "metric_964",
+      "description": "Query for prometheus_remote_storage_histograms_in_total",
+      "query": "prometheus_remote_storage_histograms_in_total"
+    },
+    {
+      "name": "metric_965",
+      "description": "Query for prometheus_remote_storage_samples_in_total",
+      "query": "prometheus_remote_storage_samples_in_total"
+    },
+    {
+      "name": "metric_966",
+      "description": "Query for prometheus_remote_storage_string_interner_zero_reference_releases_total",
+      "query": "prometheus_remote_storage_string_interner_zero_reference_releases_total"
+    },
+    {
+      "name": "metric_967",
+      "description": "Query for prometheus_rule_evaluation_duration_seconds",
+      "query": "prometheus_rule_evaluation_duration_seconds"
+    },
+    {
+      "name": "metric_968",
+      "description": "Query for prometheus_rule_evaluation_duration_seconds_count",
+      "query": "prometheus_rule_evaluation_duration_seconds_count"
+    },
+    {
+      "name": "metric_969",
+      "description": "Query for prometheus_rule_evaluation_duration_seconds_sum",
+      "query": "prometheus_rule_evaluation_duration_seconds_sum"
+    },
+    {
+      "name": "metric_970",
+      "description": "Query for prometheus_rule_group_duration_seconds",
+      "query": "prometheus_rule_group_duration_seconds"
+    },
+    {
+      "name": "metric_971",
+      "description": "Query for prometheus_rule_group_duration_seconds_count",
+      "query": "prometheus_rule_group_duration_seconds_count"
+    },
+    {
+      "name": "metric_972",
+      "description": "Query for prometheus_rule_group_duration_seconds_sum",
+      "query": "prometheus_rule_group_duration_seconds_sum"
+    },
+    {
+      "name": "metric_973",
+      "description": "Query for prometheus_sd_azure_cache_hit_total",
+      "query": "prometheus_sd_azure_cache_hit_total"
+    },
+    {
+      "name": "metric_974",
+      "description": "Query for prometheus_sd_azure_failures_total",
+      "query": "prometheus_sd_azure_failures_total"
+    },
+    {
+      "name": "metric_975",
+      "description": "Query for prometheus_sd_consul_rpc_duration_seconds",
+      "query": "prometheus_sd_consul_rpc_duration_seconds"
+    },
+    {
+      "name": "metric_976",
+      "description": "Query for prometheus_sd_consul_rpc_duration_seconds_count",
+      "query": "prometheus_sd_consul_rpc_duration_seconds_count"
+    },
+    {
+      "name": "metric_977",
+      "description": "Query for prometheus_sd_consul_rpc_duration_seconds_sum",
+      "query": "prometheus_sd_consul_rpc_duration_seconds_sum"
+    },
+    {
+      "name": "metric_978",
+      "description": "Query for prometheus_sd_consul_rpc_failures_total",
+      "query": "prometheus_sd_consul_rpc_failures_total"
+    },
+    {
+      "name": "metric_979",
+      "description": "Query for prometheus_sd_discovered_targets",
+      "query": "prometheus_sd_discovered_targets"
+    },
+    {
+      "name": "metric_980",
+      "description": "Query for prometheus_sd_dns_lookup_failures_total",
+      "query": "prometheus_sd_dns_lookup_failures_total"
+    },
+    {
+      "name": "metric_981",
+      "description": "Query for prometheus_sd_dns_lookups_total",
+      "query": "prometheus_sd_dns_lookups_total"
+    },
+    {
+      "name": "metric_982",
+      "description": "Query for prometheus_sd_failed_configs",
+      "query": "prometheus_sd_failed_configs"
+    },
+    {
+      "name": "metric_983",
+      "description": "Query for prometheus_sd_file_read_errors_total",
+      "query": "prometheus_sd_file_read_errors_total"
+    },
+    {
+      "name": "metric_984",
+      "description": "Query for prometheus_sd_file_scan_duration_seconds",
+      "query": "prometheus_sd_file_scan_duration_seconds"
+    },
+    {
+      "name": "metric_985",
+      "description": "Query for prometheus_sd_file_scan_duration_seconds_count",
+      "query": "prometheus_sd_file_scan_duration_seconds_count"
+    },
+    {
+      "name": "metric_986",
+      "description": "Query for prometheus_sd_file_scan_duration_seconds_sum",
+      "query": "prometheus_sd_file_scan_duration_seconds_sum"
+    },
+    {
+      "name": "metric_987",
+      "description": "Query for prometheus_sd_file_watcher_errors_total",
+      "query": "prometheus_sd_file_watcher_errors_total"
+    },
+    {
+      "name": "metric_988",
+      "description": "Query for prometheus_sd_http_failures_total",
+      "query": "prometheus_sd_http_failures_total"
+    },
+    {
+      "name": "metric_989",
+      "description": "Query for prometheus_sd_kubernetes_events_total",
+      "query": "prometheus_sd_kubernetes_events_total"
+    },
+    {
+      "name": "metric_990",
+      "description": "Query for prometheus_sd_kubernetes_failures_total",
+      "query": "prometheus_sd_kubernetes_failures_total"
+    },
+    {
+      "name": "metric_991",
+      "description": "Query for prometheus_sd_kuma_fetch_duration_seconds",
+      "query": "prometheus_sd_kuma_fetch_duration_seconds"
+    },
+    {
+      "name": "metric_992",
+      "description": "Query for prometheus_sd_kuma_fetch_duration_seconds_count",
+      "query": "prometheus_sd_kuma_fetch_duration_seconds_count"
+    },
+    {
+      "name": "metric_993",
+      "description": "Query for prometheus_sd_kuma_fetch_duration_seconds_sum",
+      "query": "prometheus_sd_kuma_fetch_duration_seconds_sum"
+    },
+    {
+      "name": "metric_994",
+      "description": "Query for prometheus_sd_kuma_fetch_failures_total",
+      "query": "prometheus_sd_kuma_fetch_failures_total"
+    },
+    {
+      "name": "metric_995",
+      "description": "Query for prometheus_sd_kuma_fetch_skipped_updates_total",
+      "query": "prometheus_sd_kuma_fetch_skipped_updates_total"
+    },
+    {
+      "name": "metric_996",
+      "description": "Query for prometheus_sd_linode_failures_total",
+      "query": "prometheus_sd_linode_failures_total"
+    },
+    {
+      "name": "metric_997",
+      "description": "Query for prometheus_sd_nomad_failures_total",
+      "query": "prometheus_sd_nomad_failures_total"
+    },
+    {
+      "name": "metric_998",
+      "description": "Query for prometheus_sd_received_updates_total",
+      "query": "prometheus_sd_received_updates_total"
+    },
+    {
+      "name": "metric_999",
+      "description": "Query for prometheus_sd_updates_delayed_total",
+      "query": "prometheus_sd_updates_delayed_total"
+    }
+  ]
+}
