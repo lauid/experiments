@@ -37,13 +37,13 @@ public interface PrometheusService {
      * 
      * @param cluster 集群名
      * @param query PromQL查询语句
-     * @param startTime 开始时间
-     * @param endTime 结束时间
+     * @param startTime 开始时间（时间戳，毫秒）
+     * @param endTime 结束时间（时间戳，毫秒）
      * @param step 步长
      * @return 查询结果
      * @throws PrometheusException 查询异常
      */
-    PrometheusQueryResponse queryRange(String cluster, String query, String startTime, String endTime, String step) 
+    PrometheusQueryResponse queryRange(String cluster, String query, Long startTime, Long endTime, String step) 
             throws PrometheusException;
     
     /**
@@ -51,11 +51,11 @@ public interface PrometheusService {
      * 
      * @param cluster 集群名
      * @param query PromQL查询语句
-     * @param time 查询时间（可选）
+     * @param time 查询时间（时间戳，毫秒，可选）
      * @return 查询结果
      * @throws PrometheusException 查询异常
      */
-    PrometheusQueryResponse query(String cluster, String query, String time) throws PrometheusException;
+    PrometheusQueryResponse query(String cluster, String query, Long time) throws PrometheusException;
     
     /**
      * 检查Prometheus连接状态

@@ -50,19 +50,25 @@ public class PrometheusRepositoryImpl implements PrometheusRepository {
     }
 
     @Override
-    public PrometheusQueryResponse queryRange(String cluster, String query, String startTime, String endTime, String step)
+    public PrometheusQueryResponse queryRange(String cluster, String query, Long startTime, Long endTime, String step)
             throws PrometheusException {
+        // Prometheus API 期望秒级时间戳，直接传递 Long 值即可
+        String startTimeStr = startTime != null ? String.valueOf(startTime) : null;
+        String endTimeStr = endTime != null ? String.valueOf(endTime) : null;
+        
         String url = String.format("%s/api/v1/query_range?query=%s&start=%s&end=%s&step=%s",
-                config.getPrometheusBaseUrl(cluster), query, startTime, endTime, step);
+                config.getPrometheusBaseUrl(cluster), query, startTimeStr, endTimeStr, step);
         return executeQueryWithRetry(url, PrometheusQueryResponse.class, config.getMaxRetries(), config.getRetryDelay());
     }
 
     @Override
-    public PrometheusQueryResponse query(String cluster, String query, String time) throws PrometheusException {
+    public PrometheusQueryResponse query(String cluster, String query, Long time) throws PrometheusException {
         String baseUrl = config.getPrometheusBaseUrl(cluster);
         String url = String.format("%s/api/v1/query?query=%s", baseUrl, query);
-        if (time != null && !time.isEmpty()) {
-            url += "&time=" + time;
+        if (time != null) {
+            // Prometheus API 期望秒级时间戳，直接传递 Long 值即可
+            String timeStr = String.valueOf(time);
+            url += "&time=" + timeStr;
         }
         logger.info("Prometheus query URL: {}", url);
         logger.info("Base URL for cluster {}: {}", cluster, baseUrl);

@@ -6,6 +6,7 @@ import com.example.kdemo.dto.PrometheusQueryRequest;
 import com.example.kdemo.dto.PrometheusQueryResponse;
 import com.example.kdemo.exception.PrometheusException;
 import com.example.kdemo.service.PrometheusService;
+import com.example.kdemo.util.TimeUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -121,7 +122,11 @@ public class PrometheusController {
             @RequestParam(value = "cluster", required = false) String cluster) {
         log.debug("Received range query request for cluster {}: {} from {} to {} with step {}", cluster, query, start, end, step);
         try {
-            PrometheusQueryResponse response = prometheusService.queryRange(cluster, query, start, end, step);
+            // 将字符串时间转换为时间戳（毫秒）
+            Long startTime = TimeUtils.parseTimeParameter(start);
+            Long endTime = TimeUtils.parseTimeParameter(end);
+            
+            PrometheusQueryResponse response = prometheusService.queryRange(cluster, query, startTime, endTime, step);
             return ResponseEntity.ok(response);
         } catch (PrometheusException e) {
             log.error("Range query failed: {}", e.getMessage());
@@ -142,7 +147,11 @@ public class PrometheusController {
             @RequestParam String step) {
         log.debug("Received range query request for cluster {}: {} from {} to {} with step {}", cluster, query, start, end, step);
         try {
-            PrometheusQueryResponse response = prometheusService.queryRange(cluster, query, start, end, step);
+            // 将字符串时间转换为时间戳（毫秒）
+            Long startTime = TimeUtils.parseTimeParameter(start);
+            Long endTime = TimeUtils.parseTimeParameter(end);
+            
+            PrometheusQueryResponse response = prometheusService.queryRange(cluster, query, startTime, endTime, step);
             return ResponseEntity.ok(response);
         } catch (PrometheusException e) {
             log.error("Range query failed: {}", e.getMessage());
@@ -161,7 +170,10 @@ public class PrometheusController {
             @RequestParam(value = "cluster", required = false) String cluster) {
         log.debug("Received instant query request for cluster {}: {} at time {}", cluster, query, time);
         try {
-            PrometheusQueryResponse response = prometheusService.query(cluster, query, time);
+            // 将字符串时间转换为时间戳（毫秒）
+            Long timeParam = time != null ? TimeUtils.parseTimeParameter(time) : null;
+            
+            PrometheusQueryResponse response = prometheusService.query(cluster, query, timeParam);
             return ResponseEntity.ok(response);
         } catch (PrometheusException e) {
             log.error("Instant query failed: {}", e.getMessage());
@@ -180,7 +192,10 @@ public class PrometheusController {
             @RequestParam(required = false) String time) {
         log.debug("Received instant query request for cluster {}: {} at time {}", cluster, query, time);
         try {
-            PrometheusQueryResponse response = prometheusService.query(cluster, query, time);
+            // 将字符串时间转换为时间戳（毫秒）
+            Long timeParam = time != null ? TimeUtils.parseTimeParameter(time) : null;
+            
+            PrometheusQueryResponse response = prometheusService.query(cluster, query, timeParam);
             return ResponseEntity.ok(response);
         } catch (PrometheusException e) {
             log.error("Instant query failed: {}", e.getMessage());

@@ -22,10 +22,10 @@ public class PrometheusQueryRequest {
     private List<MetricQuery> queries;
     
     @JsonProperty("start_time")
-    private String startTime;
+    private Long startTime; // 时间戳（秒）
     
     @JsonProperty("end_time")
-    private String endTime;
+    private Long endTime; // 时间戳（秒）
     
     @JsonProperty("step")
     private String step;

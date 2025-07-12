@@ -16,17 +16,17 @@ public class PrometheusBatchRangeQueryRequest {
     private List<RangeMetricQuery> queries;
     
     @JsonProperty("start_time")
-    private String startTime;
+    private Long startTime; // 时间戳（秒）
     
     @JsonProperty("end_time")
-    private String endTime;
+    private Long endTime; // 时间戳（秒）
     
     @JsonProperty("step")
     private String step;
     
     public PrometheusBatchRangeQueryRequest() {}
     
-    public PrometheusBatchRangeQueryRequest(String cluster, List<RangeMetricQuery> queries, String startTime, String endTime, String step) {
+    public PrometheusBatchRangeQueryRequest(String cluster, List<RangeMetricQuery> queries, Long startTime, Long endTime, String step) {
         this.cluster = cluster;
         this.queries = queries;
         this.startTime = startTime;
@@ -51,19 +51,19 @@ public class PrometheusBatchRangeQueryRequest {
         this.queries = queries;
     }
     
-    public String getStartTime() {
+    public Long getStartTime() {
         return startTime;
     }
     
-    public void setStartTime(String startTime) {
+    public void setStartTime(Long startTime) {
         this.startTime = startTime;
     }
     
-    public String getEndTime() {
+    public Long getEndTime() {
         return endTime;
     }
     
-    public void setEndTime(String endTime) {
+    public void setEndTime(Long endTime) {
         this.endTime = endTime;
     }
     
@@ -92,10 +92,10 @@ public class PrometheusBatchRangeQueryRequest {
         private Map<String, String> labels;
         
         @JsonProperty("start_time")
-        private String startTime;
+        private Long startTime; // 时间戳（秒）
         
         @JsonProperty("end_time")
-        private String endTime;
+        private Long endTime; // 时间戳（秒）
         
         @JsonProperty("step")
         private String step;
@@ -110,7 +110,7 @@ public class PrometheusBatchRangeQueryRequest {
         }
         
         public RangeMetricQuery(String name, String query, String description, Map<String, String> labels, 
-                               String startTime, String endTime, String step) {
+                               Long startTime, Long endTime, String step) {
             this.name = name;
             this.query = query;
             this.description = description;
@@ -153,19 +153,19 @@ public class PrometheusBatchRangeQueryRequest {
             this.labels = labels;
         }
         
-        public String getStartTime() {
+        public Long getStartTime() {
             return startTime;
         }
         
-        public void setStartTime(String startTime) {
+        public void setStartTime(Long startTime) {
             this.startTime = startTime;
         }
         
-        public String getEndTime() {
+        public Long getEndTime() {
             return endTime;
         }
         
-        public void setEndTime(String endTime) {
+        public void setEndTime(Long endTime) {
             this.endTime = endTime;
         }
         

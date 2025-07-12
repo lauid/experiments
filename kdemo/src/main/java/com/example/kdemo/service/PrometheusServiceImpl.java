@@ -354,13 +354,13 @@ public class PrometheusServiceImpl implements PrometheusService {
     }
     
     @Override
-    public PrometheusQueryResponse queryRange(String cluster, String query, String startTime, String endTime, String step) 
+    public PrometheusQueryResponse queryRange(String cluster, String query, Long startTime, Long endTime, String step) 
             throws PrometheusException {
         return prometheusRepository.queryRange(cluster, query, startTime, endTime, step);
     }
     
     @Override
-    public PrometheusQueryResponse query(String cluster, String query, String time) throws PrometheusException {
+    public PrometheusQueryResponse query(String cluster, String query, Long time) throws PrometheusException {
         return prometheusRepository.query(cluster, query, time);
     }
     

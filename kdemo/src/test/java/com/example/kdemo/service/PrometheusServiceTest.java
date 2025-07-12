@@ -64,8 +64,8 @@ class PrometheusServiceTest {
         List<PrometheusQueryRequest.MetricQuery> queries = new ArrayList<>();
         queries.add(testQuery);
         request.setQueries(queries);
-        request.setStartTime("2024-01-01T00:00:00Z");
-        request.setEndTime("2024-01-01T01:00:00Z");
+        request.setStartTime(1640995200L); // 2024-01-01T00:00:00Z (秒级时间戳)
+        request.setEndTime(1640998800L);   // 2024-01-01T01:00:00Z (秒级时间戳)
         request.setStep("1m");
         when(prometheusRepository.query(eq("test-cluster"), eq(testQuery.getQuery()), isNull()))
                 .thenReturn(testResponse);
@@ -106,13 +106,13 @@ class PrometheusServiceTest {
 
     @Test
     void testQueryRange_Success() {
-        when(prometheusRepository.queryRange(anyString(), anyString(), anyString(), anyString(), anyString()))
+        when(prometheusRepository.queryRange(anyString(), anyString(), anyLong(), anyLong(), anyString()))
                 .thenReturn(testResponse);
         PrometheusQueryResponse response = prometheusService.queryRange(
                 "test-cluster",
                 "rate(container_cpu_usage_seconds_total[5m])",
-                "1640995200",
-                "1640998800",
+                1640995200L, // 2024-01-01T00:00:00Z (秒级时间戳)
+                1640998800L, // 2024-01-01T01:00:00Z (秒级时间戳)
                 "1m"
         );
         assert response == testResponse;
