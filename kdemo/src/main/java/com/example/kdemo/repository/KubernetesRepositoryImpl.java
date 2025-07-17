@@ -26,6 +26,8 @@ import io.kubernetes.client.openapi.models.V1Node;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import com.flipkart.zjsonpatch.JsonDiff;
+import io.kubernetes.client.common.KubernetesObject;
+import io.kubernetes.client.common.KubernetesListObject;
 
 import java.util.List;
 import java.util.Map;
@@ -36,10 +38,9 @@ import io.kubernetes.client.util.generic.KubernetesApiResponse;
 public class KubernetesRepositoryImpl implements KubernetesRepository {
 
     private final Map<String, CoreV1Api> apiClients;
-    private final Map<String, ApiextensionsV1Api> crdApiClients;
-    private final Map<String, GenericKubernetesApi<Application, ApplicationList>> applicationApis;
-    private final Map<String, GenericKubernetesApi<Microservice, MicroserviceList>> microserviceApis;
-    private final Map<String, GenericKubernetesApi<GPU, GPUList>> gpuApis;
+    // 通用 API 缓存，key: apiClient+kind
+    private final Map<String, GenericKubernetesApi<?, ?>> genericApis = new ConcurrentHashMap<>();
+    private final Map<String, ApiClient> apiClientMap = new ConcurrentHashMap<>();
     private final ApiClient defaultApiClient;
     private static final String DEFAULT_CLUSTER = "cluster-local";
 
@@ -49,48 +50,39 @@ public class KubernetesRepositoryImpl implements KubernetesRepository {
     @Autowired
     public KubernetesRepositoryImpl(ApiClient apiClient) {
         this.defaultApiClient = apiClient;
+        this.apiClientMap.put(DEFAULT_CLUSTER, apiClient);
         this.apiClients = new ConcurrentHashMap<>();
-        this.crdApiClients = new ConcurrentHashMap<>();
-        this.applicationApis = new ConcurrentHashMap<>();
-        this.microserviceApis = new ConcurrentHashMap<>();
-        this.gpuApis = new ConcurrentHashMap<>();
-        
-        // 初始化默认集群
         initializeCluster(DEFAULT_CLUSTER);
     }
 
     private void initializeCluster(String clusterName) {
-        CoreV1Api api = new CoreV1Api(defaultApiClient);
-        ApiextensionsV1Api crdApi = new ApiextensionsV1Api(defaultApiClient);
-        
+        ApiClient apiClient = apiClientMap.getOrDefault(clusterName, defaultApiClient);
+        CoreV1Api api = new CoreV1Api(apiClient);
         apiClients.put(clusterName, api);
-        crdApiClients.put(clusterName, crdApi);
-        
-        applicationApis.put(clusterName, new GenericKubernetesApi<>(
+        // 初始化默认集群的 GenericKubernetesApi
+        genericApis.put(clusterName + ":Application", new GenericKubernetesApi<>(
                 Application.class,
                 ApplicationList.class,
                 "example.com",
                 "v1",
                 "applications",
-                defaultApiClient
+                apiClient
         ));
-        
-        microserviceApis.put(clusterName, new GenericKubernetesApi<>(
+        genericApis.put(clusterName + ":Microservice", new GenericKubernetesApi<>(
                 Microservice.class,
                 MicroserviceList.class,
                 "example.com",
                 "v1",
                 "microservices",
-                defaultApiClient
+                apiClient
         ));
-        
-        gpuApis.put(clusterName, new GenericKubernetesApi<>(
+        genericApis.put(clusterName + ":GPU", new GenericKubernetesApi<>(
                 GPU.class,
                 GPUList.class,
                 "example.com",
                 "v1",
                 "gpus",
-                defaultApiClient
+                apiClient
         ));
     }
 
@@ -98,44 +90,193 @@ public class KubernetesRepositoryImpl implements KubernetesRepository {
         return cluster != null && !cluster.isEmpty() ? cluster : DEFAULT_CLUSTER;
     }
 
+    private ApiClient getApiClient(String cluster) {
+        String clusterName = getClusterName(cluster);
+        return apiClientMap.getOrDefault(clusterName, defaultApiClient);
+    }
+
+    /**
+     * 获取指定集群的CoreV1Api实例，若不存在则新建并缓存
+     */
     private CoreV1Api getApi(String cluster) {
         String clusterName = getClusterName(cluster);
-        if (!apiClients.containsKey(clusterName)) {
-            initializeCluster(clusterName);
-        }
-        return apiClients.get(clusterName);
+        return apiClients.computeIfAbsent(clusterName, k -> new CoreV1Api(getApiClient(clusterName)));
     }
 
-    private ApiextensionsV1Api getCrdApi(String cluster) {
-        String clusterName = getClusterName(cluster);
-        if (!crdApiClients.containsKey(clusterName)) {
-            initializeCluster(clusterName);
-        }
-        return crdApiClients.get(clusterName);
+    // 通用 API 缓存，key: apiClient+kind
+    @SuppressWarnings("unchecked")
+    private <T extends KubernetesObject, L extends KubernetesListObject> GenericKubernetesApi<T, L> getGenericApi(ApiClient apiClient, Class<T> resourceClass, Class<L> listClass, String plural) {
+        String key = apiClient.hashCode() + ":" + resourceClass.getSimpleName();
+        return (GenericKubernetesApi<T, L>) genericApis.computeIfAbsent(key, k -> new GenericKubernetesApi<>(
+            resourceClass, listClass, "example.com", "v1", plural, apiClient));
     }
 
-    private GenericKubernetesApi<Application, ApplicationList> getApplicationApi(String cluster) {
-        String clusterName = getClusterName(cluster);
-        if (!applicationApis.containsKey(clusterName)) {
-            initializeCluster(clusterName);
+    /**
+     * 统一处理KubernetesApiResponse，抛出带code的KubernetesException（支持资源和列表对象）
+     * errorCode优先取response.getStatus().getReason()，否则用http code
+     */
+    private <T extends io.kubernetes.client.common.KubernetesType> T handleApiResponse(io.kubernetes.client.util.generic.KubernetesApiResponse<T> response, String action, String resourceType, String name) {
+        if (!response.isSuccess()) {
+            int code = response.getHttpStatusCode();
+            String reason = null;
+            if (response.getStatus() != null && response.getStatus().getReason() != null && !response.getStatus().getReason().isEmpty()) {
+                reason = response.getStatus().getReason();
+            }
+            String errorCode = reason != null ? reason : String.valueOf(code);
+            String msg = "Failed to " + action + " " + resourceType + (name != null ? (": " + name) : "");
+            if (code == 404) {
+                throw new KubernetesException(msg, errorCode, action, null);
+            } else {
+                throw new KubernetesException(msg, errorCode, action, null);
+            }
         }
-        return applicationApis.get(clusterName);
+        return response.getObject();
     }
 
-    private GenericKubernetesApi<Microservice, MicroserviceList> getMicroserviceApi(String cluster) {
-        String clusterName = getClusterName(cluster);
-        if (!microserviceApis.containsKey(clusterName)) {
-            initializeCluster(clusterName);
+    // 通用 list
+    @SuppressWarnings("unchecked")
+    private <T extends KubernetesObject, L extends KubernetesListObject> List<T> listResources(ApiClient apiClient, String namespace, Class<T> resourceClass, Class<L> listClass, String plural) {
+        try {
+            GenericKubernetesApi<T, L> api = getGenericApi(apiClient, resourceClass, listClass, plural);
+            if (namespace != null && !namespace.isEmpty()) {
+                return ((List<T>) handleApiResponse(api.list(namespace), "list", resourceClass.getSimpleName(), null).getItems());
+            } else {
+                return ((List<T>) handleApiResponse(api.list(), "list", resourceClass.getSimpleName(), null).getItems());
+            }
+        } catch (Exception e) {
+            throw new KubernetesException("Failed to list resources: " + resourceClass.getSimpleName(), "", "listResources", e);
         }
-        return microserviceApis.get(clusterName);
     }
 
-    private GenericKubernetesApi<GPU, GPUList> getGPUApi(String cluster) {
-        String clusterName = getClusterName(cluster);
-        if (!gpuApis.containsKey(clusterName)) {
-            initializeCluster(clusterName);
+    // 通用 get
+    private <T extends KubernetesObject, L extends KubernetesListObject> T getResource(ApiClient apiClient, String namespace, String name, Class<T> resourceClass, Class<L> listClass, String plural) {
+        try {
+            GenericKubernetesApi<T, L> api = getGenericApi(apiClient, resourceClass, listClass, plural);
+            io.kubernetes.client.util.generic.KubernetesApiResponse<T> response;
+            if (namespace != null && !namespace.isEmpty()) {
+                response = api.get(namespace, name);
+            } else {
+                response = api.get(name);
+            }
+            return handleApiResponse(response, "get", resourceClass.getSimpleName(), name);
+        } catch (KubernetesException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new KubernetesException("Failed to get resource: " + resourceClass.getSimpleName() + ": " + name, "", "getResource", e);
         }
-        return gpuApis.get(clusterName);
+    }
+
+    // 通用 create
+    private <T extends KubernetesObject, L extends KubernetesListObject> T createResource(ApiClient apiClient, String namespace, T obj, Class<T> resourceClass, Class<L> listClass, String plural) {
+        try {
+            GenericKubernetesApi<T, L> api = getGenericApi(apiClient, resourceClass, listClass, plural);
+            io.kubernetes.client.util.generic.KubernetesApiResponse<T> response;
+            if (namespace != null && !namespace.isEmpty()) {
+                response = api.create(namespace, obj, new CreateOptions());
+            } else {
+                response = api.create(obj, new CreateOptions());
+            }
+            return handleApiResponse(response, "create", resourceClass.getSimpleName(), null);
+        } catch (KubernetesException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new KubernetesException("Failed to create resource: " + resourceClass.getSimpleName(), "", "createResource", e);
+        }
+    }
+
+    // 通用 update
+    private <T extends KubernetesObject, L extends KubernetesListObject> T updateResource(ApiClient apiClient, String namespace, String name, T obj, Class<T> resourceClass, Class<L> listClass, String plural) {
+        try {
+            GenericKubernetesApi<T, L> api = getGenericApi(apiClient, resourceClass, listClass, plural);
+            io.kubernetes.client.util.generic.KubernetesApiResponse<T> response = api.update(obj, new UpdateOptions());
+            return handleApiResponse(response, "update", resourceClass.getSimpleName(), name);
+        } catch (KubernetesException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new KubernetesException("Failed to update resource: " + resourceClass.getSimpleName() + ": " + name, "", "updateResource", e);
+        }
+    }
+
+    // 通用 delete
+    private <T extends KubernetesObject, L extends KubernetesListObject> void deleteResource(ApiClient apiClient, String namespace, String name, Class<T> resourceClass, Class<L> listClass, String plural) {
+        try {
+            GenericKubernetesApi<T, L> api = getGenericApi(apiClient, resourceClass, listClass, plural);
+            io.kubernetes.client.util.generic.KubernetesApiResponse<T> response;
+            if (namespace != null && !namespace.isEmpty()) {
+                response = api.delete(namespace, name);
+            } else {
+                response = api.delete(name);
+            }
+            handleApiResponse(response, "delete", resourceClass.getSimpleName(), name);
+        } catch (KubernetesException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new KubernetesException("Failed to delete resource: " + resourceClass.getSimpleName() + ": " + name, "", "deleteResource", e);
+        }
+    }
+
+    // Application
+    @Override
+    public List<Application> getApplications(ApiClient apiClient, String namespace) {
+        return listResources(apiClient, namespace, Application.class, ApplicationList.class, "applications");
+    }
+    @Override
+    public Application getApplication(ApiClient apiClient, String namespace, String name) {
+        return getResource(apiClient, namespace, name, Application.class, ApplicationList.class, "applications");
+    }
+    @Override
+    public Application createApplication(ApiClient apiClient, String namespace, Application application) {
+        return createResource(apiClient, namespace, application, Application.class, ApplicationList.class, "applications");
+    }
+    @Override
+    public Application updateApplication(ApiClient apiClient, String namespace, String name, Application application) {
+        return updateResource(apiClient, namespace, name, application, Application.class, ApplicationList.class, "applications");
+    }
+    @Override
+    public void deleteApplication(ApiClient apiClient, String namespace, String name) {
+        deleteResource(apiClient, namespace, name, Application.class, ApplicationList.class, "applications");
+    }
+    // Microservice
+    @Override
+    public List<Microservice> getMicroservices(ApiClient apiClient, String namespace) {
+        return listResources(apiClient, namespace, Microservice.class, MicroserviceList.class, "microservices");
+    }
+    @Override
+    public Microservice getMicroservice(ApiClient apiClient, String namespace, String name) {
+        return getResource(apiClient, namespace, name, Microservice.class, MicroserviceList.class, "microservices");
+    }
+    @Override
+    public Microservice createMicroservice(ApiClient apiClient, String namespace, Microservice microservice) {
+        return createResource(apiClient, namespace, microservice, Microservice.class, MicroserviceList.class, "microservices");
+    }
+    @Override
+    public Microservice updateMicroservice(ApiClient apiClient, String namespace, String name, Microservice microservice) {
+        return updateResource(apiClient, namespace, name, microservice, Microservice.class, MicroserviceList.class, "microservices");
+    }
+    @Override
+    public void deleteMicroservice(ApiClient apiClient, String namespace, String name) {
+        deleteResource(apiClient, namespace, name, Microservice.class, MicroserviceList.class, "microservices");
+    }
+    // GPU
+    @Override
+    public List<GPU> getGPUs(ApiClient apiClient, String namespace) {
+        return listResources(apiClient, namespace, GPU.class, GPUList.class, "gpus");
+    }
+    @Override
+    public GPU getGPU(ApiClient apiClient, String namespace, String name) {
+        return getResource(apiClient, namespace, name, GPU.class, GPUList.class, "gpus");
+    }
+    @Override
+    public GPU createGPU(ApiClient apiClient, String namespace, GPU gpu) {
+        return createResource(apiClient, namespace, gpu, GPU.class, GPUList.class, "gpus");
+    }
+    @Override
+    public GPU updateGPU(ApiClient apiClient, String namespace, String name, GPU gpu) {
+        return updateResource(apiClient, namespace, name, gpu, GPU.class, GPUList.class, "gpus");
+    }
+    @Override
+    public void deleteGPU(ApiClient apiClient, String namespace, String name) {
+        deleteResource(apiClient, namespace, name, GPU.class, GPUList.class, "gpus");
     }
 
     @Override
@@ -171,313 +312,35 @@ public class KubernetesRepositoryImpl implements KubernetesRepository {
     }
 
     @Override
-    public V1CustomResourceDefinitionList getCustomResourceDefinitions(String cluster) {
+    public V1CustomResourceDefinitionList getCustomResourceDefinitions(ApiClient apiClient) {
         try {
-            ApiextensionsV1Api crdApi = getCrdApi(cluster);
+            ApiextensionsV1Api crdApi = getCrdApi(apiClient);
             return crdApi.listCustomResourceDefinition().execute();
         } catch (ApiException e) {
-            throw new KubernetesException("Failed to get CRDs", getClusterName(cluster), "listCRDs", e);
+            throw new KubernetesException("Failed to get CRDs", "", "listCRDs", e);
         }
     }
 
     @Override
-    public V1CustomResourceDefinition getCustomResourceDefinition(String cluster, String name) {
+    public V1CustomResourceDefinition getCustomResourceDefinition(ApiClient apiClient, String name) {
         try {
-            ApiextensionsV1Api crdApi = getCrdApi(cluster);
+            ApiextensionsV1Api crdApi = getCrdApi(apiClient);
             return crdApi.readCustomResourceDefinition(name).execute();
         } catch (ApiException e) {
-            throw new ResourceNotFoundException("CRD", name, getClusterName(cluster));
+            throw new ResourceNotFoundException("CRD", name, "");
         }
     }
 
     @Override
-    public V1CustomResourceDefinition createCustomResourceDefinition(String cluster, String crdYaml) {
+    public V1CustomResourceDefinition createCustomResourceDefinition(ApiClient apiClient, String crdYaml) {
         try {
-            ApiextensionsV1Api crdApi = getCrdApi(cluster);
+            ApiextensionsV1Api crdApi = getCrdApi(apiClient);
             ObjectMapper mapper = new ObjectMapper();
             JsonNode crdJson = mapper.readTree(crdYaml);
             V1CustomResourceDefinition crd = mapper.treeToValue(crdJson, V1CustomResourceDefinition.class);
             return crdApi.createCustomResourceDefinition(crd).execute();
         } catch (Exception e) {
-            throw new KubernetesException("Failed to create CRD", getClusterName(cluster), "createCRD", e);
-        }
-    }
-
-    @Override
-    public List<Application> getApplications(String cluster, String namespace) {
-        try {
-            GenericKubernetesApi<Application, ApplicationList> api = getApplicationApi(cluster);
-            if (namespace != null && !namespace.isEmpty()) {
-                return api.list(namespace).getObject().getItems();
-            } else {
-                return api.list().getObject().getItems();
-            }
-        } catch (Exception e) {
-            throw new KubernetesException("Failed to get applications", getClusterName(cluster), "listApplications", e);
-        }
-    }
-
-    @Override
-    public Application getApplication(String cluster, String namespace, String name) {
-        try {
-            GenericKubernetesApi<Application, ApplicationList> api = getApplicationApi(cluster);
-            Application application;
-            if (namespace != null && !namespace.isEmpty()) {
-                application = api.get(namespace, name).getObject();
-            } else {
-                application = api.get(name).getObject();
-            }
-            if (application == null) {
-                throw new ResourceNotFoundException("Application", name, namespace, getClusterName(cluster));
-            }
-            return application;
-        } catch (ResourceNotFoundException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new KubernetesException("Failed to get application: " + name, 
-                                        getClusterName(cluster), "getApplication", e);
-        }
-    }
-
-    @Override
-    public Application createApplication(String cluster, String namespace, Application application) {
-        try {
-            GenericKubernetesApi<Application, ApplicationList> api = getApplicationApi(cluster);
-            if (namespace != null && !namespace.isEmpty()) {
-                return api.create(namespace, application, new CreateOptions()).getObject();
-            } else {
-                return api.create(application, new CreateOptions()).getObject();
-            }
-        } catch (Exception e) {
-            throw new KubernetesException("Failed to create application", getClusterName(cluster), "createApplication", e);
-        }
-    }
-
-    @Override
-    public Application updateApplication(String cluster, String namespace, String name, Application application) {
-        try {
-            GenericKubernetesApi<Application, ApplicationList> api = getApplicationApi(cluster);
-            return api.update(application, new UpdateOptions()).getObject();
-        } catch (Exception e) {
-            throw new KubernetesException("Failed to update application: " + name, 
-                                        getClusterName(cluster), "updateApplication", e);
-        }
-    }
-
-    @Override
-    public void deleteApplication(String cluster, String namespace, String name) {
-        try {
-            GenericKubernetesApi<Application, ApplicationList> api = getApplicationApi(cluster);
-            if (namespace != null && !namespace.isEmpty()) {
-                api.delete(namespace, name);
-            } else {
-                api.delete(name);
-            }
-        } catch (Exception e) {
-            throw new KubernetesException("Failed to delete application: " + name, 
-                                        getClusterName(cluster), "deleteApplication", e);
-        }
-    }
-
-    @Override
-    public List<Microservice> getMicroservices(String cluster, String namespace) {
-        try {
-            GenericKubernetesApi<Microservice, MicroserviceList> api = getMicroserviceApi(cluster);
-            if (namespace != null && !namespace.isEmpty()) {
-                return api.list(namespace).getObject().getItems();
-            } else {
-                return api.list().getObject().getItems();
-            }
-        } catch (Exception e) {
-            throw new KubernetesException("Failed to get microservices", getClusterName(cluster), "listMicroservices", e);
-        }
-    }
-
-    @Override
-    public Microservice getMicroservice(String cluster, String namespace, String name) {
-        try {
-            GenericKubernetesApi<Microservice, MicroserviceList> api = getMicroserviceApi(cluster);
-            Microservice microservice;
-            if (namespace != null && !namespace.isEmpty()) {
-                microservice = api.get(namespace, name).getObject();
-            } else {
-                microservice = api.get(name).getObject();
-            }
-            if (microservice == null) {
-                throw new ResourceNotFoundException("Microservice", name, namespace, getClusterName(cluster));
-            }
-            return microservice;
-        } catch (ResourceNotFoundException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new KubernetesException("Failed to get microservice: " + name, 
-                                        getClusterName(cluster), "getMicroservice", e);
-        }
-    }
-
-    @Override
-    public Microservice createMicroservice(String cluster, String namespace, Microservice microservice) {
-        try {
-            GenericKubernetesApi<Microservice, MicroserviceList> api = getMicroserviceApi(cluster);
-            if (namespace != null && !namespace.isEmpty()) {
-                return api.create(namespace, microservice, new CreateOptions()).getObject();
-            } else {
-                return api.create(microservice, new CreateOptions()).getObject();
-            }
-        } catch (Exception e) {
-            throw new KubernetesException("Failed to create microservice", getClusterName(cluster), "createMicroservice", e);
-        }
-    }
-
-    @Override
-    public Microservice updateMicroservice(String cluster, String namespace, String name, Microservice microservice) {
-        try {
-            GenericKubernetesApi<Microservice, MicroserviceList> api = getMicroserviceApi(cluster);
-            return api.update(microservice, new UpdateOptions()).getObject();
-        } catch (Exception e) {
-            throw new KubernetesException("Failed to update microservice: " + name, 
-                                        getClusterName(cluster), "updateMicroservice", e);
-        }
-    }
-
-    @Override
-    public void deleteMicroservice(String cluster, String namespace, String name) {
-        try {
-            GenericKubernetesApi<Microservice, MicroserviceList> api = getMicroserviceApi(cluster);
-            if (namespace != null && !namespace.isEmpty()) {
-                api.delete(namespace, name);
-            } else {
-                api.delete(name);
-            }
-        } catch (Exception e) {
-            throw new KubernetesException("Failed to delete microservice: " + name, 
-                                        getClusterName(cluster), "deleteMicroservice", e);
-        }
-    }
-
-    @Override
-    public List<GPU> getGPUs(String cluster, String namespace) {
-        try {
-            GenericKubernetesApi<GPU, GPUList> api = getGPUApi(cluster);
-            if (namespace != null && !namespace.isEmpty()) {
-                return api.list(namespace).getObject().getItems();
-            } else {
-                return api.list().getObject().getItems();
-            }
-        } catch (Exception e) {
-            e.printStackTrace(); // 增强日志
-            System.err.println("[getGPUs] Exception: " + e.getMessage());
-            for (StackTraceElement ste : e.getStackTrace()) {
-                System.err.println(ste.toString());
-            }
-            try {
-                java.nio.file.Files.writeString(
-                    java.nio.file.Paths.get("gpu-get-error.log"),
-                    java.time.LocalDateTime.now() + "\n" + e.toString() + "\n" + java.util.Arrays.toString(e.getStackTrace()) + "\n",
-                    java.nio.file.StandardOpenOption.CREATE, java.nio.file.StandardOpenOption.APPEND
-                );
-            } catch (Exception ignore) {}
-            throw new KubernetesException("Failed to get GPUs: " + e.getMessage(), getClusterName(cluster), "listGPUs", e);
-        }
-    }
-
-    @Override
-    public GPU getGPU(String cluster, String namespace, String name) {
-        try {
-            GenericKubernetesApi<GPU, GPUList> api = getGPUApi(cluster);
-            GPU gpu;
-            if (namespace != null && !namespace.isEmpty()) {
-                gpu = api.get(namespace, name).getObject();
-            } else {
-                gpu = api.get(name).getObject();
-            }
-            if (gpu == null) {
-                throw new ResourceNotFoundException("GPU", name, namespace, getClusterName(cluster));
-            }
-            return gpu;
-        } catch (ResourceNotFoundException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new KubernetesException("Failed to get GPU: " + name, 
-                                        getClusterName(cluster), "getGPU", e);
-        }
-    }
-
-    @Override
-    public GPU createGPU(String cluster, String namespace, GPU gpu) {
-        try {
-            GenericKubernetesApi<GPU, GPUList> api = getGPUApi(cluster);
-            KubernetesApiResponse<GPU> response;
-            if (namespace != null && !namespace.isEmpty()) {
-                response = api.create(namespace, gpu, new CreateOptions());
-            } else {
-                response = api.create(gpu, new CreateOptions());
-            }
-            if (response == null) {
-                throw new KubernetesException("K8s API returned null response", getClusterName(cluster), "createGPU");
-            }
-            if (!response.isSuccess()) {
-                String status = response.getStatus() != null ? response.getStatus().toString() : "null";
-                throw new KubernetesException("K8s API error: " + status, getClusterName(cluster), "createGPU");
-            }
-            if (response.getObject() == null) {
-                String status = response.getStatus() != null ? response.getStatus().toString() : "null";
-                throw new KubernetesException("K8s API returned null object, status: " + status, getClusterName(cluster), "createGPU");
-            }
-            return response.getObject();
-        } catch (Exception e) {
-            // 增强日志
-            System.err.println("[createGPU] Exception: " + e.getMessage());
-            e.printStackTrace();
-            if (e instanceof io.kubernetes.client.openapi.ApiException) {
-                io.kubernetes.client.openapi.ApiException apiEx = (io.kubernetes.client.openapi.ApiException) e;
-                System.err.println("[createGPU] ApiException responseBody: " + apiEx.getResponseBody());
-            }
-            // 透传详细错误信息
-            String detail = e.getMessage();
-            if (e instanceof io.kubernetes.client.openapi.ApiException) {
-                io.kubernetes.client.openapi.ApiException apiEx = (io.kubernetes.client.openapi.ApiException) e;
-                detail += ", responseBody: " + apiEx.getResponseBody();
-            }
-            throw new KubernetesException("Failed to create GPU: " + detail, getClusterName(cluster), "createGPU", e);
-        }
-    }
-
-    @Override
-    public GPU updateGPU(String cluster, String namespace, String name, GPU gpu) {
-        try {
-            if (gpu == null) {
-                throw new IllegalArgumentException("GPU object cannot be null");
-            }
-            
-            GenericKubernetesApi<GPU, GPUList> api = getGPUApi(cluster);
-            GPU updated = api.update(gpu, new UpdateOptions()).getObject();
-            
-            if (updated == null) {
-                throw new KubernetesException("Failed to update GPU: " + name, 
-                                            getClusterName(cluster), "updateGPU", 
-                                            new Exception("Update returned null"));
-            }
-            
-            return updated;
-        } catch (Exception e) {
-            throw new KubernetesException("Failed to update GPU: " + name, 
-                                        getClusterName(cluster), "updateGPU", e);
-        }
-    }
-
-    @Override
-    public void deleteGPU(String cluster, String namespace, String name) {
-        try {
-            GenericKubernetesApi<GPU, GPUList> api = getGPUApi(cluster);
-            if (namespace != null && !namespace.isEmpty()) {
-                api.delete(namespace, name);
-            } else {
-                api.delete(name);
-            }
-        } catch (Exception e) {
-            throw new KubernetesException("Failed to delete GPU: " + name, 
-                                        getClusterName(cluster), "deleteGPU", e);
+            throw new KubernetesException("Failed to create CRD", "", "createCRD", e);
         }
     }
 
@@ -545,5 +408,9 @@ public class KubernetesRepositoryImpl implements KubernetesRepository {
         } catch (Exception e) {
             throw new KubernetesException("Failed to auto patch node (subresource=" + subresource + "): " + newNode.getMetadata().getName(), getClusterName(cluster), "patchNodeAuto", e);
         }
+    }
+
+    private ApiextensionsV1Api getCrdApi(ApiClient apiClient) {
+        return new ApiextensionsV1Api(apiClient);
     }
 } 

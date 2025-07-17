@@ -8,10 +8,14 @@ import com.example.kdemo.repository.KubernetesRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import io.kubernetes.client.openapi.ApiClient;
+import java.util.concurrent.ConcurrentHashMap;
 
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import io.kubernetes.client.openapi.models.V1NamespaceList;
+import io.kubernetes.client.openapi.models.V1PodList;
 
 @Service
 public class KubernetesService {
@@ -19,15 +23,24 @@ public class KubernetesService {
     private final KubernetesRepository repository;
     private final ObjectMapper objectMapper;
     private static final String DEFAULT_CLUSTER = "cluster-local";
+    private final Map<String, ApiClient> apiClientMap = new ConcurrentHashMap<>();
+    private final ApiClient defaultApiClient;
 
     @Autowired
-    public KubernetesService(KubernetesRepository repository, ObjectMapper objectMapper) {
+    public KubernetesService(KubernetesRepository repository, ObjectMapper objectMapper, ApiClient defaultApiClient) {
         this.repository = repository;
         this.objectMapper = objectMapper;
+        this.defaultApiClient = defaultApiClient;
+        apiClientMap.put("cluster-local", defaultApiClient);
+        // 可在此注册其他集群 ApiClient
     }
 
     private String getClusterName(String cluster) {
         return cluster != null && !cluster.isEmpty() ? cluster : DEFAULT_CLUSTER;
+    }
+
+    private ApiClient getApiClient(String cluster) {
+        return apiClientMap.getOrDefault(cluster, defaultApiClient);
     }
 
     /**
@@ -44,10 +57,11 @@ public class KubernetesService {
      */
     public NamespaceInfo getNamespaces(String cluster) {
         String clusterName = getClusterName(cluster);
-        List<String> namespaces = repository.getNamespaces(clusterName).getItems().stream()
+        V1NamespaceList namespaces = repository.getNamespaces(clusterName);
+        List<String> namespaceNames = namespaces.getItems().stream()
                 .map(namespace -> namespace.getMetadata().getName())
                 .collect(Collectors.toList());
-        return new NamespaceInfo(clusterName, namespaces);
+        return new NamespaceInfo(clusterName, namespaceNames);
     }
 
     /**
@@ -55,10 +69,11 @@ public class KubernetesService {
      */
     public PodInfo getPodsInNamespace(String cluster, String namespace) {
         String clusterName = getClusterName(cluster);
-        List<String> pods = repository.getPodsInNamespace(clusterName, namespace).getItems().stream()
+        V1PodList pods = repository.getPodsInNamespace(clusterName, namespace);
+        List<String> podNames = pods.getItems().stream()
                 .map(pod -> pod.getMetadata().getName())
                 .collect(Collectors.toList());
-        return new PodInfo(clusterName, namespace, pods);
+        return new PodInfo(clusterName, namespace, podNames);
     }
 
     /**
@@ -89,19 +104,19 @@ public class KubernetesService {
      * 获取所有CRD
      */
     public CrdInfo getCustomResourceDefinitions(String cluster) {
-        String clusterName = getClusterName(cluster);
-        List<String> crds = repository.getCustomResourceDefinitions(clusterName).getItems().stream()
+        ApiClient apiClient = getApiClient(cluster);
+        List<String> crds = repository.getCustomResourceDefinitions(apiClient).getItems().stream()
                 .map(crd -> crd.getMetadata().getName())
                 .collect(Collectors.toList());
-        return new CrdInfo(clusterName, crds);
+        return new CrdInfo(getClusterName(cluster), crds);
     }
 
     /**
      * 获取指定CRD的详细信息
      */
     public Map<String, Object> getCustomResourceDefinition(String cluster, String name) {
-        String clusterName = getClusterName(cluster);
-        var crd = repository.getCustomResourceDefinition(clusterName, name);
+        ApiClient apiClient = getApiClient(cluster);
+        var crd = repository.getCustomResourceDefinition(apiClient, name);
         return Map.of(
                 "name", crd.getMetadata().getName(),
                 "group", crd.getSpec().getGroup(),
@@ -117,12 +132,12 @@ public class KubernetesService {
      * 创建CRD
      */
     public OperationResult createCustomResourceDefinition(String cluster, String crdYaml) {
-        String clusterName = getClusterName(cluster);
+        ApiClient apiClient = getApiClient(cluster);
         try {
-            var createdCrd = repository.createCustomResourceDefinition(clusterName, crdYaml);
-            return OperationResult.success(clusterName, createdCrd.getMetadata().getName(), "CRD created successfully");
+            var createdCrd = repository.createCustomResourceDefinition(apiClient, crdYaml);
+            return OperationResult.success(getClusterName(cluster), createdCrd.getMetadata().getName(), "CRD created successfully");
         } catch (Exception e) {
-            return OperationResult.failure(clusterName, "CRD", "Failed to create CRD", e.getMessage());
+            return OperationResult.failure(getClusterName(cluster), "CRD", "Failed to create CRD", e.getMessage());
         }
     }
 
@@ -132,30 +147,30 @@ public class KubernetesService {
      * 获取所有 Application 资源
      */
     public ResourceResponse<Application> getApplications(String cluster, String namespace) {
-        String clusterName = getClusterName(cluster);
-        List<Application> applications = repository.getApplications(clusterName, namespace);
-        return new ResourceResponse<>(clusterName, namespace, applications);
+        ApiClient apiClient = getApiClient(cluster);
+        List<Application> applications = repository.getApplications(apiClient, namespace);
+        return new ResourceResponse<>(cluster, namespace, applications);
     }
 
     /**
      * 获取指定的 Application 资源
      */
     public Application getApplication(String cluster, String namespace, String name) {
-        String clusterName = getClusterName(cluster);
-        return repository.getApplication(clusterName, namespace, name);
+        ApiClient apiClient = getApiClient(cluster);
+        return repository.getApplication(apiClient, namespace, name);
     }
 
     /**
      * 创建 Application 资源
      */
     public OperationResult createApplication(String cluster, String namespace, String resourceYaml) {
-        String clusterName = getClusterName(cluster);
+        ApiClient apiClient = getApiClient(cluster);
         try {
             Application application = objectMapper.readValue(resourceYaml, Application.class);
-            Application created = repository.createApplication(clusterName, namespace, application);
-            return OperationResult.success(clusterName, created.getMetadata().getName(), "Application created successfully");
+            Application created = repository.createApplication(apiClient, namespace, application);
+            return OperationResult.success(cluster, created.getMetadata().getName(), "Application created successfully");
         } catch (Exception e) {
-            return OperationResult.failure(clusterName, "Application", "Failed to create application", e.getMessage());
+            return OperationResult.failure(cluster, "Application", "Failed to create application", e.getMessage());
         }
     }
 
@@ -163,13 +178,13 @@ public class KubernetesService {
      * 更新 Application 资源
      */
     public OperationResult updateApplication(String cluster, String namespace, String name, String resourceYaml) {
-        String clusterName = getClusterName(cluster);
+        ApiClient apiClient = getApiClient(cluster);
         try {
             Application application = objectMapper.readValue(resourceYaml, Application.class);
-            Application updated = repository.updateApplication(clusterName, namespace, name, application);
-            return OperationResult.success(clusterName, updated.getMetadata().getName(), "Application updated successfully");
+            Application updated = repository.updateApplication(apiClient, namespace, name, application);
+            return OperationResult.success(cluster, updated.getMetadata().getName(), "Application updated successfully");
         } catch (Exception e) {
-            return OperationResult.failure(clusterName, name, "Failed to update application", e.getMessage());
+            return OperationResult.failure(cluster, name, "Failed to update application", e.getMessage());
         }
     }
 
@@ -177,12 +192,12 @@ public class KubernetesService {
      * 删除 Application 资源
      */
     public OperationResult deleteApplication(String cluster, String namespace, String name) {
-        String clusterName = getClusterName(cluster);
+        ApiClient apiClient = getApiClient(cluster);
         try {
-            repository.deleteApplication(clusterName, namespace, name);
-            return OperationResult.success(clusterName, name, "Application deleted successfully");
+            repository.deleteApplication(apiClient, namespace, name);
+            return OperationResult.success(cluster, name, "Application deleted successfully");
         } catch (Exception e) {
-            return OperationResult.failure(clusterName, name, "Failed to delete application", e.getMessage());
+            return OperationResult.failure(cluster, name, "Failed to delete application", e.getMessage());
         }
     }
 
@@ -192,30 +207,30 @@ public class KubernetesService {
      * 获取所有 Microservice 资源
      */
     public ResourceResponse<Microservice> getMicroservices(String cluster, String namespace) {
-        String clusterName = getClusterName(cluster);
-        List<Microservice> microservices = repository.getMicroservices(clusterName, namespace);
-        return new ResourceResponse<>(clusterName, namespace, microservices);
+        ApiClient apiClient = getApiClient(cluster);
+        List<Microservice> microservices = repository.getMicroservices(apiClient, namespace);
+        return new ResourceResponse<>(cluster, namespace, microservices);
     }
 
     /**
      * 获取指定的 Microservice 资源
      */
     public Microservice getMicroservice(String cluster, String namespace, String name) {
-        String clusterName = getClusterName(cluster);
-        return repository.getMicroservice(clusterName, namespace, name);
+        ApiClient apiClient = getApiClient(cluster);
+        return repository.getMicroservice(apiClient, namespace, name);
     }
 
     /**
      * 创建 Microservice 资源
      */
     public OperationResult createMicroservice(String cluster, String namespace, String resourceYaml) {
-        String clusterName = getClusterName(cluster);
+        ApiClient apiClient = getApiClient(cluster);
         try {
             Microservice microservice = objectMapper.readValue(resourceYaml, Microservice.class);
-            Microservice created = repository.createMicroservice(clusterName, namespace, microservice);
-            return OperationResult.success(clusterName, created.getMetadata().getName(), "Microservice created successfully");
+            Microservice created = repository.createMicroservice(apiClient, namespace, microservice);
+            return OperationResult.success(cluster, created.getMetadata().getName(), "Microservice created successfully");
         } catch (Exception e) {
-            return OperationResult.failure(clusterName, "Microservice", "Failed to create microservice", e.getMessage());
+            return OperationResult.failure(cluster, "Microservice", "Failed to create microservice", e.getMessage());
         }
     }
 
@@ -223,13 +238,13 @@ public class KubernetesService {
      * 更新 Microservice 资源
      */
     public OperationResult updateMicroservice(String cluster, String namespace, String name, String resourceYaml) {
-        String clusterName = getClusterName(cluster);
+        ApiClient apiClient = getApiClient(cluster);
         try {
             Microservice microservice = objectMapper.readValue(resourceYaml, Microservice.class);
-            Microservice updated = repository.updateMicroservice(clusterName, namespace, name, microservice);
-            return OperationResult.success(clusterName, updated.getMetadata().getName(), "Microservice updated successfully");
+            Microservice updated = repository.updateMicroservice(apiClient, namespace, name, microservice);
+            return OperationResult.success(cluster, updated.getMetadata().getName(), "Microservice updated successfully");
         } catch (Exception e) {
-            return OperationResult.failure(clusterName, name, "Failed to update microservice", e.getMessage());
+            return OperationResult.failure(cluster, name, "Failed to update microservice", e.getMessage());
         }
     }
 
@@ -237,12 +252,12 @@ public class KubernetesService {
      * 删除 Microservice 资源
      */
     public OperationResult deleteMicroservice(String cluster, String namespace, String name) {
-        String clusterName = getClusterName(cluster);
+        ApiClient apiClient = getApiClient(cluster);
         try {
-            repository.deleteMicroservice(clusterName, namespace, name);
-            return OperationResult.success(clusterName, name, "Microservice deleted successfully");
+            repository.deleteMicroservice(apiClient, namespace, name);
+            return OperationResult.success(cluster, name, "Microservice deleted successfully");
         } catch (Exception e) {
-            return OperationResult.failure(clusterName, name, "Failed to delete microservice", e.getMessage());
+            return OperationResult.failure(cluster, name, "Failed to delete microservice", e.getMessage());
         }
     }
 
@@ -252,30 +267,30 @@ public class KubernetesService {
      * 获取所有 GPU 资源
      */
     public ResourceResponse<GPU> getGPUs(String cluster, String namespace) {
-        String clusterName = getClusterName(cluster);
-        List<GPU> gpus = repository.getGPUs(clusterName, namespace);
-        return new ResourceResponse<>(clusterName, namespace, gpus);
+        ApiClient apiClient = getApiClient(cluster);
+        List<GPU> gpus = repository.getGPUs(apiClient, namespace);
+        return new ResourceResponse<>(cluster, namespace, gpus);
     }
 
     /**
      * 获取指定的 GPU 资源
      */
     public GPU getGPU(String cluster, String namespace, String name) {
-        String clusterName = getClusterName(cluster);
-        return repository.getGPU(clusterName, namespace, name);
+        ApiClient apiClient = getApiClient(cluster);
+        return repository.getGPU(apiClient, namespace, name);
     }
 
     /**
      * 创建 GPU 资源
      */
     public OperationResult createGPU(String cluster, String namespace, String resourceYaml) {
-        String clusterName = getClusterName(cluster);
+        ApiClient apiClient = getApiClient(cluster);
         try {
             GPU gpu = objectMapper.readValue(resourceYaml, GPU.class);
-            GPU created = repository.createGPU(clusterName, namespace, gpu);
-            return OperationResult.success(clusterName, created.getMetadata().getName(), "GPU created successfully");
+            GPU created = repository.createGPU(apiClient, namespace, gpu);
+            return OperationResult.success(cluster, created.getMetadata().getName(), "GPU created successfully");
         } catch (Exception e) {
-            return OperationResult.failure(clusterName, "GPU", "Failed to create GPU", e.getMessage());
+            return OperationResult.failure(cluster, "GPU", "Failed to create GPU", e.getMessage());
         }
     }
 
@@ -283,29 +298,28 @@ public class KubernetesService {
      * 更新 GPU 资源
      */
     public OperationResult updateGPU(String cluster, String namespace, String name, String resourceYaml) {
-        String clusterName = getClusterName(cluster);
+        ApiClient apiClient = getApiClient(cluster);
         try {
-            // 先检查资源是否存在
-            repository.getGPU(clusterName, namespace, name);
+            repository.getGPU(apiClient, namespace, name);
             
             // 解析JSON
             GPU gpu = objectMapper.readValue(resourceYaml, GPU.class);
             if (gpu == null) {
-                return OperationResult.failure(clusterName, name, "Failed to update GPU", "Parsed GPU object is null");
+                return OperationResult.failure(cluster, name, "Failed to update GPU", "Parsed GPU object is null");
             }
             
             // 确保metadata不为null
             if (gpu.getMetadata() == null) {
-                return OperationResult.failure(clusterName, name, "Failed to update GPU", "GPU metadata is null");
+                return OperationResult.failure(cluster, name, "Failed to update GPU", "GPU metadata is null");
             }
             
-            GPU updated = repository.updateGPU(clusterName, namespace, name, gpu);
+            GPU updated = repository.updateGPU(apiClient, namespace, name, gpu);
             if (updated == null) {
-                return OperationResult.failure(clusterName, name, "Failed to update GPU", "Update operation returned null");
+                return OperationResult.failure(cluster, name, "Failed to update GPU", "Update operation returned null");
             }
-            return OperationResult.success(clusterName, updated.getMetadata().getName(), "GPU updated successfully");
+            return OperationResult.success(cluster, updated.getMetadata().getName(), "GPU updated successfully");
         } catch (Exception e) {
-            return OperationResult.failure(clusterName, name, "Failed to update GPU", e.getMessage());
+            return OperationResult.failure(cluster, name, "Failed to update GPU", e.getMessage());
         }
     }
 
@@ -313,12 +327,12 @@ public class KubernetesService {
      * 删除 GPU 资源
      */
     public OperationResult deleteGPU(String cluster, String namespace, String name) {
-        String clusterName = getClusterName(cluster);
+        ApiClient apiClient = getApiClient(cluster);
         try {
-            repository.deleteGPU(clusterName, namespace, name);
-            return OperationResult.success(clusterName, name, "GPU deleted successfully");
+            repository.deleteGPU(apiClient, namespace, name);
+            return OperationResult.success(cluster, name, "GPU deleted successfully");
         } catch (Exception e) {
-            return OperationResult.failure(clusterName, name, "Failed to delete GPU", e.getMessage());
+            return OperationResult.failure(cluster, name, "Failed to delete GPU", e.getMessage());
         }
     }
 } 

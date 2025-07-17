@@ -2,43 +2,49 @@
   "apiVersion": "example.com/v1",
   "kind": "GPU",
   "metadata": {
-    "name": "a100-01",
+    "name": "rtx-4090-01",
     "namespace": "default",
     "labels": {
-      "gpu-type": "datacenter",
+      "gpu-type": "gaming",
       "manufacturer": "nvidia"
     }
   },
   "spec": {
-    "model": "A100",
+    "model": "RTX 4090",
     "memory": {
-      "total": "80GB",
-      "available": "75GB"
+      "total": "24GB",
+      "available": "20GB"
     },
-    "computeCapability": "8.0",
-    "architecture": "Ampere",
+    "computeCapability": "8.9",
+    "architecture": "Ada Lovelace",
     "powerLimit": {
-      "max": 400,
-      "current": 300
+      "max": 450,
+      "current": 350
     },
     "temperature": {
-      "current": 55,
-      "max": 85
+      "current": 65,
+      "max": 88
     },
     "utilization": {
-      "gpu": 25,
-      "memory": 35
+      "gpu": 45,
+      "memory": 60
     },
     "status": "available",
-    "nodeName": "gpu-cluster-01",
+    "nodeName": "gpu-node-01",
     "driverVersion": "535.86.10",
     "cudaVersion": "12.2",
     "processes": [
       {
-        "pid": 23456,
-        "name": "deep-learning-training",
-        "memoryUsed": "5GB",
-        "gpuUtilization": 25
+        "pid": 12345,
+        "name": "tensorflow",
+        "memoryUsed": "4GB",
+        "gpuUtilization": 30
+      },
+      {
+        "pid": 12346,
+        "name": "pytorch",
+        "memoryUsed": "2GB",
+        "gpuUtilization": 15
       }
     ],
     "vendor": "nvidia"
@@ -56,4 +62,4 @@
     ],
     "lastUpdated": "2024-01-15T10:30:00Z"
   }
-} 
+}
