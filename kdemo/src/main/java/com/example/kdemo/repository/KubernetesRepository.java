@@ -7,8 +7,10 @@ import io.kubernetes.client.openapi.models.V1CustomResourceDefinition;
 import io.kubernetes.client.openapi.models.V1CustomResourceDefinitionList;
 import io.kubernetes.client.openapi.models.V1NamespaceList;
 import io.kubernetes.client.openapi.models.V1PodList;
+import io.kubernetes.client.openapi.models.V1Node;
 
 import java.util.List;
+import java.util.Map;
 
 public interface KubernetesRepository {
     
@@ -39,6 +41,31 @@ public interface KubernetesRepository {
     GPU createGPU(String cluster, String namespace, GPU gpu);
     GPU updateGPU(String cluster, String namespace, String name, GPU gpu);
     void deleteGPU(String cluster, String namespace, String name);
+    
+    /**
+     * Patch Node 的 labels 字段
+     */
+    V1Node patchNodeLabels(String cluster, String nodeName, Map<String, String> labels);
+
+    /**
+     * Patch Node 的 spec 字段
+     */
+    V1Node patchNodeSpec(String cluster, String nodeName, Map<String, Object> specPatch);
+
+    /**
+     * Patch Node，支持任意结构化 patch
+     */
+    V1Node patchNodeRaw(String cluster, String nodeName, Object patchObject);
+    
+    /**
+     * 自动 diff patch node，传入新 node 对象，自动与集群现有对象对比并 patch（metadata/spec）。
+     */
+    V1Node patchNodeAuto(String cluster, V1Node newNode);
+
+    /**
+     * 自动 diff patch node 的 status 子资源，传入新 node 对象，自动与集群现有对象对比并 patch status。
+     */
+    V1Node patchNodeStatusAuto(String cluster, V1Node newNode);
     
     // 连接检查
     boolean isConnected(String cluster);

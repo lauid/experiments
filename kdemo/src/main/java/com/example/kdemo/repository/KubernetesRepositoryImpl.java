@@ -21,8 +21,11 @@ import io.kubernetes.client.openapi.models.V1PodList;
 import io.kubernetes.client.util.generic.GenericKubernetesApi;
 import io.kubernetes.client.util.generic.options.CreateOptions;
 import io.kubernetes.client.util.generic.options.UpdateOptions;
+import io.kubernetes.client.custom.V1Patch;
+import io.kubernetes.client.openapi.models.V1Node;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import com.flipkart.zjsonpatch.JsonDiff;
 
 import java.util.List;
 import java.util.Map;
@@ -38,6 +41,9 @@ public class KubernetesRepositoryImpl implements KubernetesRepository {
     private final Map<String, GenericKubernetesApi<GPU, GPUList>> gpuApis;
     private final ApiClient defaultApiClient;
     private static final String DEFAULT_CLUSTER = "cluster-local";
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @Autowired
     public KubernetesRepositoryImpl(ApiClient apiClient) {
@@ -433,6 +439,72 @@ public class KubernetesRepositoryImpl implements KubernetesRepository {
         } catch (Exception e) {
             throw new KubernetesException("Failed to delete GPU: " + name, 
                                         getClusterName(cluster), "deleteGPU", e);
+        }
+    }
+
+    @Override
+    public V1Node patchNodeLabels(String cluster, String nodeName, Map<String, String> labels) {
+        Map<String, Object> patch = Map.of("metadata", Map.of("labels", labels));
+        return patchNodeRaw(cluster, nodeName, patch);
+    }
+
+    @Override
+    public V1Node patchNodeSpec(String cluster, String nodeName, Map<String, Object> specPatch) {
+        Map<String, Object> patch = Map.of("spec", specPatch);
+        return patchNodeRaw(cluster, nodeName, patch);
+    }
+
+    @Override
+    public V1Node patchNodeRaw(String cluster, String nodeName, Object patchObject) {
+        try {
+            String patchJson = objectMapper.writeValueAsString(patchObject);
+            V1Patch patch = new V1Patch(patchJson);
+            CoreV1Api api = getApi(cluster);
+            return api.patchNode(nodeName, patch).execute();
+        } catch (Exception e) {
+            throw new KubernetesException("Failed to patch node: " + nodeName, getClusterName(cluster), "patchNode", e);
+        }
+    }
+
+    @Override
+    public V1Node patchNodeAuto(String cluster, V1Node newNode) {
+        return patchNodeAutoInternal(cluster, newNode, null);
+    }
+
+    @Override
+    public V1Node patchNodeStatusAuto(String cluster, V1Node newNode) {
+        return patchNodeAutoInternal(cluster, newNode, "status");
+    }
+
+    /**
+     * 自动 diff patch node，支持 patch metadata/spec 或 status 子资源
+     */
+    private V1Node patchNodeAutoInternal(String cluster, V1Node newNode, String subresource) {
+        try {
+            String nodeName = newNode.getMetadata().getName();
+            CoreV1Api api = getApi(cluster);
+            // 获取 oldNode
+            V1Node oldNode = api.readNode(nodeName).execute();
+            // 转为 JsonNode
+            JsonNode oldJson = objectMapper.valueToTree(oldNode);
+            JsonNode newJson = objectMapper.valueToTree(newNode);
+            // 生成 diff patch (zjsonpatch)
+            JsonNode patchNode = JsonDiff.asJson(oldJson, newJson);
+            if (patchNode.isEmpty()) {
+                return oldNode;
+            }
+            // 序列化 patch
+            String patchString = objectMapper.writeValueAsString(patchNode);
+            V1Patch patch = new V1Patch(patchString);
+            if (subresource == null) {
+                return api.patchNode(nodeName, patch).execute();
+            } else if ("status".equals(subresource)) {
+                return api.patchNodeStatus(nodeName, patch).execute();
+            } else {
+                throw new KubernetesException("Unsupported subresource for patchNode: " + subresource, getClusterName(cluster), "patchNodeAuto", null);
+            }
+        } catch (Exception e) {
+            throw new KubernetesException("Failed to auto patch node (subresource=" + subresource + "): " + newNode.getMetadata().getName(), getClusterName(cluster), "patchNodeAuto", e);
         }
     }
 } 
