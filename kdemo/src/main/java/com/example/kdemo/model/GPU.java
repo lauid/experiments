@@ -5,6 +5,7 @@ import io.kubernetes.client.common.KubernetesObject;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
@@ -14,6 +15,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
     "spec",
     "status"
 })
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class GPU implements KubernetesObject {
     
     @JsonProperty("apiVersion")

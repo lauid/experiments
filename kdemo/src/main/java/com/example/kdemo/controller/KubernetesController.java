@@ -6,6 +6,7 @@ import com.example.kdemo.exception.ResourceNotFoundException;
 import com.example.kdemo.model.Application;
 import com.example.kdemo.model.Microservice;
 import com.example.kdemo.model.GPU;
+import com.example.kdemo.model.GPUSpec;
 import com.example.kdemo.service.KubernetesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,6 +14,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
+import java.util.List;
+import java.util.ArrayList;
 
 @RestController
 @RequestMapping("/api/kubernetes")
@@ -185,25 +188,23 @@ public class KubernetesController {
 
     // ========== GPU 资源操作 ==========
 
-    @GetMapping("/gpus")
-    public ResponseEntity<ResourceResponse<GPU>> getGPUs(
-            @RequestParam(required = false) String cluster,
-            @RequestParam(defaultValue = "default") String namespace) {
-        ResourceResponse<GPU> response = kubernetesService.getGPUs(cluster, namespace);
-        return ResponseEntity.ok(response);
+    @GetMapping("/gpus/{name}")
+    public GPUView getGpu(@RequestParam(required = false) String cluster,
+                          @RequestParam String namespace,
+                          @PathVariable String name) {
+        GPU gpu = kubernetesService.getGPU(cluster, namespace, name);
+        return new GPUView(gpu);
     }
 
-    @GetMapping("/gpus/{name}")
-    public ResponseEntity<GPU> getGPU(
-            @PathVariable String name,
-            @RequestParam(required = false) String cluster,
-            @RequestParam(defaultValue = "default") String namespace) {
-        try {
-            GPU gpu = kubernetesService.getGPU(cluster, namespace, name);
-            return ResponseEntity.ok(gpu);
-        } catch (ResourceNotFoundException e) {
-            return ResponseEntity.notFound().build();
+    @GetMapping("/gpus")
+    public List<GPUView> listGpus(@RequestParam(required = false) String cluster,
+                                  @RequestParam String namespace) {
+        List<com.example.kdemo.model.GPU> gpus = kubernetesService.getGPUs(cluster, namespace).getResources();
+        List<GPUView> views = new ArrayList<>();
+        for (com.example.kdemo.model.GPU gpu : gpus) {
+            views.add(new GPUView(gpu));
         }
+        return views;
     }
 
     @PostMapping("/gpus")
@@ -234,6 +235,13 @@ public class KubernetesController {
         return ResponseEntity.ok(result);
     }
 
+    @GetMapping("/test-gpu-vendor")
+    public GPUSpec testGpuVendor() {
+        GPUSpec spec = new GPUSpec();
+        spec.setVendor(com.example.kdemo.model.Vendor.NVIDIA);
+        return spec;
+    }
+
     // ========== 异常处理 ==========
 
     @ExceptionHandler(ResourceNotFoundException.class)
@@ -243,8 +251,16 @@ public class KubernetesController {
     }
 
     @ExceptionHandler(KubernetesException.class)
-    public ResponseEntity<Map<String, String>> handleKubernetesException(KubernetesException e) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(Map.of("error", e.getMessage()));
+    public ResponseEntity<Map<String, Object>> handleKubernetesException(KubernetesException e) {
+        Map<String, Object> error = new java.util.HashMap<>();
+        error.put("error", e.getMessage());
+        error.put("exception", e.getClass().getName());
+        error.put("stackTrace", e.getStackTrace());
+        Throwable cause = e.getCause();
+        if (cause != null) {
+            error.put("cause", cause.toString());
+            error.put("causeMessage", cause.getMessage());
+        }
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
     }
 } 

@@ -4,13 +4,21 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import java.util.List;
 import java.util.Map;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class GPUSpec {
     
     @JsonProperty("model")
     private String model;
     
+    /**
+     * 显存大小，如 "16Gi"
+     */
     @JsonProperty("memory")
     private Map<String, String> memory;
     
@@ -43,6 +51,12 @@ public class GPUSpec {
     
     @JsonProperty("processes")
     private List<Map<String, Object>> processes;
+    
+    /**
+     * GPU厂商，枚举类型。序列化为小写，接口返回大写。
+     */
+    @JsonProperty("vendor")
+    private Vendor vendor;
     
     // Constructors
     public GPUSpec() {}
@@ -148,5 +162,12 @@ public class GPUSpec {
     
     public void setProcesses(List<Map<String, Object>> processes) {
         this.processes = processes;
+    }
+
+    public Vendor getVendor() {
+        return vendor;
+    }
+    public void setVendor(Vendor vendor) {
+        this.vendor = vendor;
     }
 } 

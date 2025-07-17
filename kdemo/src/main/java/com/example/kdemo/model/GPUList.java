@@ -5,6 +5,7 @@ import io.kubernetes.client.common.KubernetesListObject;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.util.List;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
@@ -14,6 +15,7 @@ import java.util.List;
     "metadata",
     "items"
 })
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class GPUList implements KubernetesListObject {
     
     @JsonProperty("apiVersion")

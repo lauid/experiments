@@ -30,6 +30,7 @@ import com.flipkart.zjsonpatch.JsonDiff;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import io.kubernetes.client.util.generic.KubernetesApiResponse;
 
 @Repository
 public class KubernetesRepositoryImpl implements KubernetesRepository {
@@ -364,7 +365,19 @@ public class KubernetesRepositoryImpl implements KubernetesRepository {
                 return api.list().getObject().getItems();
             }
         } catch (Exception e) {
-            throw new KubernetesException("Failed to get GPUs", getClusterName(cluster), "listGPUs", e);
+            e.printStackTrace(); // 增强日志
+            System.err.println("[getGPUs] Exception: " + e.getMessage());
+            for (StackTraceElement ste : e.getStackTrace()) {
+                System.err.println(ste.toString());
+            }
+            try {
+                java.nio.file.Files.writeString(
+                    java.nio.file.Paths.get("gpu-get-error.log"),
+                    java.time.LocalDateTime.now() + "\n" + e.toString() + "\n" + java.util.Arrays.toString(e.getStackTrace()) + "\n",
+                    java.nio.file.StandardOpenOption.CREATE, java.nio.file.StandardOpenOption.APPEND
+                );
+            } catch (Exception ignore) {}
+            throw new KubernetesException("Failed to get GPUs: " + e.getMessage(), getClusterName(cluster), "listGPUs", e);
         }
     }
 
@@ -394,13 +407,39 @@ public class KubernetesRepositoryImpl implements KubernetesRepository {
     public GPU createGPU(String cluster, String namespace, GPU gpu) {
         try {
             GenericKubernetesApi<GPU, GPUList> api = getGPUApi(cluster);
+            KubernetesApiResponse<GPU> response;
             if (namespace != null && !namespace.isEmpty()) {
-                return api.create(namespace, gpu, new CreateOptions()).getObject();
+                response = api.create(namespace, gpu, new CreateOptions());
             } else {
-                return api.create(gpu, new CreateOptions()).getObject();
+                response = api.create(gpu, new CreateOptions());
             }
+            if (response == null) {
+                throw new KubernetesException("K8s API returned null response", getClusterName(cluster), "createGPU");
+            }
+            if (!response.isSuccess()) {
+                String status = response.getStatus() != null ? response.getStatus().toString() : "null";
+                throw new KubernetesException("K8s API error: " + status, getClusterName(cluster), "createGPU");
+            }
+            if (response.getObject() == null) {
+                String status = response.getStatus() != null ? response.getStatus().toString() : "null";
+                throw new KubernetesException("K8s API returned null object, status: " + status, getClusterName(cluster), "createGPU");
+            }
+            return response.getObject();
         } catch (Exception e) {
-            throw new KubernetesException("Failed to create GPU", getClusterName(cluster), "createGPU", e);
+            // 增强日志
+            System.err.println("[createGPU] Exception: " + e.getMessage());
+            e.printStackTrace();
+            if (e instanceof io.kubernetes.client.openapi.ApiException) {
+                io.kubernetes.client.openapi.ApiException apiEx = (io.kubernetes.client.openapi.ApiException) e;
+                System.err.println("[createGPU] ApiException responseBody: " + apiEx.getResponseBody());
+            }
+            // 透传详细错误信息
+            String detail = e.getMessage();
+            if (e instanceof io.kubernetes.client.openapi.ApiException) {
+                io.kubernetes.client.openapi.ApiException apiEx = (io.kubernetes.client.openapi.ApiException) e;
+                detail += ", responseBody: " + apiEx.getResponseBody();
+            }
+            throw new KubernetesException("Failed to create GPU: " + detail, getClusterName(cluster), "createGPU", e);
         }
     }
 

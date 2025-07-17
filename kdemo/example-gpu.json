@@ -40,7 +40,8 @@
         "memoryUsed": "5GB",
         "gpuUtilization": 25
       }
-    ]
+    ],
+    "vendor": "nvidia"
   },
   "status": {
     "phase": "Running",

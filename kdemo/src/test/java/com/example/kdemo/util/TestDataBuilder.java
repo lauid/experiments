@@ -9,6 +9,7 @@ import com.example.kdemo.model.MicroserviceStatus;
 import com.example.kdemo.model.GPU;
 import com.example.kdemo.model.GPUSpec;
 import com.example.kdemo.model.GPUStatus;
+import com.example.kdemo.model.Vendor;
 import io.kubernetes.client.openapi.models.V1ObjectMeta;
 
 import java.util.HashMap;
@@ -94,10 +95,10 @@ public class TestDataBuilder {
         spec.setNodeName("gpu-node-01");
         spec.setDriverVersion("535.86.10");
         spec.setCudaVersion("12.2");
+        spec.setVendor(Vendor.NVIDIA);
         
-        Map<String, String> memory = new HashMap<>();
-        memory.put("total", "24GB");
-        memory.put("available", "20GB");
+        Map<String, String> memory = new java.util.HashMap<>();
+        memory.put("total", "16Gi");
         spec.setMemory(memory);
         
         Map<String, Integer> powerLimit = new HashMap<>();
@@ -198,10 +199,7 @@ public class TestDataBuilder {
                     "nodeName": "gpu-node-01",
                     "driverVersion": "535.86.10",
                     "cudaVersion": "12.2",
-                    "memory": {
-                        "total": "24GB",
-                        "available": "20GB"
-                    },
+                    "memory": "16Gi",
                     "powerLimit": {
                         "max": 450,
                         "current": 350

@@ -98,11 +98,16 @@ spec:
                     gpuUtilization:
                       type: integer
                       description: GPU utilization by this process
+              vendor:
+                type: string
+                enum: ["huawei", "nvidia"]
+                description: GPU vendor/manufacturer
             required:
             - model
             - memory
             - status
             - nodeName
+            - vendor
           status:
             type: object
             properties:

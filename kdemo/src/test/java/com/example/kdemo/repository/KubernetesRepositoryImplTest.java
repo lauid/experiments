@@ -5,13 +5,22 @@ import com.example.kdemo.model.Microservice;
 import com.example.kdemo.model.GPU;
 import com.example.kdemo.exception.KubernetesException;
 import com.example.kdemo.exception.ResourceNotFoundException;
+import com.example.kdemo.model.GPUSpec;
+import com.example.kdemo.model.Vendor;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import io.kubernetes.client.openapi.ApiClient;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.junit.jupiter.api.Assertions.*;
+
+import java.util.List;
 
 @ExtendWith(MockitoExtension.class)
 class KubernetesRepositoryImplTest {

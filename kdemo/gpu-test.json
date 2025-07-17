@@ -1,0 +1,25 @@
+{
+  "apiVersion": "example.com/v1",
+  "kind": "GPU",
+  "metadata": {
+    "name": "test-gpu",
+    "namespace": "default"
+  },
+  "spec": {
+    "model": "RTX 4090",
+    "computeCapability": "8.9",
+    "architecture": "Ada Lovelace",
+    "status": "available",
+    "nodeName": "gpu-node-01",
+    "driverVersion": "535.86.10",
+    "cudaVersion": "12.2",
+    "memory": {"total": "16Gi"},
+    "powerLimit": {"max": 450, "current": 350},
+    "temperature": {"current": 65, "max": 88},
+    "utilization": {"gpu": 45, "memory": 60},
+    "vendor": "nvidia"
+  },
+  "status": {
+    "phase": "Running"
+  }
+}

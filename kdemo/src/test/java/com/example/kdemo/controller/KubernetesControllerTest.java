@@ -328,18 +328,16 @@ class KubernetesControllerTest {
     @Test
     void testGetGPUs() {
         // Given
-        ResourceResponse<GPU> gpuResponse = new ResourceResponse<>("cluster-local", "default", Arrays.asList(gpu));
-        when(kubernetesService.getGPUs("cluster-local", "default")).thenReturn(gpuResponse);
+        List<GPUView> gpuViews = List.of(new GPUView(gpu));
+        when(kubernetesService.getGPUs("cluster-local", "default")).thenReturn(new ResourceResponse<>("cluster-local", "default", List.of(gpu)));
 
         // When
-        ResponseEntity<ResourceResponse<GPU>> response = kubernetesController.getGPUs("cluster-local", "default");
+        List<GPUView> result = kubernetesController.listGpus("cluster-local", "default");
 
         // Then
-        assertNotNull(response);
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertNotNull(response.getBody());
-        assertEquals(1, response.getBody().getResources().size());
-        assertEquals("test-gpu", response.getBody().getResources().get(0).getMetadata().getName());
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        assertEquals("test-gpu", result.get(0).getName());
         verify(kubernetesService).getGPUs("cluster-local", "default");
     }
 
@@ -349,13 +347,11 @@ class KubernetesControllerTest {
         when(kubernetesService.getGPU("cluster-local", "default", "test-gpu")).thenReturn(gpu);
 
         // When
-        ResponseEntity<GPU> response = kubernetesController.getGPU("test-gpu", "cluster-local", "default");
+        GPUView result = kubernetesController.getGpu("cluster-local", "default", "test-gpu");
 
         // Then
-        assertNotNull(response);
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertNotNull(response.getBody());
-        assertEquals("test-gpu", response.getBody().getMetadata().getName());
+        assertNotNull(result);
+        assertEquals("test-gpu", result.getName());
         verify(kubernetesService).getGPU("cluster-local", "default", "test-gpu");
     }
 
