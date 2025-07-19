@@ -6,6 +6,7 @@ import com.example.kdemo.model.Microservice;
 import com.example.kdemo.model.GPU;
 import com.example.kdemo.repository.KubernetesRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.kubernetes.client.openapi.ApiClient;
 import io.kubernetes.client.openapi.models.V1CustomResourceDefinition;
 import io.kubernetes.client.openapi.models.V1CustomResourceDefinitionList;
 import io.kubernetes.client.openapi.models.V1NamespaceList;
@@ -35,16 +36,19 @@ class KubernetesServiceTest {
     @InjectMocks
     private KubernetesService service;
 
+    private ApiClient apiClient;
+
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
+        apiClient = new ApiClient(); // 可根据需要mock或配置
     }
 
     @Test
     void testCheckConnection() {
         // Given
         String cluster = "test-cluster";
-        when(repository.isConnected(cluster)).thenReturn(true);
+        when(repository.isConnected(apiClient)).thenReturn(true);
 
         // When
         ClusterInfo result = service.checkConnection(cluster);
@@ -53,13 +57,13 @@ class KubernetesServiceTest {
         assertNotNull(result);
         assertTrue(result.isConnected());
         assertEquals(cluster, result.getCluster());
-        verify(repository).isConnected(cluster);
+        verify(repository).isConnected(apiClient);
     }
 
     @Test
     void testCheckConnectionWithNullCluster() {
         // Given
-        when(repository.isConnected("cluster-local")).thenReturn(false);
+        when(repository.isConnected(apiClient)).thenReturn(false);
 
         // When
         ClusterInfo result = service.checkConnection(null);
@@ -68,7 +72,7 @@ class KubernetesServiceTest {
         assertNotNull(result);
         assertFalse(result.isConnected());
         assertEquals("cluster-local", result.getCluster());
-        verify(repository).isConnected("cluster-local");
+        verify(repository).isConnected(apiClient);
     }
 
     @Test
@@ -80,7 +84,7 @@ class KubernetesServiceTest {
             createNamespace("default"),
             createNamespace("kube-system")
         ));
-        when(repository.getNamespaces(cluster)).thenReturn(namespaceList);
+        when(repository.getNamespaces(apiClient)).thenReturn(namespaceList);
 
         // When
         NamespaceInfo result = service.getNamespaces(cluster);
@@ -91,7 +95,7 @@ class KubernetesServiceTest {
         assertEquals(2, result.getCount());
         assertTrue(result.getNamespaces().contains("default"));
         assertTrue(result.getNamespaces().contains("kube-system"));
-        verify(repository).getNamespaces(cluster);
+        verify(repository).getNamespaces(apiClient);
     }
 
     @Test
@@ -104,7 +108,7 @@ class KubernetesServiceTest {
             createPod("pod1"),
             createPod("pod2")
         ));
-        when(repository.getPodsInNamespace(cluster, namespace)).thenReturn(podList);
+        when(repository.getPodsInNamespace(apiClient, namespace)).thenReturn(podList);
 
         // When
         PodInfo result = service.getPodsInNamespace(cluster, namespace);
@@ -116,7 +120,7 @@ class KubernetesServiceTest {
         assertEquals(2, result.getCount());
         assertTrue(result.getPods().contains("pod1"));
         assertTrue(result.getPods().contains("pod2"));
-        verify(repository).getPodsInNamespace(cluster, namespace);
+        verify(repository).getPodsInNamespace(apiClient, namespace);
     }
 
     @Test
@@ -133,9 +137,9 @@ class KubernetesServiceTest {
         V1PodList podList2 = new V1PodList();
         podList2.setItems(Arrays.asList(createPod("pod3")));
 
-        when(repository.getNamespaces(cluster)).thenReturn(namespaceList);
-        when(repository.getPodsInNamespace(cluster, "default")).thenReturn(podList1);
-        when(repository.getPodsInNamespace(cluster, "kube-system")).thenReturn(podList2);
+        when(repository.getNamespaces(apiClient)).thenReturn(namespaceList);
+        when(repository.getPodsInNamespace(apiClient, "default")).thenReturn(podList1);
+        when(repository.getPodsInNamespace(apiClient, "kube-system")).thenReturn(podList2);
 
         // When
         ClusterOverview result = service.getClusterOverview(cluster);
@@ -158,7 +162,7 @@ class KubernetesServiceTest {
             createCRD("applications.example.com"),
             createCRD("microservices.example.com")
         ));
-        when(repository.getCustomResourceDefinitions(cluster)).thenReturn(crdList);
+        when(repository.getCustomResourceDefinitions(apiClient)).thenReturn(crdList);
 
         // When
         CrdInfo result = service.getCustomResourceDefinitions(cluster);
@@ -169,7 +173,7 @@ class KubernetesServiceTest {
         assertEquals(2, result.getCount());
         assertTrue(result.getCrds().contains("applications.example.com"));
         assertTrue(result.getCrds().contains("microservices.example.com"));
-        verify(repository).getCustomResourceDefinitions(cluster);
+        verify(repository).getCustomResourceDefinitions(apiClient);
     }
 
     @Test
@@ -178,7 +182,7 @@ class KubernetesServiceTest {
         String cluster = "test-cluster";
         String name = "applications.example.com";
         V1CustomResourceDefinition crd = createCRD(name);
-        when(repository.getCustomResourceDefinition(cluster, name)).thenReturn(crd);
+        when(repository.getCustomResourceDefinition(apiClient, name)).thenReturn(crd);
 
         // When
         Map<String, Object> result = service.getCustomResourceDefinition(cluster, name);
@@ -186,7 +190,7 @@ class KubernetesServiceTest {
         // Then
         assertNotNull(result);
         assertEquals(name, result.get("name"));
-        verify(repository).getCustomResourceDefinition(cluster, name);
+        verify(repository).getCustomResourceDefinition(apiClient, name);
     }
 
     @Test
@@ -195,7 +199,7 @@ class KubernetesServiceTest {
         String cluster = "test-cluster";
         String crdYaml = "apiVersion: apiextensions.k8s.io/v1\nkind: CustomResourceDefinition";
         V1CustomResourceDefinition crd = createCRD("test.example.com");
-        when(repository.createCustomResourceDefinition(cluster, crdYaml)).thenReturn(crd);
+        when(repository.createCustomResourceDefinition(apiClient, crdYaml)).thenReturn(crd);
 
         // When
         OperationResult result = service.createCustomResourceDefinition(cluster, crdYaml);
@@ -205,7 +209,7 @@ class KubernetesServiceTest {
         assertTrue(result.isSuccess());
         assertEquals(cluster, result.getCluster());
         assertEquals("test.example.com", result.getName());
-        verify(repository).createCustomResourceDefinition(cluster, crdYaml);
+        verify(repository).createCustomResourceDefinition(apiClient, crdYaml);
     }
 
     @Test
@@ -213,7 +217,7 @@ class KubernetesServiceTest {
         // Given
         String cluster = "test-cluster";
         String crdYaml = "invalid yaml";
-        when(repository.createCustomResourceDefinition(cluster, crdYaml))
+        when(repository.createCustomResourceDefinition(apiClient, crdYaml))
             .thenThrow(new RuntimeException("Invalid CRD"));
 
         // When
@@ -225,7 +229,7 @@ class KubernetesServiceTest {
         assertEquals(cluster, result.getCluster());
         assertEquals("CRD", result.getName());
         assertNotNull(result.getError());
-        verify(repository).createCustomResourceDefinition(cluster, crdYaml);
+        verify(repository).createCustomResourceDefinition(apiClient, crdYaml);
     }
 
     // Application tests
@@ -238,7 +242,7 @@ class KubernetesServiceTest {
             createApplication("app1"),
             createApplication("app2")
         );
-        when(repository.getApplications(cluster, namespace)).thenReturn(applications);
+        when(repository.getApplications(apiClient, namespace)).thenReturn(applications);
 
         // When
         ResourceResponse<Application> result = service.getApplications(cluster, namespace);
@@ -249,7 +253,7 @@ class KubernetesServiceTest {
         assertEquals(namespace, result.getNamespace());
         assertEquals(2, result.getCount());
         assertEquals(applications, result.getResources());
-        verify(repository).getApplications(cluster, namespace);
+        verify(repository).getApplications(apiClient, namespace);
     }
 
     @Test
@@ -259,7 +263,7 @@ class KubernetesServiceTest {
         String namespace = "default";
         String name = "test-app";
         Application application = createApplication(name);
-        when(repository.getApplication(cluster, namespace, name)).thenReturn(application);
+        when(repository.getApplication(apiClient, namespace, name)).thenReturn(application);
 
         // When
         Application result = service.getApplication(cluster, namespace, name);
@@ -267,7 +271,7 @@ class KubernetesServiceTest {
         // Then
         assertNotNull(result);
         assertEquals(name, result.getMetadata().getName());
-        verify(repository).getApplication(cluster, namespace, name);
+        verify(repository).getApplication(apiClient, namespace, name);
     }
 
     @Test
@@ -278,7 +282,7 @@ class KubernetesServiceTest {
         String resourceYaml = "{\"metadata\":{\"name\":\"test-app\"}}";
         Application application = createApplication("test-app");
         when(objectMapper.readValue(resourceYaml, Application.class)).thenReturn(application);
-        when(repository.createApplication(cluster, namespace, application)).thenReturn(application);
+        when(repository.createApplication(apiClient, namespace, application)).thenReturn(application);
 
         // When
         OperationResult result = service.createApplication(cluster, namespace, resourceYaml);
@@ -289,7 +293,7 @@ class KubernetesServiceTest {
         assertEquals(cluster, result.getCluster());
         assertEquals("test-app", result.getName());
         verify(objectMapper).readValue(resourceYaml, Application.class);
-        verify(repository).createApplication(cluster, namespace, application);
+        verify(repository).createApplication(apiClient, namespace, application);
     }
 
     @Test
@@ -301,7 +305,7 @@ class KubernetesServiceTest {
         String resourceYaml = "{\"metadata\":{\"name\":\"test-app\"}}";
         Application application = createApplication(name);
         when(objectMapper.readValue(resourceYaml, Application.class)).thenReturn(application);
-        when(repository.updateApplication(cluster, namespace, name, application)).thenReturn(application);
+        when(repository.updateApplication(apiClient, namespace, name, application)).thenReturn(application);
 
         // When
         OperationResult result = service.updateApplication(cluster, namespace, name, resourceYaml);
@@ -312,7 +316,7 @@ class KubernetesServiceTest {
         assertEquals(cluster, result.getCluster());
         assertEquals(name, result.getName());
         verify(objectMapper).readValue(resourceYaml, Application.class);
-        verify(repository).updateApplication(cluster, namespace, name, application);
+        verify(repository).updateApplication(apiClient, namespace, name, application);
     }
 
     @Test
@@ -321,7 +325,7 @@ class KubernetesServiceTest {
         String cluster = "test-cluster";
         String namespace = "default";
         String name = "test-app";
-        doNothing().when(repository).deleteApplication(cluster, namespace, name);
+        doNothing().when(repository).deleteApplication(apiClient, namespace, name);
 
         // When
         OperationResult result = service.deleteApplication(cluster, namespace, name);
@@ -331,7 +335,7 @@ class KubernetesServiceTest {
         assertTrue(result.isSuccess());
         assertEquals(cluster, result.getCluster());
         assertEquals(name, result.getName());
-        verify(repository).deleteApplication(cluster, namespace, name);
+        verify(repository).deleteApplication(apiClient, namespace, name);
     }
 
     // Microservice tests
@@ -344,7 +348,7 @@ class KubernetesServiceTest {
             createMicroservice("svc1"),
             createMicroservice("svc2")
         );
-        when(repository.getMicroservices(cluster, namespace)).thenReturn(microservices);
+        when(repository.getMicroservices(apiClient, namespace)).thenReturn(microservices);
 
         // When
         ResourceResponse<Microservice> result = service.getMicroservices(cluster, namespace);
@@ -355,7 +359,7 @@ class KubernetesServiceTest {
         assertEquals(namespace, result.getNamespace());
         assertEquals(2, result.getCount());
         assertEquals(microservices, result.getResources());
-        verify(repository).getMicroservices(cluster, namespace);
+        verify(repository).getMicroservices(apiClient, namespace);
     }
 
     @Test
@@ -365,7 +369,7 @@ class KubernetesServiceTest {
         String namespace = "default";
         String name = "test-svc";
         Microservice microservice = createMicroservice(name);
-        when(repository.getMicroservice(cluster, namespace, name)).thenReturn(microservice);
+        when(repository.getMicroservice(apiClient, namespace, name)).thenReturn(microservice);
 
         // When
         Microservice result = service.getMicroservice(cluster, namespace, name);
@@ -373,7 +377,7 @@ class KubernetesServiceTest {
         // Then
         assertNotNull(result);
         assertEquals(name, result.getMetadata().getName());
-        verify(repository).getMicroservice(cluster, namespace, name);
+        verify(repository).getMicroservice(apiClient, namespace, name);
     }
 
     @Test
@@ -384,7 +388,7 @@ class KubernetesServiceTest {
         String resourceYaml = "{\"metadata\":{\"name\":\"test-svc\"}}";
         Microservice microservice = createMicroservice("test-svc");
         when(objectMapper.readValue(resourceYaml, Microservice.class)).thenReturn(microservice);
-        when(repository.createMicroservice(cluster, namespace, microservice)).thenReturn(microservice);
+        when(repository.createMicroservice(apiClient, namespace, microservice)).thenReturn(microservice);
 
         // When
         OperationResult result = service.createMicroservice(cluster, namespace, resourceYaml);
@@ -395,7 +399,7 @@ class KubernetesServiceTest {
         assertEquals(cluster, result.getCluster());
         assertEquals("test-svc", result.getName());
         verify(objectMapper).readValue(resourceYaml, Microservice.class);
-        verify(repository).createMicroservice(cluster, namespace, microservice);
+        verify(repository).createMicroservice(apiClient, namespace, microservice);
     }
 
     @Test
@@ -407,7 +411,7 @@ class KubernetesServiceTest {
         String resourceYaml = "{\"metadata\":{\"name\":\"test-svc\"}}";
         Microservice microservice = createMicroservice(name);
         when(objectMapper.readValue(resourceYaml, Microservice.class)).thenReturn(microservice);
-        when(repository.updateMicroservice(cluster, namespace, name, microservice)).thenReturn(microservice);
+        when(repository.updateMicroservice(apiClient, namespace, name, microservice)).thenReturn(microservice);
 
         // When
         OperationResult result = service.updateMicroservice(cluster, namespace, name, resourceYaml);
@@ -418,7 +422,7 @@ class KubernetesServiceTest {
         assertEquals(cluster, result.getCluster());
         assertEquals(name, result.getName());
         verify(objectMapper).readValue(resourceYaml, Microservice.class);
-        verify(repository).updateMicroservice(cluster, namespace, name, microservice);
+        verify(repository).updateMicroservice(apiClient, namespace, name, microservice);
     }
 
     @Test
@@ -427,7 +431,7 @@ class KubernetesServiceTest {
         String cluster = "test-cluster";
         String namespace = "default";
         String name = "test-svc";
-        doNothing().when(repository).deleteMicroservice(cluster, namespace, name);
+        doNothing().when(repository).deleteMicroservice(apiClient, namespace, name);
 
         // When
         OperationResult result = service.deleteMicroservice(cluster, namespace, name);
@@ -437,7 +441,7 @@ class KubernetesServiceTest {
         assertTrue(result.isSuccess());
         assertEquals(cluster, result.getCluster());
         assertEquals(name, result.getName());
-        verify(repository).deleteMicroservice(cluster, namespace, name);
+        verify(repository).deleteMicroservice(apiClient, namespace, name);
     }
 
     // GPU tests
@@ -450,7 +454,7 @@ class KubernetesServiceTest {
             createGPU("gpu1"),
             createGPU("gpu2")
         );
-        when(repository.getGPUs(cluster, namespace)).thenReturn(gpus);
+        when(repository.getGPUs(apiClient, namespace)).thenReturn(gpus);
 
         // When
         ResourceResponse<GPU> result = service.getGPUs(cluster, namespace);
@@ -461,7 +465,7 @@ class KubernetesServiceTest {
         assertEquals(namespace, result.getNamespace());
         assertEquals(2, result.getCount());
         assertEquals(gpus, result.getResources());
-        verify(repository).getGPUs(cluster, namespace);
+        verify(repository).getGPUs(apiClient, namespace);
     }
 
     @Test
@@ -471,7 +475,7 @@ class KubernetesServiceTest {
         String namespace = "default";
         String name = "test-gpu";
         GPU gpu = createGPU(name);
-        when(repository.getGPU(cluster, namespace, name)).thenReturn(gpu);
+        when(repository.getGPU(apiClient, namespace, name)).thenReturn(gpu);
 
         // When
         GPU result = service.getGPU(cluster, namespace, name);
@@ -479,7 +483,7 @@ class KubernetesServiceTest {
         // Then
         assertNotNull(result);
         assertEquals(name, result.getMetadata().getName());
-        verify(repository).getGPU(cluster, namespace, name);
+        verify(repository).getGPU(apiClient, namespace, name);
     }
 
     @Test
@@ -490,7 +494,7 @@ class KubernetesServiceTest {
         String resourceYaml = "{\"metadata\":{\"name\":\"test-gpu\"}}";
         GPU gpu = createGPU("test-gpu");
         when(objectMapper.readValue(resourceYaml, GPU.class)).thenReturn(gpu);
-        when(repository.createGPU(cluster, namespace, gpu)).thenReturn(gpu);
+        when(repository.createGPU(apiClient, namespace, gpu)).thenReturn(gpu);
 
         // When
         OperationResult result = service.createGPU(cluster, namespace, resourceYaml);
@@ -501,7 +505,7 @@ class KubernetesServiceTest {
         assertEquals(cluster, result.getCluster());
         assertEquals("test-gpu", result.getName());
         verify(objectMapper).readValue(resourceYaml, GPU.class);
-        verify(repository).createGPU(cluster, namespace, gpu);
+        verify(repository).createGPU(apiClient, namespace, gpu);
     }
 
     @Test
@@ -513,7 +517,7 @@ class KubernetesServiceTest {
         String resourceYaml = "{\"metadata\":{\"name\":\"test-gpu\"}}";
         GPU gpu = createGPU(name);
         when(objectMapper.readValue(resourceYaml, GPU.class)).thenReturn(gpu);
-        when(repository.updateGPU(cluster, namespace, name, gpu)).thenReturn(gpu);
+        when(repository.updateGPU(apiClient, namespace, name, gpu)).thenReturn(gpu);
 
         // When
         OperationResult result = service.updateGPU(cluster, namespace, name, resourceYaml);
@@ -524,7 +528,7 @@ class KubernetesServiceTest {
         assertEquals(cluster, result.getCluster());
         assertEquals(name, result.getName());
         verify(objectMapper).readValue(resourceYaml, GPU.class);
-        verify(repository).updateGPU(cluster, namespace, name, gpu);
+        verify(repository).updateGPU(apiClient, namespace, name, gpu);
     }
 
     @Test
@@ -533,7 +537,7 @@ class KubernetesServiceTest {
         String cluster = "test-cluster";
         String namespace = "default";
         String name = "test-gpu";
-        doNothing().when(repository).deleteGPU(cluster, namespace, name);
+        doNothing().when(repository).deleteGPU(apiClient, namespace, name);
 
         // When
         OperationResult result = service.deleteGPU(cluster, namespace, name);
@@ -543,7 +547,7 @@ class KubernetesServiceTest {
         assertTrue(result.isSuccess());
         assertEquals(cluster, result.getCluster());
         assertEquals(name, result.getName());
-        verify(repository).deleteGPU(cluster, namespace, name);
+        verify(repository).deleteGPU(apiClient, namespace, name);
     }
 
     // Helper methods

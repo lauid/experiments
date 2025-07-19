@@ -21,16 +21,14 @@ import java.util.Map;
 public class KubernetesSecretUtils {
     private static final Logger logger = LoggerFactory.getLogger(KubernetesSecretUtils.class);
     
-    private final ApiClient apiClient;
-    private final CoreV1Api coreV1Api;
-    
+    // 移除ApiClient和CoreV1Api字段
     // 缓存Secret数据，避免频繁查询
     private final Map<String, Map<String, String>> secretCache = new HashMap<>();
     
-    @Autowired
-    public KubernetesSecretUtils(ApiClient apiClient) {
-        this.apiClient = apiClient;
-        this.coreV1Api = new CoreV1Api(apiClient);
+    // 移除@Autowired构造函数
+    public KubernetesSecretUtils() {
+        // This constructor is now empty as ApiClient and CoreV1Api are no longer fields.
+        // The logic for creating ApiClient and CoreV1Api is moved into getSecretData.
     }
     
     /**
@@ -76,25 +74,28 @@ public class KubernetesSecretUtils {
      */
     private Map<String, String> getSecretData(String cluster, String namespace, String secretName) throws ApiException {
         logger.debug("Fetching secret {} from namespace {} for cluster {}", secretName, namespace, cluster);
-        
-        V1Secret secret = coreV1Api.readNamespacedSecret(secretName, namespace).execute();
-        
-        if (secret == null || secret.getData() == null) {
-            logger.warn("Secret {} not found or empty in namespace {}", secretName, namespace);
+        try {
+            ApiClient apiClient = io.kubernetes.client.util.ClientBuilder.standard().build();
+            CoreV1Api coreV1Api = new CoreV1Api(apiClient);
+            V1Secret secret = coreV1Api.readNamespacedSecret(secretName, namespace).execute();
+            if (secret == null || secret.getData() == null) {
+                logger.warn("Secret {} not found or empty in namespace {}", secretName, namespace);
+                return new HashMap<>();
+            }
+            Map<String, String> decodedData = new HashMap<>();
+            for (Map.Entry<String, byte[]> entry : secret.getData().entrySet()) {
+                String key = entry.getKey();
+                byte[] value = entry.getValue();
+                if (value != null) {
+                    decodedData.put(key, new String(value, java.nio.charset.StandardCharsets.UTF_8));
+                }
+            }
+            logger.debug("Successfully fetched secret data with {} keys", decodedData.size());
+            return decodedData;
+        } catch (Exception e) {
+            logger.error("Failed to load ApiClient or fetch secret: {}", e.getMessage());
             return new HashMap<>();
         }
-        
-        Map<String, String> decodedData = new HashMap<>();
-        for (Map.Entry<String, byte[]> entry : secret.getData().entrySet()) {
-            String key = entry.getKey();
-            byte[] value = entry.getValue();
-            if (value != null) {
-                decodedData.put(key, new String(value, StandardCharsets.UTF_8));
-            }
-        }
-        
-        logger.debug("Successfully fetched secret data with {} keys", decodedData.size());
-        return decodedData;
     }
     
     /**

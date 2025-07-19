@@ -16,8 +16,8 @@ import java.util.Map;
 public interface KubernetesRepository {
     
     // 基础Kubernetes资源操作
-    V1NamespaceList getNamespaces(String cluster);
-    V1PodList getPodsInNamespace(String cluster, String namespace);
+    V1NamespaceList getNamespaces(ApiClient apiClient);
+    V1PodList getPodsInNamespace(ApiClient apiClient, String namespace);
     V1CustomResourceDefinitionList getCustomResourceDefinitions(ApiClient apiClient);
     V1CustomResourceDefinition getCustomResourceDefinition(ApiClient apiClient, String name);
     V1CustomResourceDefinition createCustomResourceDefinition(ApiClient apiClient, String crdYaml);
@@ -46,28 +46,28 @@ public interface KubernetesRepository {
     /**
      * Patch Node 的 labels 字段
      */
-    V1Node patchNodeLabels(String cluster, String nodeName, Map<String, String> labels);
+    V1Node patchNodeLabels(ApiClient apiClient, String nodeName, Map<String, String> labels);
 
     /**
      * Patch Node 的 spec 字段
      */
-    V1Node patchNodeSpec(String cluster, String nodeName, Map<String, Object> specPatch);
+    V1Node patchNodeSpec(ApiClient apiClient, String nodeName, Map<String, Object> specPatch);
 
     /**
      * Patch Node，支持任意结构化 patch
      */
-    V1Node patchNodeRaw(String cluster, String nodeName, Object patchObject);
+    V1Node patchNodeRaw(ApiClient apiClient, String nodeName, Object patchObject);
     
     /**
      * 自动 diff patch node，传入新 node 对象，自动与集群现有对象对比并 patch（metadata/spec）。
      */
-    V1Node patchNodeAuto(String cluster, V1Node newNode);
+    V1Node patchNodeAuto(ApiClient apiClient, V1Node newNode);
 
     /**
      * 自动 diff patch node 的 status 子资源，传入新 node 对象，自动与集群现有对象对比并 patch status。
      */
-    V1Node patchNodeStatusAuto(String cluster, V1Node newNode);
+    V1Node patchNodeStatusAuto(ApiClient apiClient, V1Node newNode);
     
     // 连接检查
-    boolean isConnected(String cluster);
+    boolean isConnected(ApiClient apiClient);
 } 

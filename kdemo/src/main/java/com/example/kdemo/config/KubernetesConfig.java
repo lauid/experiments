@@ -20,18 +20,7 @@ public class KubernetesConfig {
     
     public static final String DEFAULT_CLUSTER = "cluster-local";
     
-    @Bean
-    public ApiClient kubernetesApiClient() {
-        try {
-            return ClientBuilder.standard().build();
-        } catch (IOException e) {
-            try {
-                return ClientBuilder.cluster().build();
-            } catch (IOException ioException) {
-                return new ApiClient();
-            }
-        }
-    }
+    // 移除kubernetesApiClient的@Bean定义
 
     @Bean
     public ObjectMapper objectMapper() {

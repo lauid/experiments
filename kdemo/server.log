@@ -32,6 +32,17 @@
 [INFO] -------------------------------------------------------------
 [ERROR] COMPILATION ERROR : 
 [INFO] -------------------------------------------------------------
+[ERROR] /Users/laugh/code/experiments/kdemo/src/test/java/com/example/kdemo/service/KubernetesServiceTest.java:[47,37] 不兼容的类型: java.lang.String无法转换为io.kubernetes.client.openapi.ApiClient
+[ERROR] /Users/laugh/code/experiments/kdemo/src/test/java/com/example/kdemo/service/KubernetesServiceTest.java:[56,40] 不兼容的类型: java.lang.String无法转换为io.kubernetes.client.openapi.ApiClient
+[ERROR] /Users/laugh/code/experiments/kdemo/src/test/java/com/example/kdemo/service/KubernetesServiceTest.java:[62,37] 不兼容的类型: java.lang.String无法转换为io.kubernetes.client.openapi.ApiClient
+[ERROR] /Users/laugh/code/experiments/kdemo/src/test/java/com/example/kdemo/service/KubernetesServiceTest.java:[71,40] 不兼容的类型: java.lang.String无法转换为io.kubernetes.client.openapi.ApiClient
+[ERROR] /Users/laugh/code/experiments/kdemo/src/test/java/com/example/kdemo/service/KubernetesServiceTest.java:[83,39] 不兼容的类型: java.lang.String无法转换为io.kubernetes.client.openapi.ApiClient
+[ERROR] /Users/laugh/code/experiments/kdemo/src/test/java/com/example/kdemo/service/KubernetesServiceTest.java:[94,42] 不兼容的类型: java.lang.String无法转换为io.kubernetes.client.openapi.ApiClient
+[ERROR] /Users/laugh/code/experiments/kdemo/src/test/java/com/example/kdemo/service/KubernetesServiceTest.java:[107,44] 不兼容的类型: java.lang.String无法转换为io.kubernetes.client.openapi.ApiClient
+[ERROR] /Users/laugh/code/experiments/kdemo/src/test/java/com/example/kdemo/service/KubernetesServiceTest.java:[119,47] 不兼容的类型: java.lang.String无法转换为io.kubernetes.client.openapi.ApiClient
+[ERROR] /Users/laugh/code/experiments/kdemo/src/test/java/com/example/kdemo/service/KubernetesServiceTest.java:[136,39] 不兼容的类型: java.lang.String无法转换为io.kubernetes.client.openapi.ApiClient
+[ERROR] /Users/laugh/code/experiments/kdemo/src/test/java/com/example/kdemo/service/KubernetesServiceTest.java:[137,44] 不兼容的类型: java.lang.String无法转换为io.kubernetes.client.openapi.ApiClient
+[ERROR] /Users/laugh/code/experiments/kdemo/src/test/java/com/example/kdemo/service/KubernetesServiceTest.java:[138,44] 不兼容的类型: java.lang.String无法转换为io.kubernetes.client.openapi.ApiClient
 [ERROR] /Users/laugh/code/experiments/kdemo/src/test/java/com/example/kdemo/service/KubernetesServiceTest.java:[161,54] 不兼容的类型: java.lang.String无法转换为io.kubernetes.client.openapi.ApiClient
 [ERROR] /Users/laugh/code/experiments/kdemo/src/test/java/com/example/kdemo/service/KubernetesServiceTest.java:[172,57] 不兼容的类型: java.lang.String无法转换为io.kubernetes.client.openapi.ApiClient
 [ERROR] /Users/laugh/code/experiments/kdemo/src/test/java/com/example/kdemo/service/KubernetesServiceTest.java:[181,53] 不兼容的类型: java.lang.String无法转换为io.kubernetes.client.openapi.ApiClient
@@ -70,6 +81,12 @@
 [ERROR] /Users/laugh/code/experiments/kdemo/src/test/java/com/example/kdemo/service/KubernetesServiceTest.java:[527,38] 不兼容的类型: java.lang.String无法转换为io.kubernetes.client.openapi.ApiClient
 [ERROR] /Users/laugh/code/experiments/kdemo/src/test/java/com/example/kdemo/service/KubernetesServiceTest.java:[536,48] 不兼容的类型: java.lang.String无法转换为io.kubernetes.client.openapi.ApiClient
 [ERROR] /Users/laugh/code/experiments/kdemo/src/test/java/com/example/kdemo/service/KubernetesServiceTest.java:[546,38] 不兼容的类型: java.lang.String无法转换为io.kubernetes.client.openapi.ApiClient
+[ERROR] /Users/laugh/code/experiments/kdemo/src/test/java/com/example/kdemo/repository/KubernetesRepositoryImplTest.java:[34,22] 无法将类 com.example.kdemo.repository.KubernetesRepositoryImpl中的构造器 KubernetesRepositoryImpl应用到给定类型;
+  需要: 没有参数
+  找到:    io.kubernetes.client.openapi.ApiClient
+  原因: 实际参数列表和形式参数列表长度不同
+[ERROR] /Users/laugh/code/experiments/kdemo/src/test/java/com/example/kdemo/repository/KubernetesRepositoryImplTest.java:[44,38] 不兼容的类型: java.lang.String无法转换为io.kubernetes.client.openapi.ApiClient
+[ERROR] /Users/laugh/code/experiments/kdemo/src/test/java/com/example/kdemo/repository/KubernetesRepositoryImplTest.java:[56,43] 不兼容的类型: java.lang.String无法转换为io.kubernetes.client.openapi.ApiClient
 [ERROR] /Users/laugh/code/experiments/kdemo/src/test/java/com/example/kdemo/repository/KubernetesRepositoryImplTest.java:[67,53] 不兼容的类型: java.lang.String无法转换为io.kubernetes.client.openapi.ApiClient
 [ERROR] /Users/laugh/code/experiments/kdemo/src/test/java/com/example/kdemo/repository/KubernetesRepositoryImplTest.java:[79,52] 不兼容的类型: java.lang.String无法转换为io.kubernetes.client.openapi.ApiClient
 [ERROR] /Users/laugh/code/experiments/kdemo/src/test/java/com/example/kdemo/repository/KubernetesRepositoryImplTest.java:[91,55] 不兼容的类型: java.lang.String无法转换为io.kubernetes.client.openapi.ApiClient
@@ -88,15 +105,27 @@
 [ERROR] /Users/laugh/code/experiments/kdemo/src/test/java/com/example/kdemo/repository/KubernetesRepositoryImplTest.java:[259,34] 不兼容的类型: java.lang.String无法转换为io.kubernetes.client.openapi.ApiClient
 [ERROR] /Users/laugh/code/experiments/kdemo/src/test/java/com/example/kdemo/repository/KubernetesRepositoryImplTest.java:[273,34] 不兼容的类型: java.lang.String无法转换为io.kubernetes.client.openapi.ApiClient
 [ERROR] /Users/laugh/code/experiments/kdemo/src/test/java/com/example/kdemo/repository/KubernetesRepositoryImplTest.java:[286,34] 不兼容的类型: java.lang.String无法转换为io.kubernetes.client.openapi.ApiClient
-[INFO] 56 errors 
+[ERROR] /Users/laugh/code/experiments/kdemo/src/test/java/com/example/kdemo/repository/KubernetesRepositoryImplTest.java:[296,44] 不兼容的类型: java.lang.String无法转换为io.kubernetes.client.openapi.ApiClient
+[INFO] 71 errors 
 [INFO] -------------------------------------------------------------
 [INFO] ------------------------------------------------------------------------
 [INFO] BUILD FAILURE
 [INFO] ------------------------------------------------------------------------
-[INFO] Total time:  27.146 s
-[INFO] Finished at: 2025-07-18T03:53:50+08:00
+[INFO] Total time:  13.535 s
+[INFO] Finished at: 2025-07-19T21:50:21+08:00
 [INFO] ------------------------------------------------------------------------
 [ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.8.1:testCompile (default-testCompile) on project kdemo: Compilation failure: Compilation failure: 
+[ERROR] /Users/laugh/code/experiments/kdemo/src/test/java/com/example/kdemo/service/KubernetesServiceTest.java:[47,37] 不兼容的类型: java.lang.String无法转换为io.kubernetes.client.openapi.ApiClient
+[ERROR] /Users/laugh/code/experiments/kdemo/src/test/java/com/example/kdemo/service/KubernetesServiceTest.java:[56,40] 不兼容的类型: java.lang.String无法转换为io.kubernetes.client.openapi.ApiClient
+[ERROR] /Users/laugh/code/experiments/kdemo/src/test/java/com/example/kdemo/service/KubernetesServiceTest.java:[62,37] 不兼容的类型: java.lang.String无法转换为io.kubernetes.client.openapi.ApiClient
+[ERROR] /Users/laugh/code/experiments/kdemo/src/test/java/com/example/kdemo/service/KubernetesServiceTest.java:[71,40] 不兼容的类型: java.lang.String无法转换为io.kubernetes.client.openapi.ApiClient
+[ERROR] /Users/laugh/code/experiments/kdemo/src/test/java/com/example/kdemo/service/KubernetesServiceTest.java:[83,39] 不兼容的类型: java.lang.String无法转换为io.kubernetes.client.openapi.ApiClient
+[ERROR] /Users/laugh/code/experiments/kdemo/src/test/java/com/example/kdemo/service/KubernetesServiceTest.java:[94,42] 不兼容的类型: java.lang.String无法转换为io.kubernetes.client.openapi.ApiClient
+[ERROR] /Users/laugh/code/experiments/kdemo/src/test/java/com/example/kdemo/service/KubernetesServiceTest.java:[107,44] 不兼容的类型: java.lang.String无法转换为io.kubernetes.client.openapi.ApiClient
+[ERROR] /Users/laugh/code/experiments/kdemo/src/test/java/com/example/kdemo/service/KubernetesServiceTest.java:[119,47] 不兼容的类型: java.lang.String无法转换为io.kubernetes.client.openapi.ApiClient
+[ERROR] /Users/laugh/code/experiments/kdemo/src/test/java/com/example/kdemo/service/KubernetesServiceTest.java:[136,39] 不兼容的类型: java.lang.String无法转换为io.kubernetes.client.openapi.ApiClient
+[ERROR] /Users/laugh/code/experiments/kdemo/src/test/java/com/example/kdemo/service/KubernetesServiceTest.java:[137,44] 不兼容的类型: java.lang.String无法转换为io.kubernetes.client.openapi.ApiClient
+[ERROR] /Users/laugh/code/experiments/kdemo/src/test/java/com/example/kdemo/service/KubernetesServiceTest.java:[138,44] 不兼容的类型: java.lang.String无法转换为io.kubernetes.client.openapi.ApiClient
 [ERROR] /Users/laugh/code/experiments/kdemo/src/test/java/com/example/kdemo/service/KubernetesServiceTest.java:[161,54] 不兼容的类型: java.lang.String无法转换为io.kubernetes.client.openapi.ApiClient
 [ERROR] /Users/laugh/code/experiments/kdemo/src/test/java/com/example/kdemo/service/KubernetesServiceTest.java:[172,57] 不兼容的类型: java.lang.String无法转换为io.kubernetes.client.openapi.ApiClient
 [ERROR] /Users/laugh/code/experiments/kdemo/src/test/java/com/example/kdemo/service/KubernetesServiceTest.java:[181,53] 不兼容的类型: java.lang.String无法转换为io.kubernetes.client.openapi.ApiClient
@@ -135,6 +164,12 @@
 [ERROR] /Users/laugh/code/experiments/kdemo/src/test/java/com/example/kdemo/service/KubernetesServiceTest.java:[527,38] 不兼容的类型: java.lang.String无法转换为io.kubernetes.client.openapi.ApiClient
 [ERROR] /Users/laugh/code/experiments/kdemo/src/test/java/com/example/kdemo/service/KubernetesServiceTest.java:[536,48] 不兼容的类型: java.lang.String无法转换为io.kubernetes.client.openapi.ApiClient
 [ERROR] /Users/laugh/code/experiments/kdemo/src/test/java/com/example/kdemo/service/KubernetesServiceTest.java:[546,38] 不兼容的类型: java.lang.String无法转换为io.kubernetes.client.openapi.ApiClient
+[ERROR] /Users/laugh/code/experiments/kdemo/src/test/java/com/example/kdemo/repository/KubernetesRepositoryImplTest.java:[34,22] 无法将类 com.example.kdemo.repository.KubernetesRepositoryImpl中的构造器 KubernetesRepositoryImpl应用到给定类型;
+[ERROR]   需要: 没有参数
+[ERROR]   找到:    io.kubernetes.client.openapi.ApiClient
+[ERROR]   原因: 实际参数列表和形式参数列表长度不同
+[ERROR] /Users/laugh/code/experiments/kdemo/src/test/java/com/example/kdemo/repository/KubernetesRepositoryImplTest.java:[44,38] 不兼容的类型: java.lang.String无法转换为io.kubernetes.client.openapi.ApiClient
+[ERROR] /Users/laugh/code/experiments/kdemo/src/test/java/com/example/kdemo/repository/KubernetesRepositoryImplTest.java:[56,43] 不兼容的类型: java.lang.String无法转换为io.kubernetes.client.openapi.ApiClient
 [ERROR] /Users/laugh/code/experiments/kdemo/src/test/java/com/example/kdemo/repository/KubernetesRepositoryImplTest.java:[67,53] 不兼容的类型: java.lang.String无法转换为io.kubernetes.client.openapi.ApiClient
 [ERROR] /Users/laugh/code/experiments/kdemo/src/test/java/com/example/kdemo/repository/KubernetesRepositoryImplTest.java:[79,52] 不兼容的类型: java.lang.String无法转换为io.kubernetes.client.openapi.ApiClient
 [ERROR] /Users/laugh/code/experiments/kdemo/src/test/java/com/example/kdemo/repository/KubernetesRepositoryImplTest.java:[91,55] 不兼容的类型: java.lang.String无法转换为io.kubernetes.client.openapi.ApiClient
@@ -153,6 +188,7 @@
 [ERROR] /Users/laugh/code/experiments/kdemo/src/test/java/com/example/kdemo/repository/KubernetesRepositoryImplTest.java:[259,34] 不兼容的类型: java.lang.String无法转换为io.kubernetes.client.openapi.ApiClient
 [ERROR] /Users/laugh/code/experiments/kdemo/src/test/java/com/example/kdemo/repository/KubernetesRepositoryImplTest.java:[273,34] 不兼容的类型: java.lang.String无法转换为io.kubernetes.client.openapi.ApiClient
 [ERROR] /Users/laugh/code/experiments/kdemo/src/test/java/com/example/kdemo/repository/KubernetesRepositoryImplTest.java:[286,34] 不兼容的类型: java.lang.String无法转换为io.kubernetes.client.openapi.ApiClient
+[ERROR] /Users/laugh/code/experiments/kdemo/src/test/java/com/example/kdemo/repository/KubernetesRepositoryImplTest.java:[296,44] 不兼容的类型: java.lang.String无法转换为io.kubernetes.client.openapi.ApiClient
 [ERROR] -> [Help 1]
 [ERROR] 
 [ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.

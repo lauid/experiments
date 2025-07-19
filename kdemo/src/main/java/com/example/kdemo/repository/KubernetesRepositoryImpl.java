@@ -14,6 +14,7 @@ import io.kubernetes.client.openapi.ApiClient;
 import io.kubernetes.client.openapi.ApiException;
 import io.kubernetes.client.openapi.apis.ApiextensionsV1Api;
 import io.kubernetes.client.openapi.apis.CoreV1Api;
+import io.kubernetes.client.openapi.apis.CoreV1Api.APIpatchNodeRequest;
 import io.kubernetes.client.openapi.models.V1CustomResourceDefinition;
 import io.kubernetes.client.openapi.models.V1CustomResourceDefinitionList;
 import io.kubernetes.client.openapi.models.V1NamespaceList;
@@ -28,79 +29,28 @@ import org.springframework.stereotype.Repository;
 import com.flipkart.zjsonpatch.JsonDiff;
 import io.kubernetes.client.common.KubernetesObject;
 import io.kubernetes.client.common.KubernetesListObject;
+import io.kubernetes.client.util.PatchUtils;
 
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import io.kubernetes.client.util.generic.KubernetesApiResponse;
+import io.kubernetes.client.openapi.models.V1Status;
 
 @Repository
 public class KubernetesRepositoryImpl implements KubernetesRepository {
 
-    private final Map<String, CoreV1Api> apiClients;
     // 通用 API 缓存，key: apiClient+kind
     private final Map<String, GenericKubernetesApi<?, ?>> genericApis = new ConcurrentHashMap<>();
-    private final Map<String, ApiClient> apiClientMap = new ConcurrentHashMap<>();
-    private final ApiClient defaultApiClient;
-    private static final String DEFAULT_CLUSTER = "cluster-local";
 
     @Autowired
     private ObjectMapper objectMapper;
 
     @Autowired
-    public KubernetesRepositoryImpl(ApiClient apiClient) {
-        this.defaultApiClient = apiClient;
-        this.apiClientMap.put(DEFAULT_CLUSTER, apiClient);
-        this.apiClients = new ConcurrentHashMap<>();
-        initializeCluster(DEFAULT_CLUSTER);
-    }
+    public KubernetesRepositoryImpl() {}
 
-    private void initializeCluster(String clusterName) {
-        ApiClient apiClient = apiClientMap.getOrDefault(clusterName, defaultApiClient);
-        CoreV1Api api = new CoreV1Api(apiClient);
-        apiClients.put(clusterName, api);
-        // 初始化默认集群的 GenericKubernetesApi
-        genericApis.put(clusterName + ":Application", new GenericKubernetesApi<>(
-                Application.class,
-                ApplicationList.class,
-                "example.com",
-                "v1",
-                "applications",
-                apiClient
-        ));
-        genericApis.put(clusterName + ":Microservice", new GenericKubernetesApi<>(
-                Microservice.class,
-                MicroserviceList.class,
-                "example.com",
-                "v1",
-                "microservices",
-                apiClient
-        ));
-        genericApis.put(clusterName + ":GPU", new GenericKubernetesApi<>(
-                GPU.class,
-                GPUList.class,
-                "example.com",
-                "v1",
-                "gpus",
-                apiClient
-        ));
-    }
-
-    private String getClusterName(String cluster) {
-        return cluster != null && !cluster.isEmpty() ? cluster : DEFAULT_CLUSTER;
-    }
-
-    private ApiClient getApiClient(String cluster) {
-        String clusterName = getClusterName(cluster);
-        return apiClientMap.getOrDefault(clusterName, defaultApiClient);
-    }
-
-    /**
-     * 获取指定集群的CoreV1Api实例，若不存在则新建并缓存
-     */
-    private CoreV1Api getApi(String cluster) {
-        String clusterName = getClusterName(cluster);
-        return apiClients.computeIfAbsent(clusterName, k -> new CoreV1Api(getApiClient(clusterName)));
+    private CoreV1Api getApi(ApiClient apiClient) {
+        return new CoreV1Api(apiClient);
     }
 
     // 通用 API 缓存，key: apiClient+kind
@@ -115,7 +65,7 @@ public class KubernetesRepositoryImpl implements KubernetesRepository {
      * 统一处理KubernetesApiResponse，抛出带code的KubernetesException（支持资源和列表对象）
      * errorCode优先取response.getStatus().getReason()，否则用http code
      */
-    private <T extends io.kubernetes.client.common.KubernetesType> T handleApiResponse(io.kubernetes.client.util.generic.KubernetesApiResponse<T> response, String action, String resourceType, String name) {
+    private <T extends io.kubernetes.client.common.KubernetesType> T handleApiResponse(KubernetesApiResponse<T> response, String action, String resourceType, String name) {
         if (!response.isSuccess()) {
             int code = response.getHttpStatusCode();
             String reason = null;
@@ -188,7 +138,7 @@ public class KubernetesRepositoryImpl implements KubernetesRepository {
     private <T extends KubernetesObject, L extends KubernetesListObject> T updateResource(ApiClient apiClient, String namespace, String name, T obj, Class<T> resourceClass, Class<L> listClass, String plural) {
         try {
             GenericKubernetesApi<T, L> api = getGenericApi(apiClient, resourceClass, listClass, plural);
-            io.kubernetes.client.util.generic.KubernetesApiResponse<T> response = api.update(obj, new UpdateOptions());
+            KubernetesApiResponse<T> response = api.update(obj, new UpdateOptions());
             return handleApiResponse(response, "update", resourceClass.getSimpleName(), name);
         } catch (KubernetesException e) {
             throw e;
@@ -201,7 +151,7 @@ public class KubernetesRepositoryImpl implements KubernetesRepository {
     private <T extends KubernetesObject, L extends KubernetesListObject> void deleteResource(ApiClient apiClient, String namespace, String name, Class<T> resourceClass, Class<L> listClass, String plural) {
         try {
             GenericKubernetesApi<T, L> api = getGenericApi(apiClient, resourceClass, listClass, plural);
-            io.kubernetes.client.util.generic.KubernetesApiResponse<T> response;
+            KubernetesApiResponse<T> response;
             if (namespace != null && !namespace.isEmpty()) {
                 response = api.delete(namespace, name);
             } else {
@@ -280,30 +230,41 @@ public class KubernetesRepositoryImpl implements KubernetesRepository {
     }
 
     @Override
-    public V1NamespaceList getNamespaces(String cluster) {
+    public V1NamespaceList getNamespaces(ApiClient apiClient) {
         try {
-            CoreV1Api api = getApi(cluster);
+            CoreV1Api api = getApi(apiClient);
             return api.listNamespace().execute();
         } catch (ApiException e) {
-            throw new KubernetesException("Failed to get namespaces", getClusterName(cluster), "listNamespaces", e);
+            V1Status status = KubernetesException.parseStatusFromApiException(e);
+            if (status != null) {
+                throw new KubernetesException("Failed to get namespaces", null, status);
+            } else {
+                String errorDetail = "ApiException: code=" + e.getCode() + ", body=" + e.getResponseBody();
+                throw new KubernetesException("Failed to get namespaces [" + errorDetail + "]", null, "listNamespaces", e);
+            }
         }
     }
 
     @Override
-    public V1PodList getPodsInNamespace(String cluster, String namespace) {
+    public V1PodList getPodsInNamespace(ApiClient apiClient, String namespace) {
         try {
-            CoreV1Api api = getApi(cluster);
+            CoreV1Api api = getApi(apiClient);
             return api.listNamespacedPod(namespace).execute();
         } catch (ApiException e) {
-            throw new KubernetesException("Failed to get pods in namespace: " + namespace, 
-                                        getClusterName(cluster), "listPods", e);
+            V1Status status = KubernetesException.parseStatusFromApiException(e);
+            if (status != null) {
+                throw new KubernetesException("Failed to get pods in namespace: " + namespace, null, status);
+            } else {
+                String errorDetail = "ApiException: code=" + e.getCode() + ", body=" + e.getResponseBody();
+                throw new KubernetesException("Failed to get pods in namespace: " + namespace + " [" + errorDetail + "]", null, "listPods", e);
+            }
         }
     }
 
     @Override
-    public boolean isConnected(String cluster) {
+    public boolean isConnected(ApiClient apiClient) {
         try {
-            CoreV1Api api = getApi(cluster);
+            CoreV1Api api = getApi(apiClient);
             api.listNamespace().execute();
             return true;
         } catch (ApiException e) {
@@ -317,7 +278,13 @@ public class KubernetesRepositoryImpl implements KubernetesRepository {
             ApiextensionsV1Api crdApi = getCrdApi(apiClient);
             return crdApi.listCustomResourceDefinition().execute();
         } catch (ApiException e) {
-            throw new KubernetesException("Failed to get CRDs", "", "listCRDs", e);
+            V1Status status = KubernetesException.parseStatusFromApiException(e);
+            if (status != null) {
+                throw new KubernetesException("Failed to get CRDs", "", status);
+            } else {
+                String errorDetail = "ApiException: code=" + e.getCode() + ", body=" + e.getResponseBody();
+                throw new KubernetesException("Failed to get CRDs [" + errorDetail + "]", "", "listCRDs", e);
+            }
         }
     }
 
@@ -345,46 +312,46 @@ public class KubernetesRepositoryImpl implements KubernetesRepository {
     }
 
     @Override
-    public V1Node patchNodeLabels(String cluster, String nodeName, Map<String, String> labels) {
+    public V1Node patchNodeLabels(ApiClient apiClient, String nodeName, Map<String, String> labels) {
         Map<String, Object> patch = Map.of("metadata", Map.of("labels", labels));
-        return patchNodeRaw(cluster, nodeName, patch);
+        return patchNodeRaw(apiClient, nodeName, patch);
     }
 
     @Override
-    public V1Node patchNodeSpec(String cluster, String nodeName, Map<String, Object> specPatch) {
+    public V1Node patchNodeSpec(ApiClient apiClient, String nodeName, Map<String, Object> specPatch) {
         Map<String, Object> patch = Map.of("spec", specPatch);
-        return patchNodeRaw(cluster, nodeName, patch);
+        return patchNodeRaw(apiClient, nodeName, patch);
     }
 
     @Override
-    public V1Node patchNodeRaw(String cluster, String nodeName, Object patchObject) {
+    public V1Node patchNodeRaw(ApiClient apiClient, String nodeName, Object patchObject) {
         try {
             String patchJson = objectMapper.writeValueAsString(patchObject);
             V1Patch patch = new V1Patch(patchJson);
-            CoreV1Api api = getApi(cluster);
+            CoreV1Api api = getApi(apiClient);
             return api.patchNode(nodeName, patch).execute();
         } catch (Exception e) {
-            throw new KubernetesException("Failed to patch node: " + nodeName, getClusterName(cluster), "patchNode", e);
+            throw new KubernetesException("Failed to patch node: " + nodeName, null, "patchNode", e);
         }
     }
 
     @Override
-    public V1Node patchNodeAuto(String cluster, V1Node newNode) {
-        return patchNodeAutoInternal(cluster, newNode, null);
+    public V1Node patchNodeAuto(ApiClient apiClient, V1Node newNode) {
+        return patchNodeAutoInternal(apiClient, newNode, null);
     }
 
     @Override
-    public V1Node patchNodeStatusAuto(String cluster, V1Node newNode) {
-        return patchNodeAutoInternal(cluster, newNode, "status");
+    public V1Node patchNodeStatusAuto(ApiClient apiClient, V1Node newNode) {
+        return patchNodeAutoInternal(apiClient, newNode, "status");
     }
 
     /**
      * 自动 diff patch node，支持 patch metadata/spec 或 status 子资源
      */
-    private V1Node patchNodeAutoInternal(String cluster, V1Node newNode, String subresource) {
+    private V1Node patchNodeAutoInternal(ApiClient apiClient, V1Node newNode, String subresource) {
+        String nodeName = newNode.getMetadata().getName();
         try {
-            String nodeName = newNode.getMetadata().getName();
-            CoreV1Api api = getApi(cluster);
+            CoreV1Api api = getApi(apiClient);
             // 获取 oldNode
             V1Node oldNode = api.readNode(nodeName).execute();
             // 转为 JsonNode
@@ -403,10 +370,20 @@ public class KubernetesRepositoryImpl implements KubernetesRepository {
             } else if ("status".equals(subresource)) {
                 return api.patchNodeStatus(nodeName, patch).execute();
             } else {
-                throw new KubernetesException("Unsupported subresource for patchNode: " + subresource, getClusterName(cluster), "patchNodeAuto", null);
+                throw new KubernetesException("Unsupported subresource for patchNode: " + subresource, null, "patchNodeAuto", null);
             }
+        } catch (io.kubernetes.client.openapi.ApiException e) {
+            V1Status status = KubernetesException.parseStatusFromApiException(e);
+            if (status != null) {
+                throw new KubernetesException("Kubernetes API error during patchNodeAuto", null, status);
+            } else {
+                String errorDetail = "ApiException: code=" + e.getCode() + ", body=" + e.getResponseBody();
+                throw new KubernetesException("Kubernetes API error during patchNodeAuto [" + errorDetail + "]", null, "patchNodeAuto", e);
+            }
+        } catch (com.fasterxml.jackson.core.JsonProcessingException e) {
+            throw new KubernetesException("JSON processing error during patchNodeAuto: " + e.getMessage(), null, "patchNodeAuto", e);
         } catch (Exception e) {
-            throw new KubernetesException("Failed to auto patch node (subresource=" + subresource + "): " + newNode.getMetadata().getName(), getClusterName(cluster), "patchNodeAuto", e);
+            throw new KubernetesException("Failed to auto patch node (subresource=" + subresource + "): " + nodeName, null, "patchNodeAuto", e);
         }
     }
 

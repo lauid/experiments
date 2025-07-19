@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import io.kubernetes.client.openapi.models.V1NamespaceList;
 import io.kubernetes.client.openapi.models.V1PodList;
+import io.kubernetes.client.util.ClientBuilder;
 
 @Service
 public class KubernetesService {
@@ -23,16 +24,12 @@ public class KubernetesService {
     private final KubernetesRepository repository;
     private final ObjectMapper objectMapper;
     private static final String DEFAULT_CLUSTER = "cluster-local";
-    private final Map<String, ApiClient> apiClientMap = new ConcurrentHashMap<>();
-    private final ApiClient defaultApiClient;
+    // 移除 defaultApiClient 和 apiClientMap
 
     @Autowired
-    public KubernetesService(KubernetesRepository repository, ObjectMapper objectMapper, ApiClient defaultApiClient) {
+    public KubernetesService(KubernetesRepository repository, ObjectMapper objectMapper) {
         this.repository = repository;
         this.objectMapper = objectMapper;
-        this.defaultApiClient = defaultApiClient;
-        apiClientMap.put("cluster-local", defaultApiClient);
-        // 可在此注册其他集群 ApiClient
     }
 
     private String getClusterName(String cluster) {
@@ -40,59 +37,63 @@ public class KubernetesService {
     }
 
     private ApiClient getApiClient(String cluster) {
-        return apiClientMap.getOrDefault(cluster, defaultApiClient);
+        try {
+            return ClientBuilder.standard().build();
+        } catch (Exception e) {
+            throw new com.example.kdemo.exception.KubernetesException("未能加载本地kubeconfig，无法连接Kubernetes集群。", "NO_K8S_CONFIG", "getApiClient", e);
+        }
     }
 
     /**
      * 检查 Kubernetes 连接
      */
     public ClusterInfo checkConnection(String cluster) {
-        String clusterName = getClusterName(cluster);
-        boolean connected = repository.isConnected(clusterName);
-        return new ClusterInfo(connected, clusterName);
+        ApiClient apiClient = getApiClient(cluster);
+        boolean connected = repository.isConnected(apiClient);
+        return new ClusterInfo(connected, getClusterName(cluster));
     }
 
     /**
      * 获取所有命名空间
      */
     public NamespaceInfo getNamespaces(String cluster) {
-        String clusterName = getClusterName(cluster);
-        V1NamespaceList namespaces = repository.getNamespaces(clusterName);
+        ApiClient apiClient = getApiClient(cluster);
+        V1NamespaceList namespaces = repository.getNamespaces(apiClient);
         List<String> namespaceNames = namespaces.getItems().stream()
                 .map(namespace -> namespace.getMetadata().getName())
                 .collect(Collectors.toList());
-        return new NamespaceInfo(clusterName, namespaceNames);
+        return new NamespaceInfo(getClusterName(cluster), namespaceNames);
     }
 
     /**
      * 获取指定命名空间中的所有 Pod
      */
     public PodInfo getPodsInNamespace(String cluster, String namespace) {
-        String clusterName = getClusterName(cluster);
-        V1PodList pods = repository.getPodsInNamespace(clusterName, namespace);
+        ApiClient apiClient = getApiClient(cluster);
+        V1PodList pods = repository.getPodsInNamespace(apiClient, namespace);
         List<String> podNames = pods.getItems().stream()
                 .map(pod -> pod.getMetadata().getName())
                 .collect(Collectors.toList());
-        return new PodInfo(clusterName, namespace, podNames);
+        return new PodInfo(getClusterName(cluster), namespace, podNames);
     }
 
     /**
      * 获取集群概览
      */
     public ClusterOverview getClusterOverview(String cluster) {
-        String clusterName = getClusterName(cluster);
-        NamespaceInfo namespaceInfo = getNamespaces(clusterName);
+        ApiClient apiClient = getApiClient(cluster);
+        NamespaceInfo namespaceInfo = getNamespaces(cluster);
         
         Map<String, Integer> podsPerNamespace = namespaceInfo.getNamespaces().stream()
                 .collect(Collectors.toMap(
                         ns -> ns,
-                        ns -> repository.getPodsInNamespace(clusterName, ns).getItems().size()
+                        ns -> repository.getPodsInNamespace(apiClient, ns).getItems().size()
                 ));
         
         int totalPods = podsPerNamespace.values().stream().mapToInt(Integer::intValue).sum();
         
         return new ClusterOverview(
-                clusterName,
+                getClusterName(cluster),
                 namespaceInfo.getCount(),
                 totalPods,
                 podsPerNamespace,
