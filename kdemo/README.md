@@ -1,3 +1,5 @@
+mvn test -Dtest=QuantityUtilsTest
+
 # K8s Demo Application
 
 这是一个集成了 Kubernetes 官方 OpenAPI 客户端的 Spring Boot 应用程序。
