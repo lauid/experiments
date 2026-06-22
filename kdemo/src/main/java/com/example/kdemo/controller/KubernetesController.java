@@ -242,25 +242,5 @@ public class KubernetesController {
         return spec;
     }
 
-    // ========== 异常处理 ==========
 
-    @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<Map<String, String>> handleResourceNotFound(ResourceNotFoundException e) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(Map.of("error", e.getMessage()));
-    }
-
-    @ExceptionHandler(KubernetesException.class)
-    public ResponseEntity<Map<String, Object>> handleKubernetesException(KubernetesException e) {
-        Map<String, Object> error = new java.util.HashMap<>();
-        error.put("error", e.getMessage());
-        error.put("exception", e.getClass().getName());
-        error.put("stackTrace", e.getStackTrace());
-        Throwable cause = e.getCause();
-        if (cause != null) {
-            error.put("cause", cause.toString());
-            error.put("causeMessage", cause.getMessage());
-        }
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
-    }
-} 
+}

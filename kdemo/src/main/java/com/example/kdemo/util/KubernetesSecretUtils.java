@@ -77,16 +77,16 @@ public class KubernetesSecretUtils {
         try {
             ApiClient apiClient = io.kubernetes.client.util.ClientBuilder.standard().build();
             CoreV1Api coreV1Api = new CoreV1Api(apiClient);
-            V1Secret secret = coreV1Api.readNamespacedSecret(secretName, namespace).execute();
-            if (secret == null || secret.getData() == null) {
-                logger.warn("Secret {} not found or empty in namespace {}", secretName, namespace);
-                return new HashMap<>();
-            }
-            Map<String, String> decodedData = new HashMap<>();
-            for (Map.Entry<String, byte[]> entry : secret.getData().entrySet()) {
-                String key = entry.getKey();
-                byte[] value = entry.getValue();
-                if (value != null) {
+        V1Secret secret = coreV1Api.readNamespacedSecret(secretName, namespace).execute();
+        if (secret == null || secret.getData() == null) {
+            logger.warn("Secret {} not found or empty in namespace {}", secretName, namespace);
+            return new HashMap<>();
+        }
+        Map<String, String> decodedData = new HashMap<>();
+        for (Map.Entry<String, byte[]> entry : secret.getData().entrySet()) {
+            String key = entry.getKey();
+            byte[] value = entry.getValue();
+            if (value != null) {
                     decodedData.put(key, new String(value, java.nio.charset.StandardCharsets.UTF_8));
                 }
             }

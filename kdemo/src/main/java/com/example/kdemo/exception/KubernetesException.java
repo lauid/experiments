@@ -8,21 +8,21 @@ public class KubernetesException extends RuntimeException {
     private final String errorCode;
     private final String operation;
     private final String errorDetail;
-
+    
     public KubernetesException(String message, String errorCode, String operation) {
         super(message);
         this.errorCode = errorCode;
         this.operation = operation;
         this.errorDetail = null;
     }
-
+    
     public KubernetesException(String message, String errorCode, String operation, Throwable cause) {
         super(message, cause);
         this.errorCode = errorCode;
         this.operation = operation;
         this.errorDetail = null;
     }
-
+    
     // 推荐：从 V1Status 构造，拼装 errorDetail
     public KubernetesException(String message, String operation, V1Status status) {
         super(message + (status != null ? " [" + buildErrorDetail(status) + "]" : ""));
@@ -44,7 +44,7 @@ public class KubernetesException extends RuntimeException {
         sb.append(", message=").append(status.getMessage());
         return sb.toString();
     }
-
+    
     public String getErrorCode() { return errorCode; }
     public String getOperation() { return operation; }
     public String getErrorDetail() { return errorDetail; }
