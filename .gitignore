@@ -1,12 +1,120 @@
-.idea/*
-.idea
-./.idea
-*.tar
-vendor
-*.txt
-build
-.mvn/*
-.mvn
-*.db
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+
+# JetBrains IDEs
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+
+# VS Code
+.vscode/
+*.swp
+*.swo
+
+# Go
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+/vendor/
+/go/pkg/
+/go/bin/
+
+# Java / Maven
+target/
 *.class
+*.jar
+*.war
+*.nar
+*.ear
+*.zip
+*.tar.gz
+*.rar
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+
+# Maven local repo
+.m2/
+
+# Gradle
+.gradle/
+build/
+
+# Spring Boot
+*.jar.original
+*.jar.bak
+
+# Node / npm
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+
+# C / C++
+*.o
+*.obj
+*.a
+
+# Linux kernel
+*.ko
+*.mod.c
+*.order
+*.symvers
+*.cmd
+Module.symvers
+modules.order
+
+# IDE / Editor temp files
+*~
+*.swp
+*.swo
+*.*~
+
+# Logs
+*.log
+
+# Binary
+*.bin
+*.hex
+*.tar
+*.db
+
+# Docker
+.docker/
+docker-compose.override.yml
+
+# Misc
 tmp
