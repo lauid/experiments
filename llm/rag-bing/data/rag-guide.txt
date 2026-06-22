@@ -1,0 +1,30 @@
+RAG（检索增强生成）完全指南
+
+一、RAG 是什么
+RAG = Retrieval-Augmented Generation，检索增强生成。核心思路：在 LLM 回答前，先从知识库中检索相关文档，作为上下文提供给模型，让答案基于事实而非模型记忆。
+
+二、标准 RAG 流程
+用户提问 → Embedding 向量化 → 向量库检索 → 召回相关文档 → 拼接 Prompt → LLM 生成回答
+
+三、RAG 的三大组件
+1. 文档加载与解析：支持 PDF、TXT、HTML、Markdown、Word、Excel 等格式
+2. 向量存储与检索：ChromaDB（本地轻量）、Pinecone（云服务）、FAISS（高性能）、Weaviate、Milvus
+3. 生成模型：GPT-4o、Claude、Qwen、LLaMA 等
+
+四、Advanced RAG 技术
+- Chunk 优化：递归分割、语义分割、基于标题分割
+- 混合检索：向量检索 + 关键词检索（BM25）+ 重排序（Re-Ranker）
+- Query 转换：多查询、HyDE（假设文档嵌入）、查询分解
+- 图检索（GraphRAG）：结合知识图谱提升多跳推理能力
+
+五、评估指标
+- 检索质量：命中率（Hit Rate）、MRR、NDCG
+- 生成质量：忠实度（Faithfulness）、相关性（Relevance）、答案完整性
+- 工具：RAGAS、LangSmith
+
+六、适用场景
+- 企业知识库问答
+- 文档分析与总结
+- 客户服务机器人
+- 私有数据查询
+- 代码库搜索与理解

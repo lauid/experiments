@@ -1,0 +1,35 @@
+AI Agent 智能体入门
+
+一、什么是 Agent
+Agent = LLM + 工具 + 记忆 + 规划。Agent 不只是"聊天"，而是能自主完成任务的智能体。它可以使用工具、记住上下文、分解任务、执行步骤。
+
+二、Agent 核心模式
+1. ReAct（Reasoning + Acting）：交替进行"思考→行动→观察"，是目前最主流的 Agent 框架
+2. Plan-and-Execute：先制定计划再逐步执行
+3. Multi-Agent：多个 Agent 分工协作，如研究助手、代码审查员、测试员
+
+三、常用 Agent 框架
+- LangGraph：最流行的 Agent 编排框架，支持有向图、状态管理、条件路由
+- CrewAI：多 Agent 协作框架，角色分工明确
+- AutoGen：微软出品，支持多 Agent 对话
+- MCP（Model Context Protocol）：Anthropic 提出的标准化工具协议
+
+四、工具类型
+- 搜索工具：搜索引擎、数据库查询
+- 代码工具：执行 Python、Shell 命令
+- API 工具：调用外部 REST API
+- 文件工具：读写文件、处理文档
+- 计算工具：数学计算、数据分析
+
+五、Agent 应用场景
+- 自动研究报告生成
+- 客户服务智能助手
+- 代码开发与审查
+- 数据分析与可视化
+- 工作流自动化
+
+六、注意事项
+- 注意 Token 消耗和延迟
+- 需要良好的错误处理
+- 人工审核环节很重要
+- 工具权限要严格管理
